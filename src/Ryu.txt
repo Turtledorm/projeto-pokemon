@@ -1,0 +1,30 @@
+Ryu
+100
+80
+77
+80
+87
+75
+1
+16
+4
+Hadouken
+9
+60
+100
+15
+Shoryuken
+1
+70
+95
+10
+Tatsumaki Senpukyaku
+2
+65
+99
+10
+Shin Shoryuken
+1
+125
+75
+5
