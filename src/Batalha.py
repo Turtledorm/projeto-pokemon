@@ -14,27 +14,21 @@ def lePokemon():
     # Lê o nível
     base.append(int(input()))
 
-    i = 0
-    while i < 5:
+    for i in range(5):
         lido = int(input())
         atributos.append(lido)
-        i += 1
 
-    i = 0
-    while i < 2:
+    for i in range(2):
         lido = int(input())
         if lido < 0 or lido > 16:
             erroLeitura("tipo do Pokémon")
         base.append(lido)
-        i += 1
 
     pokemon = Pokemon(base, atributos)
     numAtaques = int(input())
 
-    i = 0
-    while i < numAtaques:
+    for i in range(numAtaques):
         pokemon.adicionaAtaque(leAtaque())
-        i += 1
 
     print("'" + base[0] + "' lido com sucesso!")
     return pokemon
@@ -52,10 +46,8 @@ def leAtaque():
         erroLeitura("tipo de um ataque")
     ataque.append(typ)
 
-    i = 0
-    while i < 3:
+    for i in range(3):
         ataque.append(int(input()))
-        i += 1
 
     return ataque
 
