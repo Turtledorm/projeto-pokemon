@@ -32,12 +32,12 @@ class PrimesTestCase(unittest.TestCase):
         self.assertEqual(self.t.atributos["SPC"], self.spc)
     
     def teste_ataques(self):
-        self.t.adiciona_ataque("bla", 1, 21, 10, 246)
-        self.t.adiciona_ataque("blo", 2, 22, 11, 247)
-        self.t.adiciona_ataque("ble", 3, 23, 12, 248)
-        self.t.adiciona_ataque("bliu", 4, 24, 13, 249)
+        self.t.adiciona_ataque("n1", 1, 21, 10, 246)
+        self.t.adiciona_ataque("n2", 2, 22, 11, 247)
+        self.t.adiciona_ataque("n3", 3, 23, 12, 248)
+        self.t.adiciona_ataque("n4", 4, 24, 13, 249)
         with self.assertRaises(Exception):
-            self.t.adiciona_ataque("bleh", 5, 25, 14, 250)         
+            self.t.adiciona_ataque("n5", 5, 25, 14, 250)         
          
 
 
