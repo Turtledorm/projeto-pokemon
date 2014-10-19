@@ -6,8 +6,8 @@ from pokemon import *
 
 class PrimesTestCase(unittest.TestCase):
 
-    def setUp(self):
-        self.nome  = "pedro" 
+    def set_up(self):
+        self.nome  = "Pedro" 
         self.lvl   = random.randint(0, 100)
         self.hp    = random.randint(0, 100)
         self.atk   = random.randint(0, 100)
