@@ -1,28 +1,27 @@
 # coding=utf-8
 
+# Possíveis tipos que um pokémon pode assumir
 tipos = {0: "Normal", 1: "Fighting", 2: "Flying", 3: "Poison", 4: "Ground",
          5: "Rock", 6: "Bird", 7: "Bug", 8: "Ghost", 9: "Fire", 10: "Water",
          11: "Grass", 12: "Electric", 13: "Psychic", 14: "Ice", 15: "Dragon",
          16: "Blank"}
 
 
-# -----------------------------------------------------------------------------
-
-
 class Pokemon:
 
-    ataques = []
+    ataques = [] # lista de ataques
 
     def __init__(self):
-        self.nome = input("Nome: ")
-        self.lvl = int(input("Nível: "))
+        """Recebe dados, atributos e ataques e cria um pokémon."""
+        self.nome = input()
+        self.lvl = int(input())
 
         # Leitura dos atributos
-        self.hp = self.hp_max = int(input("HP: "))
-        self.atk = int(input("ATK: "))
-        self.dfs = int(input("DEF: "))
-        self.spd = int(input("SPD: "))
-        self.spc = int(input("SPC: "))
+        self.hp = self.hp_max = int(input())
+        self.atk = int(input())
+        self.dfs = int(input())
+        self.spd = int(input())
+        self.spc = int(input())
 
         # Leitura dos tipos
         self.tipo1 = int(input("Tipo 1: "))
@@ -37,9 +36,8 @@ class Pokemon:
 
         print("'" + self.nome + "' lido com sucesso!")
 
-    # -------------------------------------------------------------------------
-
-    def info(self):
+    def __call__(self):
+        """Exibe informações do pokémon."""
         print("==== " + self.nome + " ====")
         print("(" + tipos[self.tipo1], end="")
         if self.tipo2 != "Blank":
@@ -53,18 +51,16 @@ class Pokemon:
         print("SPD = " + str(self.spd))
         print("SPC = " + str(self.spc))
 
-    # -------------------------------------------------------------------------
-
     def exibe_ataques(self):
+        """Mostra lista de ataques do pokémon."""
         print("\n<<<Ataques>>>")
         for ataque in self.ataques:
-            ataque.info()
-
-    # -------------------------------------------------------------------------
+            ataque()
 
     class Ataque:
 
         def __init__(self):
+            """Recebe dados e atributos do ataque."""
             self.nome = input("Nome: ")
 
             self.typ = int(input("TYP: "))
@@ -76,18 +72,15 @@ class Pokemon:
             self.pwr = int(input("PWR: "))
             self.pp = self.pp_max = int(input("PP: "))
 
-        # ---------------------------------------------------------------------
-
-        def info(self):
+        def __call__(self):
+            """Exibe informações do ataque."""
             print(self.nome + " (" + tipos[self.typ] + ")")
             print(str(self.pp) + "/" + str(self.pp_max) + " PP")
             print("Poder: " + str(self.pwr))
             print("Acurácia: " + str(self.acu) + "\n")
 
 
-# -----------------------------------------------------------------------------
-
-
 def erro_leitura(mensagem):
+    """Imprime mensagem de erro."""
     print("Erro ao ler " + mensagem + "!")
     exit(1)
