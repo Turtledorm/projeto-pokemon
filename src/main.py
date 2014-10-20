@@ -1,7 +1,8 @@
-#!/usr/bin/python3  
+#!/usr/bin/python3
 
 from pokemon import Pokemon
+from batalha import realiza_batalha
 
-poke = Pokemon()
-poke()
-poke.exibe_ataques()
+poke1 = Pokemon()
+poke2 = Pokemon()
+realiza_batalha(poke1, poke2)
