@@ -6,7 +6,7 @@ from pokemon import *
 
 class PrimesTestCase(unittest.TestCase):
 
-    def set_up(self):
+    def setUp(self):
         self.nome  = "Pedro" 
         self.lvl   = random.randint(0, 100)
         self.hp    = random.randint(0, 100)
@@ -22,7 +22,7 @@ class PrimesTestCase(unittest.TestCase):
         self.atributos = [self.hp, self.atk, self.defe, self.spd, self.spc]
         self.t = Pokemon(self.base, self.atributos)
 
-    def teste_cria_pokemons(self):
+    def test_pokemons(self):
         self.assertEqual(self.t.nome, self.nome)
         self.assertEqual(self.t.lvl, self.lvl)
         self.assertEqual(self.t.tipo1, self.tipo1)
@@ -33,7 +33,7 @@ class PrimesTestCase(unittest.TestCase):
         self.assertEqual(self.t.spd, self.spd)
         self.assertEqual(self.t.spc, self.spc)
 
-    def teste_ataques(self):
+    def test_ataques(self):
         self.t.adiciona_ataque(["n1", 1, 21, 10, 246])
         self.t.adiciona_ataque(["n2", 2, 22, 11, 247])
         self.t.adiciona_ataque(["n3", 3, 23, 12, 248])
