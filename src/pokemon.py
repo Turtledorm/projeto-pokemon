@@ -1,8 +1,16 @@
 # coding=utf-8
 
-class Pokemon:
+# Possíveis tipos que um pokémon pode assumir
+tipos = {0: "Normal", 1: "Fighting", 2: "Flying", 3: "Poison",
+         4: "Ground", 5: "Rock", 6: "Bird", 7: "Bug", 8: "Ghost",
+         9: "Fire", 10: "Water", 11: "Grass", 12: "Electric",
+         13: "Psychic", 14: "Ice", 15: "Dragon", 16: "Blank"}
 
-    self.ataques = [] # lista de ataques
+fisico = 8     # Último tipo que causa dano físico
+especial = 15  # Último tipo que causa dano especial
+
+
+class Pokemon:
 
     def __init__(self):
         """Recebe dados, atributos e ataques e cria um pokémon."""
@@ -21,11 +29,12 @@ class Pokemon:
         self.tipo2 = int(input())
 
         # Leitura dos ataques
+        self.ataques = []
         num_ataques = int(input())
         if num_ataques > 4:
             raise Exception(self.nome + " tem mais de 4 ataques!")
         for i in range(num_ataques):
-            self.ataques.append(self.Ataque())
+            self.ataques.append(Ataque())
 
         print("'" + self.nome + "' lido com sucesso!")
 
@@ -33,25 +42,61 @@ class Pokemon:
         """Exibe informações do pokémon."""
         print("==== " + self.nome + " ====")
 
-        print("(" + tipos[self.tipo1], end="")
+        print("(" + tipos[self.tipo1], end = "")
         if tipos[self.tipo2] != "Blank":
             print("/" + tipos[self.tipo2] + ")")
         else:
             print(")")
 
-        print("Nível " + str(self.lvl) + "\n")
-        print(str(self.hp) + "/" + str(self.hp_max) + " HP")
-        print("ATK = " + str(self.atk))
-        print("DEF = " + str(self.dfs))
-        print("SPD = " + str(self.spd))
-        print("SPC = " + str(self.spc))
+        print("Nível", self.lvl, "\n")
+        print(str(self.hp) + "/" + str(self.hp_max), "HP")
+        print("ATK =", self.atk)
+        print("DEF =", self.dfs)
+        print("SPD =", self.spd)
+        print("SPC =", self.spc)
 
     def exibe_ataques(self):
         """Mostra lista de ataques do pokémon."""
         print("\n<<<Ataques>>>")
         for ataque in self.ataques:
             ataque()
+        return len(self.ataques)
 
+    def dano(self, dano):
+        self.hp -= dano
+
+    def get_nome(self):
+        return self.nome
+
+    def get_lvl(self):
+        return self.lvl
+
+    def get_hp(self):
+        return self.hp
+
+    def get_atk(self):
+        return self.atk
+
+    def get_dfs(self):
+        return self.dfs
+
+    def get_spd(self):
+        return self.spd
+
+    def get_spc(self):
+        return self.spc
+
+    def get_tipos(self):
+        return self.tipo1, self.tipo2
+
+    def get_ataque(self, num):
+        return self.ataques[num]
+
+    def sem_pp(self):
+        for ataque in self.ataques:
+            if ataque.get_pp() > 0:
+                return False
+        return True
 
 class Ataque:
 
@@ -76,19 +121,24 @@ class Ataque:
         print("Poder: " + str(self.pwr))
         print("Acurácia: " + str(self.acu) + "\n")
 
+    def get_nome(self):
+        return self.nome
 
-class Tipo:
+    def get_typ(self):
+        return self.typ
 
-    def __init__(self, numero, nome):
-        self.numero = numero
-        self.nome = nome
-            
+    def get_acu(self):
+        return self.acu
 
-    # Possíveis tipos que um pokémon pode assumir
-    self.tipos = {0: "Normal", 1: "Fighting", 2: "Flying", 3: "Poison",
-                  4: "Ground", 5: "Rock", 6: "Bird", 7: "Bug", 8: "Ghost",
-                  9: "Fire", 10: "Water", 11: "Grass", 12: "Electric",
-                  13: "Psychic", 14: "Ice", 15: "Dragon", 16: "Blank"}
+    def get_pwr(self):
+        return self.pwr
+
+    def get_pp(self):
+        return self.pp
+
+    def usa_pp(self):
+        self.pp -= 1
+
 
 def erro_leitura(mensagem):
     """Imprime mensagem de erro."""
