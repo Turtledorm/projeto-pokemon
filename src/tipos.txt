@@ -1,0 +1,64 @@
+Normal
+
+5
+8
+Fighting
+0 5 14
+2 3 7 15
+8
+Flying
+1 7 11
+5 12
+
+Poison
+7 11
+3 4 5 8
+
+Ground
+3 5 9 12
+7 11
+2
+Rock
+2 7 9 14
+1 4
+
+Bird
+
+
+
+Bug
+3 11 13
+1 2 8 9
+
+Ghost
+7
+
+0 13
+Fire
+7 11 14
+5 9 10 15
+
+Water
+4 5 9
+10 11 15
+
+Grass
+4 5 10
+2 3 7 9 11 15
+
+Electric
+2 10
+11 12 15
+4
+Psychic
+1 3
+13
+
+Ice
+2 4 11 15
+10 14
+
+Dragon
+15
+
+
