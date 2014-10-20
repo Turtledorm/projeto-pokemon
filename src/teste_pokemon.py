@@ -49,7 +49,7 @@ class PrimesTestCase(unittest.TestCase):
         """Cada 5 elementos da lista self.ataques correspondem aos atributos
         de um ataque do pokemon. Então, o primeiro ataque do pokemon tem 
         como atributos os valores de teste que estão no self.ataques[0] 
-        à self.ataques[4]""" 
+        ao self.ataques[4]""" 
         for i in range(4):             
             self.assertEqual(self.t.ataques[i].nome, self.ataques[5 * i])
             self.assertEqual(self.t.ataques[i].typ,  self.ataques[5 * i + 1])
