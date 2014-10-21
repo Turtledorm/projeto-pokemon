@@ -1,7 +1,7 @@
 import os
 
-tabela_eff = [] # Tabela com multiplicadores de efetividade
-tipos = []      # Lista de tipos
+tabela_eff = []  # Tabela com multiplicadores de efetividade
+tipos = []       # Lista de tipos
 
 
 class Pokemon:
@@ -36,9 +36,9 @@ class Pokemon:
         """Exibe informações do Pokémon."""
         print("==== " + self.nome + " ====")
 
-        print("(" + self.tipo1.nome + \
-            (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "") \
-             + ")")
+        print("(" + self.tipo1.nome +
+              (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "")
+              + ")")
 
         print("Nível", self.lvl, "\n")
         print(str(self.hp) + "/" + str(self.hp_max), "HP")
@@ -153,7 +153,7 @@ class Tipo:
 
     def __call__(self):
         print(str(self.numero) + ":", self.nome,
-            "(Especial)" if self.is_especial() else "")
+              "(Especial)" if self.is_especial() else "")
 
     def get_nome(self):
         return self.nome
@@ -167,8 +167,9 @@ class Tipo:
 
 def le_tipos(nome_arquivo):
     """Lê tipos do arquivo, guarda-os e constrói a tabela de efetividade."""
-    # Para que o script leia o arquivo mesmo se executado de fora do diretório de onde ele está
-    __diretorio = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    # Permite que o script leia o arquivo mesmo
+    # se executado de fora do diretório de onde ele está.
+    __diretorio = os.path.join(os.getcwd(), os.path.dirname(__file__))
     caminho = (os.path.join(__diretorio, nome_arquivo))
 
     with open(caminho) as arquivo:
@@ -187,12 +188,6 @@ def le_tipos(nome_arquivo):
             linha = arquivo.readline().split()
             linha = list(map(float, linha))
             tabela_eff.append(linha)
-
-    # DEBUG
-    for tipo in tipos:
-        tipo()
-    for line in tabela_eff:
-        print(line)
 
 
 def erro_leitura(mensagem):
