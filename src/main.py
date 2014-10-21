@@ -2,8 +2,11 @@
 
 from pokemon import Pokemon, le_tipos
 from batalha import batalha
+import os
 
-le_tipos("tipos.txt")
+#Para que o script leia tipos.txt mesmo se executado de fora do diretório onde ele está
+__diretorio = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+le_tipos(os.path.join(__diretorio, "tipos.txt"))
 
 poke1 = Pokemon()
 poke2 = Pokemon()
