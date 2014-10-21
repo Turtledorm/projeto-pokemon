@@ -1,19 +1,13 @@
 # coding=utf-8
 
-# Possíveis tipos que um pokémon pode assumir
-tipos = {0: "Normal", 1: "Fighting", 2: "Flying", 3: "Poison",
-         4: "Ground", 5: "Rock", 6: "Bird", 7: "Bug", 8: "Ghost",
-         9: "Fire", 10: "Water", 11: "Grass", 12: "Electric",
-         13: "Psychic", 14: "Ice", 15: "Dragon", 16: "Blank"}
-
-fisico = 8     # Último tipo que causa dano físico
-especial = 15  # Último tipo que causa dano especial
+tabela_eff = [] # Tabela com multiplicadores de efetividade
+tipos = []      # Lista de tipos
 
 
 class Pokemon:
 
     def __init__(self):
-        """Recebe dados, atributos e ataques e cria um pokémon."""
+        """Recebe dados, atributos e ataques e cria um Pokémon."""
         self.nome = input()
         self.lvl = int(input())
 
@@ -39,7 +33,7 @@ class Pokemon:
         print("'" + self.nome + "' lido com sucesso!")
 
     def __call__(self):
-        """Exibe informações do pokémon."""
+        """Exibe informações do Pokémon."""
         print("==== " + self.nome + " ====")
 
         print("(" + tipos[self.tipo1], end = "")
@@ -56,35 +50,14 @@ class Pokemon:
         print("SPC =", self.spc)
 
     def exibe_ataques(self):
-        """Mostra lista de ataques do pokémon."""
+        """Mostra lista de ataques do Pokémon."""
         print("\n<<<Ataques>>>")
         for ataque in self.ataques:
             ataque()
         return len(self.ataques)
 
-    def dano(self, dano):
+    def remove_hp(self, dano):
         self.hp -= dano
-
-    def get_nome(self):
-        return self.nome
-
-    def get_lvl(self):
-        return self.lvl
-
-    def get_hp(self):
-        return self.hp
-
-    def get_atk(self):
-        return self.atk
-
-    def get_dfs(self):
-        return self.dfs
-
-    def get_spd(self):
-        return self.spd
-
-    def get_spc(self):
-        return self.spc
 
     def get_tipos(self):
         return self.tipo1, self.tipo2
@@ -92,9 +65,10 @@ class Pokemon:
     def get_ataque(self, num):
         return self.ataques[num]
 
-    def sem_pp(self):
+    def todos_ataques_sem_pp(self):
+        """Verifica se todos os ataques estão com PP 0."""
         for ataque in self.ataques:
-            if ataque.get_pp() > 0:
+            if ataque.pp > 0:
                 return False
         return True
 
@@ -121,26 +95,40 @@ class Ataque:
         print("Poder: " + str(self.pwr))
         print("Acurácia: " + str(self.acu) + "\n")
 
-    def get_nome(self):
-        return self.nome
-
-    def get_typ(self):
-        return self.typ
-
-    def get_acu(self):
-        return self.acu
-
-    def get_pwr(self):
-        return self.pwr
-
-    def get_pp(self):
-        return self.pp
-
     def usa_pp(self):
         self.pp -= 1
 
 
+class Tipo:
+
+    def __init__(self, numero, nome, is_especial):
+        self.numero = numero
+        self.nome = nome
+        self.categoria = "Especial" if bool(is_especial) else "Físico"
+
+
+def le_tipos():
+    """Lê tipos do arquivo, guarda-os e constrói a tabela de efetividade."""
+    with open("tabela.txt") as arquivo:
+        n = int(arquivo.read())
+
+        # Leitura dos nomes e categoria
+        for i in range(n):
+            nome, is_especial = arquivo.readline.split()
+            tipos.append(Tipo(i, nome, is_especial))
+
+        # Leitura da tabela de tipos
+        for i in range(n):
+            linha = arquivo.readline().split()
+            linha = list(map(float, linha))
+            tabela_eff.append(linha)
+
+    # DEBUG
+    for line in tabela_eff:
+        print(line)
+
+
 def erro_leitura(mensagem):
     """Imprime mensagem de erro."""
-    print("Erro ao ler " + mensagem + "!")
+    raise Exception("Erro ao ler " + mensagem + "!")
     exit(1)
