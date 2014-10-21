@@ -40,7 +40,7 @@ def escolhe_ataque(atacante):
 
     while True:
         escolha = int(input("Digite o nº do ataque: "))
-        if escolha in range(1, n+1):
+        if atacante.get_ataque(escolha-1) is not None:
             break
 
     return atacante.get_ataque(escolha-1)

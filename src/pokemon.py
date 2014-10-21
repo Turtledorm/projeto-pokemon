@@ -1,5 +1,6 @@
 import os
 
+max_ataques = 4
 tabela_eff = []  # Tabela com multiplicadores de efetividade
 tipos = []       # Lista de tipos
 
@@ -25,7 +26,7 @@ class Pokemon:
         # Leitura dos ataques
         self.ataques = []
         num_ataques = int(input())
-        if num_ataques > 4:
+        if num_ataques > max_ataques:
             raise Exception(self.nome + " tem mais de 4 ataques!")
         for i in range(num_ataques):
             self.ataques.append(Ataque())
@@ -90,8 +91,11 @@ class Pokemon:
     def get_tipo2(self):
         return self.tipo2
 
-    def get_ataque(self, num):
-        return self.ataques[num]
+    def get_ataque(self, n):
+        "Retorna o n-ésimo ataque do Pokémon se exister e tiver PP > 0"
+        if n > max_ataques-1 or self.ataques[n].get_pp() <= 0:
+            return None
+        return self.ataques[n]
 
     def todos_ataques_sem_pp(self):
         """Verifica se todos os ataques estão com PP 0."""
