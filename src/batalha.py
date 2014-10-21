@@ -37,7 +37,7 @@ def escolhe_ataque(atacante):
 
     if atacante.todos_ataques_sem_pp():
         return  # TODO: Struggle
-    
+
     while True:
         escolha = int(input("Digite o nº do ataque: "))
         if escolha in range(1, n+1):
@@ -68,7 +68,7 @@ def realiza_ataque(atacante, defensor, ataque):
         # Calcula o dano, aplicando os modificadores
         dano = (2*lvl + 10)/250 * atk/dfs * base + 2
         dano *= stab(ataque, atacante) * critico(atacante) \
-                * efetividade(ataque, defensor) * aleatorio()
+            * efetividade(ataque, defensor) * aleatorio()
         dano = int(dano)
 
         defensor.remove_hp(dano)
@@ -87,7 +87,7 @@ def acertou(ataque):
 
 
 def stab(ataque, atacante):
-    """Confere um bônus de dano se o tipo do ataque e do atacante são iguais."""
+    """Confere um bônus de dano se tipo do ataque e do atacante são iguais."""
     tipo1 = atacante.get_tipo1()
     tipo2 = atacante.get_tipo2()
     typ = ataque.get_typ()
@@ -120,9 +120,9 @@ def efetividade(ataque, defensor):
     # Exibe mensagem
     if mult > 1:
         print("Foi super efetivo!")
-    elif mult > 0:
+    elif mult > 0 and mult < 1:
         print("Não foi muito efetivo...")
-    else:
+    elif mult == 0:
         print("Não teve efeito. :(")
 
     return mult
