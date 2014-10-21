@@ -2,10 +2,11 @@ import random
 import pokemon
 
 
-def loop(poke1, poke2):
+def batalha(poke1, poke2):
     """Simula uma batalha entre dois Pokémons até decidir o vencedor."""
     atacante, defensor = ordem_inicio(poke1, poke2)
 
+    # Loop principal da batalha e do jogo
     while poke1.hp > 0 and poke2.hp > 0:
         defensor()
         atacante()
@@ -64,19 +65,21 @@ def realiza_ataque(atacante, defensor, ataque):
             atk = atacante.get_atk()
             dfs = defensor.get_dfs()
 
+        # Calcula o dano, aplicando os modificadores
         dano = (2*lvl + 10)/250 * atk/dfs * base + 2
         dano *= stab(ataque, atacante) * critico(atacante) \
                 * efetividade(ataque, defensor) * aleatorio()
         dano = int(dano)
 
         defensor.remove_hp(dano)
-        print(defensor.get_nome(), "perdeu", dano, "HP!")
+        print(defensor.get_nome(), "perdeu", dano, "HP!\n")
 
     else:
-        print("O ataque de " + atacante.get_nome() + " errou!")
+        print("O ataque de " + atacante.get_nome() + " errou!\n")
 
 
 def acertou(ataque):
+    """Verifica se o ataque resultou em acerto ou erro."""
     chance = (ataque.get_acu() * ataque.get_acu())/10000
     if random.uniform(0, 1) <= chance:
         return True
@@ -85,7 +88,8 @@ def acertou(ataque):
 
 def stab(ataque, atacante):
     """Confere um bônus de dano se o tipo do ataque e do atacante são iguais."""
-    tipo1, tipo2 = atacante.get_tipos()
+    tipo1 = atacante.get_tipo1()
+    tipo2 = atacante.get_tipo2()
     typ = ataque.get_typ()
 
     if tipo1 == typ or tipo2 == typ:
@@ -108,9 +112,10 @@ def efetividade(ataque, defensor):
     """Aplica o multiplicador de efetividade presente na tabela."""
 
     # Calcula o multiplicador
-    mult = pokemon.tabela_eff[ataque.typ()][defensor.tipo1()]
+    typ_ataque = ataque.typ.get_numero()
+    mult = pokemon.tabela_eff[typ_ataque][defensor.tipo1.get_numero()]
     if defensor.tipo2.get_nome() != "Blank":
-        mult *= pokemon.tabela_eff[ataque.typ()][defensor.tipo2()]
+        mult *= pokemon.tabela_eff[typ_ataque][defensor.tipo2.get_numero()]
 
     # Exibe mensagem
     if mult > 1:

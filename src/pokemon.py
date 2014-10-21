@@ -1,3 +1,5 @@
+import os
+
 tabela_eff = [] # Tabela com multiplicadores de efetividade
 tipos = []      # Lista de tipos
 
@@ -48,8 +50,11 @@ class Pokemon:
     def exibe_ataques(self):
         """Mostra lista de ataques do Pokémon e devolve quantos são."""
         print("<<< Ataques >>>")
+        i = 1
         for ataque in self.ataques:
+            print(str(i) + ")", end=" ")
             ataque()
+            i += 1
         return len(self.ataques)
 
     def remove_hp(self, dano):
@@ -148,11 +153,13 @@ class Tipo:
 
     def __call__(self):
         print(str(self.numero) + ":", self.nome,
-            "(Especial)" if self.is_especial else "")
-        return self.numero
+            "(Especial)" if self.is_especial() else "")
 
     def get_nome(self):
         return self.nome
+
+    def get_numero(self):
+        return self.numero
 
     def is_especial(self):
         return self.especial
@@ -160,7 +167,11 @@ class Tipo:
 
 def le_tipos(nome_arquivo):
     """Lê tipos do arquivo, guarda-os e constrói a tabela de efetividade."""
-    with open(nome_arquivo) as arquivo:
+    # Para que o script leia o arquivo mesmo se executado de fora do diretório de onde ele está
+    __diretorio = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    caminho = (os.path.join(__diretorio, nome_arquivo))
+
+    with open(caminho) as arquivo:
         n = int(arquivo.readline())
 
         # Leitura dos nomes e categoria
