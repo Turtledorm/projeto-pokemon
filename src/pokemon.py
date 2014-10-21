@@ -19,8 +19,8 @@ class Pokemon:
         self.spc = int(input())
 
         # Leitura dos tipos
-        self.tipo1 = int(input())
-        self.tipo2 = int(input())
+        self.tipo1 = tipos[int(input())]
+        self.tipo2 = tipos[int(input())]
 
         # Leitura dos ataques
         self.ataques = []
@@ -36,22 +36,18 @@ class Pokemon:
         """Exibe informações do Pokémon."""
         print("==== " + self.nome + " ====")
 
-        print("(" + tipos[self.tipo1], end = "")
-        if tipos[self.tipo2] != "Blank":
-            print("/" + tipos[self.tipo2] + ")")
-        else:
-            print(")")
+        print("(" + self.tipo1.nome + (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "") + ")")
 
         print("Nível", self.lvl, "\n")
         print(str(self.hp) + "/" + str(self.hp_max), "HP")
         print("ATK =", self.atk)
         print("DEF =", self.dfs)
         print("SPD =", self.spd)
-        print("SPC =", self.spc)
+        print("SPC =", self.spc, "\n")
 
     def exibe_ataques(self):
         """Mostra lista de ataques do Pokémon."""
-        print("\n<<<Ataques>>>")
+        print("<<< Ataques >>>")
         for ataque in self.ataques:
             ataque()
         return len(self.ataques)
@@ -79,9 +75,10 @@ class Ataque:
         self.nome = input()
 
         # Leitura do tipo
-        self.typ = int(input())
-        if self.typ not in range(16):
+        num_typ = int(input())
+        if num_typ not in range(16):
             erro_leitura("tipo de um ataque")
+        self.typ = tipos[num_typ]
 
         # Leitura dos atributos do ataque
         self.acu = int(input())
@@ -90,10 +87,10 @@ class Ataque:
 
     def __call__(self):
         """Exibe informações do ataque."""
-        print(self.nome + " (" + tipos[self.typ] + ")")
-        print(str(self.pp) + "/" + str(self.pp_max) + " PP")
-        print("Poder: " + str(self.pwr))
-        print("Acurácia: " + str(self.acu) + "\n")
+        print(self.nome, "(" + str(self.typ.nome) + ")")
+        print(str(self.pp) + "/" + str(self.pp_max), "PP")
+        print("Poder:", self.pwr)
+        print("Acurácia:", self.acu, "\n")
 
     def usa_pp(self):
         self.pp -= 1
@@ -104,18 +101,27 @@ class Tipo:
     def __init__(self, numero, nome, is_especial):
         self.numero = numero
         self.nome = nome
-        self.categoria = "Especial" if bool(is_especial) else "Físico"
+        self.is_especial = is_especial
+
+    def __call__(self):
+        print(str(self.numero) + ":", self.nome,
+            "(Especial)" if self.is_especial else "")
+        return self.numero()
 
 
-def le_tipos():
+def le_tipos(nome_arquivo):
     """Lê tipos do arquivo, guarda-os e constrói a tabela de efetividade."""
-    with open("tabela.txt") as arquivo:
-        n = int(arquivo.read())
+    with open(nome_arquivo) as arquivo:
+        n = int(arquivo.readline())
 
         # Leitura dos nomes e categoria
         for i in range(n):
-            nome, is_especial = arquivo.readline.split()
+            nome, flag = arquivo.readline().split()
+            is_especial = bool(int(flag))
             tipos.append(Tipo(i, nome, is_especial))
+
+        # Adiciona o tipo Blank no final da lista
+        tipos.append(Tipo(n, "Blank", False))
 
         # Leitura da tabela de tipos
         for i in range(n):
@@ -124,6 +130,8 @@ def le_tipos():
             tabela_eff.append(linha)
 
     # DEBUG
+    for tipo in tipos:
+        tipo()
     for line in tabela_eff:
         print(line)
 

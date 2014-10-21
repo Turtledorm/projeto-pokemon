@@ -57,18 +57,18 @@ def realiza_ataque(atacante, defensor, ataque):
         # Pega os valores básicos para calcular dano
         lvl = atacante.lvl
         base = ataque.pwr
-        if ataque.typ < fisico:
-            atk = atacante.atk
-            dfs = defensor.dfs
-        else:
+        if ataque.typ.is_especial:
             atk = atacante.spc
             dfs = defensor.spc
+        else:
+            atk = atacante.atk
+            dfs = defensor.dfs
 
         dano = (2*lvl + 10)/250 * atk/dfs * base + 2
-        dano *= stab(atacante, ataque) * critico(atacante)
-        dano *= aleatorio()  # Colocar efetividade aqui!
+        dano *= stab(ataque, atacante) * critico(atacante) \
+                * efetividade(ataque, defensor) * aleatorio()
+        defensor.remove_hp(int(dano))
 
-        defensor.dano(int(dano))
     else:
         print("O ataque de " + atacante.nome + " errou!")
 
@@ -80,10 +80,10 @@ def acertou(ataque):
     return False
 
 
-def stab(atacante, ataque):
+def stab(ataque, atacante):
     """Confere um bônus de dano se o tipo do ataque e do atacante são iguais."""
     tipo1, tipo2 = atacante.get_tipos()
-    typ = ataque.get_typ
+    typ = ataque.typ
 
     if tipo1 == typ or tipo2 == typ:
         return 1.5
@@ -99,6 +99,25 @@ def critico(atacante):
         print("Golpe crítico!")
         return (2*lvl + 5)/(lvl + 5)
     return 1
+
+
+def efetividade(ataque, defensor):
+    """Aplica o multiplicador de efetividade presente na tabela."""
+
+    # Calcula o multiplicador
+    mult = tabela_eff[ataque.typ()][defensor.tipo1()]
+    if (defensor.tipo2.nome != "Blank"):
+        mult *= tabela_eff[ataque.typ()][defensor.tipo2()]
+
+    # Exibe mensagem
+    if mult > 1:
+        print("Foi super efetivo!")
+    elif mult > 0:
+        print("Não foi muito efetivo...")
+    else:
+        print("Não teve efeito. :(")
+
+    return mult
 
 
 def aleatorio():
