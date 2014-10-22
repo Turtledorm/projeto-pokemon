@@ -92,8 +92,8 @@ class Pokemon:
         return self.tipo2
 
     def get_ataque(self, n):
-        "Retorna o n-ésimo ataque do Pokémon se exister e tiver PP > 0"
-        if n > max_ataques-1 or self.ataques[n].get_pp() <= 0:
+        """Retorna o n-ésimo ataque do Pokémon se existir e tiver PP > 0."""
+        if n >= max_ataques or self.ataques[n].get_pp() <= 0:
             return None
         return self.ataques[n]
 

@@ -6,7 +6,8 @@ import unittest.mock
 import os
 import sys
 
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
+# Diz onde procurar pelo módulo pokemon
+sys.path.insert(1, os.path.join(sys.path[0], '../src'))
 import pokemon
 
 
@@ -62,8 +63,8 @@ class PokeTestCase(unittest.TestCase):
         # Cada 5 elementos da lista self.ataques correspondem aos atributos
         # de um ataque do Pokémon. Então, o primeiro ataque tem como atributos
         # os valores de teste que estão de self.ataques[0] a self.ataques[4].
-        ataque = ataque
         for i in range(4):
+            ataque = self.ataques[i]
             self.assertEqual(ataque.get_nome(), self.ataques[5*i])
             self.assertEqual(ataque.get_typ().get_numero(),
                              self.ataques[5*i + 1])

@@ -39,11 +39,11 @@ def escolhe_ataque(atacante):
         return  # TODO: Struggle
 
     while True:
-        escolha = int(input("Digite o nº do ataque: "))
-        if atacante.get_ataque(escolha-1) is not None:
+        x = int(input("Digite o nº do ataque: "))
+        if atacante.get_ataque(x-1) is not None:
             break
 
-    return atacante.get_ataque(escolha-1)
+    return atacante.get_ataque(x-1)
 
 
 def realiza_ataque(atacante, defensor, ataque):
