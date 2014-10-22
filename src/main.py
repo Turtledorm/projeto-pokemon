@@ -11,7 +11,7 @@ from batalha import batalha
 def le_pokemon():
     """Recebe dados do Pokémon, guarda-os numa lista e devolve-a."""
     dados = [input()]  # Começa com o nome
-    
+
     # Leitura de LVL, HP, ATK, DEF, SPD, SPC, Tipo 1 e Tipo 2
     for i in range(8):
         dados.append(int(input()))

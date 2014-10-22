@@ -103,7 +103,7 @@ class Ataque:
     def __init__(self, dados):
         """Recebe uma lista de dados e cria um ataque."""
         dados.reverse()
-        
+
         self.nome = dados.pop()
         self.typ = dados.pop()
         self.acu = dados.pop()

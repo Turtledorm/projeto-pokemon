@@ -2,6 +2,7 @@ import random
 import pokemon
 import sys
 import subprocess
+import time
 
 # Define Struggle como um possível ataque
 struggle = pokemon.Ataque(["Struggle", pokemon.tipos[0], 100, 50, 10])
@@ -24,7 +25,7 @@ def batalha(poke1, poke2):
 
 
 def ordem_inicio(poke1, poke2):
-    """Compara o SPD dos dois Pokémons e decide quem inicia a batalha."""    
+    """Compara o SPD dos dois Pokémons e decide quem inicia a batalha."""
 
     if poke1.get_spd() > poke2.get_spd():
         return poke1, poke2
@@ -42,20 +43,26 @@ def escolhe_ataque(atacante):
     n = atacante.mostra_ataques()
 
     if atacante.todos_ataques_sem_pp():
+        print(atacante.get_nome(), "não tem golpes sobrando!")
+        time.sleep(3)
+        limpa_tela()
         return struggle
 
     while True:
         x = int(input("Digite o nº do ataque: "))
-        if x <= n:
+        if x > 0 and x <= n and atacante.get_ataque(x-1) is not None:
             break
 
-    # Limpa a tela após escolha
+    limpa_tela()
+    return atacante.get_ataque(x-1)
+
+
+def limpa_tela():
+    """Limpa a tela após a escolha do ataque pelo usuário"""
     if sys.platform == "linux":
         subprocess.call("clear")
     elif sys.platform == "win32":
         subprocess.call("cls")
-
-    return atacante.get_ataque(x-1)
 
 
 def realiza_ataque(atacante, defensor, ataque):
@@ -82,14 +89,17 @@ def realiza_ataque(atacante, defensor, ataque):
         dano = int(dano)
 
         defensor.remove_hp(dano)
-        print(defensor.get_nome(), "perdeu", dano, "HP!\n")
+        print(defensor.get_nome(), "perdeu", dano, "HP!")
 
         if ataque == struggle:
-            ataque.set_pwr(struggle.get_pwr/2)
-            realiza_ataque(defensor, defensor, ataque)
+            dano //= 2
+            print(atacante.get_nome(), "perdeu", dano, "HP pelo recuo!")
+            atacante.remove_hp(dano)
 
     else:
-        print("O ataque de " + atacante.get_nome() + " errou!\n")
+        print("O ataque de " + atacante.get_nome() + " errou!")
+
+    print()  # Pula uma linha
 
 
 def acertou(ataque):
