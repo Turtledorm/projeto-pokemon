@@ -1,35 +1,27 @@
 import os
 
-max_ataques = 4
+max_ataques = 4  # Nº máximo de ataques que um Pokémon pode possuir
 tabela_eff = []  # Tabela com multiplicadores de efetividade
 tipos = []       # Lista de tipos
 
 
 class Pokemon:
 
-    def __init__(self):
-        """Recebe dados, atributos e ataques e cria um Pokémon."""
-        self.nome = input()
-        self.lvl = int(input())
+    def __init__(self, dados):
+        """Recebe uma lista contendo dados e cria um Pokémon."""
+        dados.reverse()
 
-        # Leitura dos atributos
-        self.hp = self.hp_max = int(input())
-        self.atk = int(input())
-        self.dfs = int(input())
-        self.spd = int(input())
-        self.spc = int(input())
+        self.nome = dados.pop()
+        self.lvl = dados.pop()
+        self.hp = self.hp_max = dados.pop()
+        self.atk = dados.pop()
+        self.dfs = dados.pop()
+        self.spd = dados.pop()
+        self.spc = dados.pop()
+        self.tipo1 = tipos[dados.pop()]
+        self.tipo2 = tipos[dados.pop()]
 
-        # Leitura dos tipos
-        self.tipo1 = tipos[int(input())]
-        self.tipo2 = tipos[int(input())]
-
-        # Leitura dos ataques
-        self.ataques = []
-        num_ataques = int(input())
-        if num_ataques > max_ataques:
-            raise Exception(self.nome + " tem mais de 4 ataques!")
-        for i in range(num_ataques):
-            self.ataques.append(Ataque())
+        self.ataques = dados.pop()
 
         print("'" + self.nome + "' lido com sucesso!")
 
@@ -53,13 +45,21 @@ class Pokemon:
         print("<<< Ataques >>>")
         i = 1
         for ataque in self.ataques:
-            print(str(i) + ")", end=" ")
+            print(i, "-", end=" ")
             ataque.mostra()
             i += 1
+        print()
         return len(self.ataques)
 
     def remove_hp(self, dano):
         self.hp -= dano
+
+    def todos_ataques_sem_pp(self):
+        """Verifica se todos os ataques estão com PP 0."""
+        for ataque in self.ataques:
+            if ataque.pp > 0:
+                return False
+        return True
 
     def get_nome(self):
         return self.nome
@@ -97,37 +97,29 @@ class Pokemon:
             return None
         return self.ataques[n]
 
-    def todos_ataques_sem_pp(self):
-        """Verifica se todos os ataques estão com PP 0."""
-        for ataque in self.ataques:
-            if ataque.pp > 0:
-                return False
-        return True
-
 
 class Ataque:
 
-    def __init__(self):
-        """Recebe dados e atributos do ataque."""
-        self.nome = input()
+    def __init__(self, dados):
+        """Recebe uma lista de dados e cria um ataque."""
+        dados.reverse()
+        
+        self.nome = dados.pop()
+        self.typ = dados.pop()
+        self.acu = dados.pop()
+        self.pwr = dados.pop()
+        self.pp = self.pp_max = dados.pop()
 
-        # Leitura do tipo
-        num_typ = int(input())
-        if num_typ not in range(16):
-            erro_leitura("tipo de um ataque")
-        self.typ = tipos[num_typ]
-
-        # Leitura dos atributos do ataque
-        self.acu = int(input())
-        self.pwr = int(input())
-        self.pp = self.pp_max = int(input())
-
-    def mostra(self):
-        """Exibe informações do ataque."""
-        print(self.nome, "(" + str(self.typ.nome) + ")")
-        print(str(self.pp) + "/" + str(self.pp_max), "PP")
-        print("Poder:", self.pwr)
-        print("Acurácia:", self.acu, "\n")
+    def mostra(self, full=False):
+        """Exibe nome e PP atual/máximo do ataque.
+           Se full=True, mostra também informações adicionais."""
+        if not full:
+            print(self.nome, "(" + str(self.pp) + "/" + str(self.pp_max) + ")")
+        else:
+            print(self.nome, "(" + str(self.typ.nome) + ")")
+            print(str(self.pp) + "/" + str(self.pp_max), "PP")
+            print("Poder:", self.pwr)
+            print("Acurácia:", self.acu, "\n")
 
     def get_nome(self):
         return self.nome

@@ -3,7 +3,7 @@
 # O nome é uma homenagem ao "cat" do Pokémon (piadinha ruim).
 
 # Nome dos diretórios
-EXDIR="example"
+EXDIR="pokemon"
 SRCDIR="src"
 
 # --------------------------------------------------------------------

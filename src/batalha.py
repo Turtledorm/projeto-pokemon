@@ -42,7 +42,7 @@ def escolhe_ataque(atacante):
 
     while True:
         x = int(input("Digite o nº do ataque: "))
-        if atacante.get_ataque(x-1) is not None:
+        if x <= n:
             break
 
     # Limpa a tela após escolha
