@@ -1,5 +1,7 @@
 import random
 import pokemon
+import sys
+import subprocess
 
 
 def batalha(poke1, poke2):
@@ -8,8 +10,8 @@ def batalha(poke1, poke2):
 
     # Loop principal da batalha e do jogo
     while poke1.hp > 0 and poke2.hp > 0:
-        defensor()
-        atacante()
+        defensor.mostra()
+        atacante.mostra()
         ataque = escolhe_ataque(atacante)
         realiza_ataque(atacante, defensor, ataque)
         atacante, defensor = defensor, atacante
@@ -33,7 +35,7 @@ def ordem_inicio(poke1, poke2):
 
 def escolhe_ataque(atacante):
     """Mostra a lista de ataques do Pokémon e lê a escolha do usuário."""
-    n = atacante.exibe_ataques()
+    n = atacante.mostra_ataques()
 
     if atacante.todos_ataques_sem_pp():
         return  # TODO: Struggle
@@ -42,6 +44,12 @@ def escolhe_ataque(atacante):
         x = int(input("Digite o nº do ataque: "))
         if atacante.get_ataque(x-1) is not None:
             break
+
+    # Limpa a tela após escolha
+    if sys.platform == "linux":
+        subprocess.call("clear")
+    elif sys.platform == "win32":
+        subprocess.call("cls")
 
     return atacante.get_ataque(x-1)
 

@@ -33,7 +33,7 @@ class Pokemon:
 
         print("'" + self.nome + "' lido com sucesso!")
 
-    def __call__(self):
+    def mostra(self):
         """Exibe informações do Pokémon."""
         print("==== " + self.nome + " ====")
 
@@ -48,13 +48,13 @@ class Pokemon:
         print("SPD =", self.spd)
         print("SPC =", self.spc, "\n")
 
-    def exibe_ataques(self):
+    def mostra_ataques(self):
         """Mostra lista de ataques do Pokémon e devolve quantos são."""
         print("<<< Ataques >>>")
         i = 1
         for ataque in self.ataques:
             print(str(i) + ")", end=" ")
-            ataque()
+            ataque.mostra()
             i += 1
         return len(self.ataques)
 
@@ -122,7 +122,7 @@ class Ataque:
         self.pwr = int(input())
         self.pp = self.pp_max = int(input())
 
-    def __call__(self):
+    def mostra(self):
         """Exibe informações do ataque."""
         print(self.nome, "(" + str(self.typ.nome) + ")")
         print(str(self.pp) + "/" + str(self.pp_max), "PP")
@@ -155,7 +155,7 @@ class Tipo:
         self.nome = nome
         self.especial = especial
 
-    def __call__(self):
+    def mostra(self):
         print(str(self.numero) + ":", self.nome,
               "(Especial)" if self.is_especial() else "")
 

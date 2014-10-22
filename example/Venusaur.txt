@@ -28,5 +28,3 @@ Solar Beam
 90
 110
 5
-
-- Solar Beam foi adaptado para essa versão.
