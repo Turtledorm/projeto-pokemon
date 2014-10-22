@@ -1,0 +1,30 @@
+Charizard
+50
+185
+149
+143
+167
+150
+9
+2
+4
+Slash
+0
+100
+70
+20
+Wing Attack
+2
+100
+35
+35
+Flamethrower
+9
+100
+90
+15
+Fire Blast
+9
+85
+120
+5
