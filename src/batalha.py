@@ -3,6 +3,9 @@ import pokemon
 import sys
 import subprocess
 
+# Define Struggle como um possível ataque
+struggle = pokemon.Ataque(["Struggle", pokemon.tipos[0], 100, 50, 10])
+
 
 def batalha(poke1, poke2):
     """Simula uma batalha entre dois Pokémons até decidir o vencedor."""
@@ -21,7 +24,8 @@ def batalha(poke1, poke2):
 
 
 def ordem_inicio(poke1, poke2):
-    """Compara o SPD dos dois Pokémons e decide quem inicia a batalha."""
+    """Compara o SPD dos dois Pokémons e decide quem inicia a batalha."""    
+
     if poke1.get_spd() > poke2.get_spd():
         return poke1, poke2
     if poke1.get_spd() < poke2.get_spd():
@@ -38,7 +42,7 @@ def escolhe_ataque(atacante):
     n = atacante.mostra_ataques()
 
     if atacante.todos_ataques_sem_pp():
-        return  # TODO: Struggle
+        return struggle
 
     while True:
         x = int(input("Digite o nº do ataque: "))
@@ -56,8 +60,6 @@ def escolhe_ataque(atacante):
 
 def realiza_ataque(atacante, defensor, ataque):
     """Calcula o dano causado usando a fórmula da 1ª geração."""
-    if ataque is None:
-        pass  # TODO: Implementar Struggle!
 
     ataque.usa_pp()
     print(atacante.get_nome() + " usa " + ataque.get_nome() + "!")
@@ -81,6 +83,10 @@ def realiza_ataque(atacante, defensor, ataque):
 
         defensor.remove_hp(dano)
         print(defensor.get_nome(), "perdeu", dano, "HP!\n")
+
+        if ataque == struggle:
+            ataque.set_pwr(struggle.get_pwr/2)
+            realiza_ataque(defensor, defensor, ataque)
 
     else:
         print("O ataque de " + atacante.get_nome() + " errou!\n")

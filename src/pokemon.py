@@ -118,8 +118,8 @@ class Ataque:
         else:
             print(self.nome, "(" + str(self.typ.nome) + ")")
             print(str(self.pp) + "/" + str(self.pp_max), "PP")
-            print("Poder:", self.pwr)
             print("Acurácia:", self.acu, "\n")
+            print("Poder:", self.pwr)
 
     def get_nome(self):
         return self.nome
@@ -132,6 +132,9 @@ class Ataque:
 
     def get_pwr(self):
         return self.pwr
+
+    def set_pwr(self, pwr):
+        self.pwr = pwr
 
     def get_pp(self):
         return self.pp

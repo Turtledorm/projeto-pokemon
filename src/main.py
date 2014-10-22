@@ -1,6 +1,10 @@
 #!/usr/bin/python3
 
 import pokemon
+
+# Lê de arquivo tipos e tabela de efetividade
+pokemon.le_tipos("tipos.txt")
+
 from batalha import batalha
 
 
@@ -38,8 +42,6 @@ def le_ataque():
 
     return dados
 
-
-pokemon.le_tipos("tipos.txt")
 
 poke1 = pokemon.Pokemon(le_pokemon())
 poke2 = pokemon.Pokemon(le_pokemon())
