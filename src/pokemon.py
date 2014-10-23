@@ -1,26 +1,27 @@
 import os
 
-max_ataques = 4  # Nº máximo de ataques que um Pokémon pode possuir
-barra_max = 20   # Comprimento máximo da barra de vida
+MAX_ATAQUES = 4  # Nº máximo de ataques que um Pokémon pode possuir
+BARRA_MAX = 20   # Comprimento máximo da barra de vida
 tabela_eff = []  # Tabela com multiplicadores de efetividade
 tipos = []       # Lista de tipos
 
 
 class Pokemon:
 
-    def __init__(self, dados):
+    def __init__(self, _dados):
         """Recebe uma lista contendo dados e cria um Pokémon."""
+        dados = list(_dados)  # Faz uma cópia bruta da lista original 
         dados.reverse()
 
-        self.nome = dados.pop()
-        self.lvl = dados.pop()
-        self.hp = self.hp_max = dados.pop()
-        self.atk = dados.pop()
-        self.dfs = dados.pop()
-        self.spd = dados.pop()
-        self.spc = dados.pop()
-        self.tipo1 = tipos[dados.pop()]
-        self.tipo2 = tipos[dados.pop()]
+        self._nome = dados.pop()
+        self._lvl = dados.pop()
+        self._hp = self._hp_max = dados.pop()
+        self._atk = dados.pop()
+        self._dfs = dados.pop()
+        self._spd = dados.pop()
+        self._spc = dados.pop()
+        self._tipo1 = tipos[dados.pop()]
+        self._tipo2 = tipos[dados.pop()]
 
         self.ataques = dados.pop()
 
@@ -29,11 +30,11 @@ class Pokemon:
     def mostra(self, full=False):
         """Exibe nome, tipo(s) e HP atualm/máximo do Pokémon.
            Se full=True, mostra também os atributos restantes."""
-        print("==== " + self.nome + " ====")
+        print(">>>", self.nome, "{" + str(self.lvl) + "} <<<")
         print("(" + self.tipo1.nome +
               (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "")
-              + ")", "Nível", self.lvl)
-        self.barra_de_vida()
+              + ")")
+        self.imprime_barra()
 
         if full:
             print("ATK =", self.atk)
@@ -43,17 +44,17 @@ class Pokemon:
 
         print()
 
-    def barra_de_vida(self):
-        """Imprime uma barra para facilitar a leitura do HP de um Pokémon"""
+    def imprime_barra(self):
+        """Imprime uma barra para facilitar a leitura do HP do Pokémon."""
         # Pega o comprimento relativo à vida atual
-        length = int(barra_max * self.hp/self.hp_max)
+        length = int(BARRA_MAX * self.hp/self.hp_max)
         if length == 0 and self.hp > 0:
             length = 1
 
         # Imprime a barra
         print("[", end="")
-        print("-" * length, end="")
-        print(" " * (barra_max - length), end="")
+        print("=" * length, end="")
+        print(" " * (BARRA_MAX - length), end="")
         print("]  " + str(self.hp) + "/" + str(self.hp_max), "HP")
 
     def mostra_ataques(self, full=False):
@@ -68,113 +69,135 @@ class Pokemon:
         return len(self.ataques)
 
     def remove_hp(self, dano):
-        self.hp -= dano
+        self._hp -= dano
+        if self._hp < 0:
+            self._hp = 0
 
     def todos_ataques_sem_pp(self):
         """Verifica se todos os ataques estão com PP 0."""
         for ataque in self.ataques:
             if ataque.pp > 0:
                 return False
-        return True
+        return True    
 
-    def get_nome(self):
-        return self.nome
+    @property
+    def nome(self):
+        return self._nome
 
-    def get_lvl(self):
-        return self.lvl
+    @property
+    def lvl(self):
+        return self._lvl
 
-    def get_hp(self):
-        return self.hp
+    @property
+    def hp(self):
+        return self._hp
 
-    def get_hp_max(self):
-        return self.hp_max
+    @property
+    def hp_max(self):
+        return self._hp_max
 
-    def get_atk(self):
-        return self.atk
+    @property
+    def atk(self):
+        return self._atk
 
-    def get_dfs(self):
-        return self.dfs
+    @property
+    def dfs(self):
+        return self._dfs
 
-    def get_spd(self):
-        return self.spd
+    @property
+    def spd(self):
+        return self._spd
 
-    def get_spc(self):
-        return self.spc
+    @property
+    def spc(self):
+        return self._spc
 
-    def get_tipo1(self):
-        return self.tipo1
+    @property
+    def tipo1(self):
+        return self._tipo1
 
-    def get_tipo2(self):
-        return self.tipo2
+    @property
+    def tipo2(self):
+        return self._tipo2
 
     def get_ataque(self, n):
         """Retorna o n-ésimo ataque do Pokémon se existir e tiver PP > 0."""
-        if n >= max_ataques or self.ataques[n].get_pp() <= 0:
+        if n >= MAX_ATAQUES or self.ataques[n].pp <= 0:
             return None
         return self.ataques[n]
 
 
 class Ataque:
 
-    def __init__(self, dados):
+    def __init__(self, _dados):
         """Recebe uma lista de dados e cria um ataque."""
+        dados = list(_dados)
         dados.reverse()
 
-        self.nome = dados.pop()
-        self.typ = dados.pop()
-        self.acu = dados.pop()
-        self.pwr = dados.pop()
-        self.pp = self.pp_max = dados.pop()
+        self._nome = dados.pop()
+        self._typ = tipos[dados.pop()]
+        self._acu = dados.pop()
+        self._pwr = dados.pop()
+        self._pp = self.pp_max = dados.pop()
 
     def mostra(self, full=False):
         """Exibe nome e PP atual/máximo do ataque.
            Se full=True, mostra também os atributos restantes."""
         if not full:
-            print(self.nome, "(" + str(self.pp) + "/" + str(self.pp_max) + ")")
+            print(self.nome, "(" + str(self.typ.nome) + ")",
+                  "[" + str(self.pp) + "/" + str(self.pp_max) + "]")
         else:
             print(self.nome, "(" + str(self.typ.nome) + ")")
             print(str(self.pp) + "/" + str(self.pp_max), "PP")
             print("Acurácia:", self.acu)
             print("Poder:", self.pwr)
 
-    def get_nome(self):
-        return self.nome
+    @property
+    def nome(self):
+        return self._nome
 
-    def get_typ(self):
-        return self.typ
+    @property
+    def typ(self):
+        return self._typ
 
-    def get_acu(self):
-        return self.acu
+    @property
+    def acu(self):
+        return self._acu
 
-    def get_pwr(self):
-        return self.pwr
+    @property
+    def pwr(self):
+        return self._pwr
 
-    def get_pp(self):
-        return self.pp
+    @property        
+    def pp(self):
+        return self._pp
 
     def usa_pp(self):
-        self.pp -= 1
+        self._pp -= 1
 
 
 class Tipo:
 
-    def __init__(self, numero, nome, especial):
-        self.numero = numero
-        self.nome = nome
-        self.especial = especial
+    def __init__(self, numero, nome, is_especial):
+        self._numero = numero
+        self._nome = nome
+        self._is_especial = is_especial
 
     def mostra(self):
         print(str(self.numero) + ":", self.nome,
-              "(Especial)" if self.is_especial() else "")
+              "(Especial)" if self.is_especial else "")
 
-    def get_nome(self):
-        return self.nome
+    @property
+    def numero(self):
+        return self._numero
 
-    def get_numero(self):
-        return self.numero
+    @property
+    def nome(self):
+        return self._nome
 
+    @property
     def is_especial(self):
-        return self.especial
+        return self._is_especial
 
 
 def le_tipos(nome_arquivo):

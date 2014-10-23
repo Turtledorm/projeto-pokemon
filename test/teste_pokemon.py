@@ -8,14 +8,14 @@ import sys
 
 # Diz onde procurar pelo módulo pokemon
 sys.path.insert(1, os.path.join(sys.path[0], '../src'))
-import pokemon
+from pokemon import Pokemon, Ataque, tipos, le_tipos
 
 
 class PokeTestCase(unittest.TestCase):
 
     def setUp(self):
         """Inicializa os dados para teste."""
-        pokemon.le_tipos("tipos.txt")
+        le_tipos("tipos.txt")
 
         self.nome = "Pedro"
         self.lvl = random.randint(0, 100)
@@ -30,47 +30,38 @@ class PokeTestCase(unittest.TestCase):
             if (self.tipo2 != self.tipo1):
                 break
 
-        self.atk1 = ["n1", 1, 21, 10, 246]
-        self.atk2 = ["n2", 2, 22, 11, 247]
-        self.atk3 = ["n3", 3, 23, 12, 248]
-        self.atk4 = ["n4", 4, 24, 13, 249]
+        self.ataques = [["n1", 1, 21, 10, 246],
+                        ["n2", 2, 22, 11, 247],
+                        ["n3", 3, 23, 12, 248],
+                        ["n4", 4, 24, 13, 249]]
 
-        self.entrada = [self.nome, self.lvl, self.hp, self.atk,
-                        self.dfs, self.spd, self.spc, self.tipo1, self.tipo2]
-        self.ataques = [4]  # Nº de ataques a serem passados para o Pokemon.
-        self.ataques += self.atk1 + self.atk2 + self.atk3 + self.atk4
-        self.entrada += self.ataques  # Todo o input está aqui agora.
-
-        # Faz com que o Pokémon receba entrada do self.entrada e não de stdin.
-        pokemon.input = unittest.mock.Mock(side_effect=self.entrada)
-        self.t = pokemon.Pokemon()
+        # Cria Pokémon com os dados gerados anteriormente
+        dados = [self.nome, self.lvl, self.hp, self.atk, self.dfs,
+                 self.spd, self.spc, self.tipo1, self.tipo2,
+                 [Ataque(self.ataques[i]) for i in range(4)]]
+        self.t = Pokemon(dados)
 
     def test_pokemons(self):
         """Verifica se os valores do Pokémon coincidem com os anteriores."""
-        self.assertEqual(self.t.get_nome(), self.nome)
-        self.assertEqual(self.t.get_lvl(), self.lvl)
-        self.assertEqual(self.t.get_tipo1().get_numero(), self.tipo1)
-        self.assertEqual(self.t.get_tipo2().get_numero(), self.tipo2)
-        self.assertEqual(self.t.get_hp(), self.hp)
-        self.assertEqual(self.t.get_atk(), self.atk)
-        self.assertEqual(self.t.get_dfs(), self.dfs)
-        self.assertEqual(self.t.get_spd(), self.spd)
-        self.assertEqual(self.t.get_spc(), self.spc)
+        self.assertEqual(self.t.nome, self.nome)
+        self.assertEqual(self.t.lvl, self.lvl)
+        self.assertEqual(self.t.tipo1.numero, self.tipo1)
+        self.assertEqual(self.t.tipo2.numero, self.tipo2)
+        self.assertEqual(self.t.hp, self.hp)
+        self.assertEqual(self.t.atk, self.atk)
+        self.assertEqual(self.t.dfs, self.dfs)
+        self.assertEqual(self.t.spd, self.spd)
+        self.assertEqual(self.t.spc, self.spc)
 
     def test_ataques(self):
         """Verifica se os ataques coincidem com os valores pré-estipulados."""
-        self.ataques.pop(0)
-        # Cada 5 elementos da lista self.ataques correspondem aos atributos
-        # de um ataque do Pokémon. Então, o primeiro ataque tem como atributos
-        # os valores de teste que estão de self.ataques[0] a self.ataques[4].
         for i in range(4):
             ataque = self.t.ataques[i]
-            self.assertEqual(ataque.get_nome(), self.ataques[5*i])
-            self.assertEqual(ataque.get_typ().get_numero(),
-                             self.ataques[5*i + 1])
-            self.assertEqual(ataque.get_acu(), self.ataques[5*i + 2])
-            self.assertEqual(ataque.get_pwr(), self.ataques[5*i + 3])
-            self.assertEqual(ataque.get_pp(), self.ataques[5*i + 4])
+            self.assertEqual(ataque.nome, self.ataques[i][0])
+            self.assertEqual(ataque.typ.numero, self.ataques[i][1])
+            self.assertEqual(ataque.acu, self.ataques[i][2])
+            self.assertEqual(ataque.pwr, self.ataques[i][3])
+            self.assertEqual(ataque.pp, self.ataques[i][4])
 
 
 # Inicializa o unittest, que cuidará do resto

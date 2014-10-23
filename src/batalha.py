@@ -2,10 +2,9 @@ import random
 import pokemon
 import sys
 import subprocess
-import time
 
 # Define Struggle como um possível ataque
-struggle = pokemon.Ataque(["Struggle", pokemon.tipos[0], 100, 50, 10])
+struggle = pokemon.Ataque(["Struggle", 0, 100, 50, 10])
 
 
 def batalha(poke1, poke2):
@@ -13,32 +12,32 @@ def batalha(poke1, poke2):
     atacante, defensor = ordem_inicio(poke1, poke2)
 
     # Loop principal da batalha e do jogo
-    while poke1.get_hp() > 0 and poke2.get_hp() > 0:
-        poke1.mostra()
-        poke2.mostra()
+    while poke1.hp > 0 and poke2.hp > 0:
+        mostra_pokemons(poke1, poke2)
         print("* Turno de", atacante.nome, "*\n")
         ataque = escolhe_ataque(atacante)
-
-        limpa_tela()
         realiza_ataque(atacante, defensor, ataque)
         atacante, defensor = defensor, atacante
 
-    vitorioso = poke1 if poke1.get_hp() > 0 else poke2
-    derrotado = poke2 if poke1 == vitorioso else poke1
+    mostra_pokemons(poke1, poke2)
 
-    print(derrotado.get_nome() + " foi nocauteado!")
-    if vitorioso.get_hp() <= 0:
-        print(vitorioso.get_nome() + " foi nocauteado!")
+    # Define Pokémon vencedor e perdedor
+    vencedor = poke1 if poke1.hp > 0 else poke2
+    perdedor = poke2 if poke1 == vencedor else poke1
+
+    print(perdedor.nome + " foi nocauteado!")
+    if vencedor.hp <= 0:
+        print(vencedor.nome + " foi nocauteado!")
         print("A batalha terminou em empate!")
     else:
-        print(vitorioso.get_nome() + " vence a batalha! :D")
+        print(vencedor.nome + " vence a batalha! :D")
 
 
 def ordem_inicio(poke1, poke2):
     """Compara o SPD dos dois Pokémons e decide quem inicia a batalha."""
-    if poke1.get_spd() > poke2.get_spd():
+    if poke1.spd > poke2.spd:
         return poke1, poke2
-    if poke1.get_spd() < poke2.get_spd():
+    if poke1.spd < poke2.spd:
         return poke2, poke1
 
     # Se o SPD for igual, a escolha é aleatória
@@ -47,8 +46,15 @@ def ordem_inicio(poke1, poke2):
     return poke2, poke1
 
 
+def mostra_pokemons(poke1, poke2):
+    """Limpa a tela e exibe informação dos pokémons."""
+    limpa_tela()
+    poke1.mostra()
+    poke2.mostra()
+
+
 def limpa_tela():
-    """Limpa a tela após a escolha do ataque pelo usuário"""
+    """Limpa a tela após a escolha do ataque pelo usuário."""
     if sys.platform == "linux":
         subprocess.call("clear")
     elif sys.platform == "win32":
@@ -61,12 +67,8 @@ def escolhe_ataque(atacante):
 
     # Se não tiver mais com o que atacar, usa Struggle
     if atacante.todos_ataques_sem_pp():
-        print(atacante.get_nome(), "não tem golpes sobrando", end="")
-        for cont in range(3):
-            print(".", end="")
-            sys.stdout.flush()
-            time.sleep(1)
-        print()
+        print(atacante.nome, "não tem golpes sobrando...", end="")
+        input()
         return struggle
 
     while True:
@@ -83,18 +85,18 @@ def escolhe_ataque(atacante):
 def realiza_ataque(atacante, defensor, ataque):
     """Calcula o dano causado usando a fórmula da 1ª geração."""
     ataque.usa_pp()
-    print(atacante.get_nome() + " usa " + ataque.get_nome() + "!")
+    print("\n>", atacante.nome + " usa " + ataque.nome + "!")
 
     if acertou(ataque):
         # Pega os valores básicos para calcular dano
-        lvl = atacante.get_lvl()
-        base = ataque.get_pwr()
+        lvl = atacante.lvl
+        base = ataque.pwr
         if ataque.typ.is_especial:
-            atk = atacante.get_spc()
-            dfs = defensor.get_spc()
+            atk = atacante.spc
+            dfs = defensor.spc
         else:
-            atk = atacante.get_atk()
-            dfs = defensor.get_dfs()
+            atk = atacante.atk
+            dfs = defensor.dfs
 
         # Calcula o dano, aplicando os modificadores
         dano = (2*lvl + 10)/250 * atk/dfs * base + 2
@@ -105,21 +107,21 @@ def realiza_ataque(atacante, defensor, ataque):
 
         if dano > 0:
             defensor.remove_hp(dano)
-            print(defensor.get_nome(), "perdeu", dano, "HP!")
+            print(">", defensor.nome, "perdeu", dano, "HP!")
 
             if ataque == struggle:
                 dano //= 2
-                print(atacante.get_nome(), "perdeu", dano, "HP pelo recuo!")
+                print(">", atacante.nome, "perdeu", dano, "HP pelo recuo!")
                 atacante.remove_hp(dano)
     else:
-        print("O ataque de " + atacante.get_nome() + " errou!")
+        print("> O ataque de " + atacante.nome + " errou!")
 
-    print()  # Pula uma linha
+    input()  # Aguarda por usuário antes de limpar a tela
 
 
 def acertou(ataque):
     """Verifica se o ataque resultou em acerto ou erro."""
-    chance = (ataque.get_acu() * ataque.get_acu())/10000
+    chance = (ataque.acu * ataque.acu)/10000
     if random.uniform(0, 1) <= chance:
         return True
     return False
@@ -127,9 +129,9 @@ def acertou(ataque):
 
 def stab(ataque, atacante):
     """Confere um bônus de dano se tipo do ataque e do atacante são iguais."""
-    tipo1 = atacante.get_tipo1()
-    tipo2 = atacante.get_tipo2()
-    typ = ataque.get_typ()
+    tipo1 = atacante.tipo1
+    tipo2 = atacante.tipo2
+    typ = ataque.typ
 
     if tipo1 == typ or tipo2 == typ:
         return 1.5
@@ -138,11 +140,11 @@ def stab(ataque, atacante):
 
 def critico(atacante, eff):
     """Decide se o atacante causou um golpe crítico."""
-    lvl = atacante.get_lvl()
-    chance = atacante.get_spd()/512
+    lvl = atacante.lvl
+    chance = atacante.spd/512
 
-    if random.uniform(0, 1) <= chance and eff != 0:
-        print("Golpe crítico!")
+    if random.uniform(0, 1) <= chance and eff > 0:
+        print("> Golpe crítico!")
         return (2*lvl + 5)/(lvl + 5)
     return 1
 
@@ -150,18 +152,18 @@ def critico(atacante, eff):
 def efetividade(ataque, defensor):
     """Aplica o multiplicador de efetividade presente na tabela."""
     # Calcula o multiplicador
-    typ_ataque = ataque.typ.get_numero()
-    mult = pokemon.tabela_eff[typ_ataque][defensor.tipo1.get_numero()]
-    if defensor.tipo2.get_nome() != "Blank":
-        mult *= pokemon.tabela_eff[typ_ataque][defensor.tipo2.get_numero()]
+    typ_ataque = ataque.typ.numero
+    mult = pokemon.tabela_eff[typ_ataque][defensor.tipo1.numero]
+    if defensor.tipo2.nome != "Blank":
+        mult *= pokemon.tabela_eff[typ_ataque][defensor.tipo2.numero]
 
     # Exibe mensagem
     if mult > 1:
-        print("Foi super efetivo!")
+        print("> Foi super efetivo!")
     elif mult > 0 and mult < 1:
-        print("Não foi muito efetivo...")
+        print("> Não foi muito efetivo...")
     elif mult == 0:
-        print("Não teve efeito. :(")
+        print("> Não teve efeito. :(")
 
     return mult
 
