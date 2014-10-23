@@ -13,7 +13,7 @@ def batalha(poke1, poke2):
     atacante, defensor = ordem_inicio(poke1, poke2)
 
     # Loop principal da batalha e do jogo
-    while poke1.hp > 0 and poke2.hp > 0:
+    while poke1.get_hp() > 0 and poke2.get_hp() > 0:
         poke1.mostra()
         poke2.mostra()
         print("* Turno de", atacante.nome, "*\n")
@@ -23,14 +23,15 @@ def batalha(poke1, poke2):
         realiza_ataque(atacante, defensor, ataque)
         atacante, defensor = defensor, atacante
 
-    if poke1.hp <= 0 and poke2.hp <= 0:
-        print("Houve empate!")
-        return
-
-    vitorioso = poke1 if poke1.hp > 0 else poke2
+    vitorioso = poke1 if poke1.get_hp() > 0 else poke2
     derrotado = poke2 if poke1 == vitorioso else poke1
+
     print(derrotado.get_nome() + " foi nocauteado!")
-    print(vitorioso.get_nome() + " vence a batalha! :D")
+    if vitorioso.get_hp() <= 0:
+        print(vitorioso.get_nome() + " foi nocauteado!")
+        print("A batalha terminou em empate!")
+    else:
+        print(vitorioso.get_nome() + " vence a batalha! :D")
 
 
 def ordem_inicio(poke1, poke2):
@@ -94,17 +95,19 @@ def realiza_ataque(atacante, defensor, ataque):
 
         # Calcula o dano, aplicando os modificadores
         dano = (2*lvl + 10)/250 * atk/dfs * base + 2
-        dano *= stab(ataque, atacante) * critico(atacante) \
-            * efetividade(ataque, defensor) * aleatorio()
+        eff = efetividade(ataque, defensor)
+        dano *= stab(ataque, atacante) * critico(atacante, eff) \
+            * eff * aleatorio()
         dano = int(dano)
 
-        defensor.remove_hp(dano)
-        print(defensor.get_nome(), "perdeu", dano, "HP!")
+        if dano > 0:
+            defensor.remove_hp(dano)
+            print(defensor.get_nome(), "perdeu", dano, "HP!")
 
-        if ataque == struggle:
-            dano //= 2
-            print(atacante.get_nome(), "perdeu", dano, "HP pelo recuo!")
-            atacante.remove_hp(dano)
+            if ataque == struggle:
+                dano //= 2
+                print(atacante.get_nome(), "perdeu", dano, "HP pelo recuo!")
+                atacante.remove_hp(dano)
     else:
         print("O ataque de " + atacante.get_nome() + " errou!")
 
@@ -130,12 +133,12 @@ def stab(ataque, atacante):
     return 1
 
 
-def critico(atacante):
+def critico(atacante, eff):
     """Decide se o atacante causou um golpe crítico."""
     lvl = atacante.get_lvl()
     chance = atacante.get_spd()/512
 
-    if random.uniform(0, 1) <= chance:
+    if random.uniform(0, 1) <= chance and eff != 0:
         print("Golpe crítico!")
         return (2*lvl + 5)/(lvl + 5)
     return 1

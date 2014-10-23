@@ -18,13 +18,13 @@ Sludge Bomb
 100
 90
 10
+Vine Whip
+11
+100
+35
+10
 Razor Leaf
 11
 95
 55
 15
-Solar Beam
-11
-90
-110
-5
