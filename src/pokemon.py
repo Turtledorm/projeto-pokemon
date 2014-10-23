@@ -25,20 +25,22 @@ class Pokemon:
 
         print("'" + self.nome + "' lido com sucesso!")
 
-    def mostra(self):
-        """Exibe informações do Pokémon."""
+    def mostra(self, full=False):
+        """Exibe nome, tipo(s) e HP atualm/máximo do Pokémon.
+           Se full=True, mostra também os atributos restantes."""
         print("==== " + self.nome + " ====")
-
         print("(" + self.tipo1.nome +
               (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "")
-              + ")")
+              + ")", "Nível", self.lvl)
+        print("[" + str(self.hp) + "/" + str(self.hp_max) + "]", "HP")
 
-        print("Nível", self.lvl, "\n")
-        print(str(self.hp) + "/" + str(self.hp_max), "HP")
-        print("ATK =", self.atk)
-        print("DEF =", self.dfs)
-        print("SPD =", self.spd)
-        print("SPC =", self.spc, "\n")
+        if full:
+            print("ATK =", self.atk)
+            print("DEF =", self.dfs)
+            print("SPD =", self.spd)
+            print("SPC =", self.spc)
+
+        print()
 
     def mostra_ataques(self):
         """Mostra lista de ataques do Pokémon e devolve quantos são."""
@@ -112,7 +114,7 @@ class Ataque:
 
     def mostra(self, full=False):
         """Exibe nome e PP atual/máximo do ataque.
-           Se full=True, mostra também informações adicionais."""
+           Se full=True, mostra também os atributos restantes."""
         if not full:
             print(self.nome, "(" + str(self.pp) + "/" + str(self.pp_max) + ")")
         else:
@@ -132,9 +134,6 @@ class Ataque:
 
     def get_pwr(self):
         return self.pwr
-
-    def set_pwr(self, pwr):
-        self.pwr = pwr
 
     def get_pp(self):
         return self.pp

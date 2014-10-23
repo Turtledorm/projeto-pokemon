@@ -8,7 +8,7 @@ Struggler
 0
 16
 1
-Do Nothing!
+Do Nothing
 0
 100
 0

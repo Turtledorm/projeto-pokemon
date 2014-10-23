@@ -45,4 +45,5 @@ def le_ataque():
 
 poke1 = pokemon.Pokemon(le_pokemon())
 poke2 = pokemon.Pokemon(le_pokemon())
+print()
 batalha(poke1, poke2)

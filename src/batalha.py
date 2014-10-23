@@ -14,19 +14,27 @@ def batalha(poke1, poke2):
 
     # Loop principal da batalha e do jogo
     while poke1.hp > 0 and poke2.hp > 0:
-        defensor.mostra()
-        atacante.mostra()
+        poke1.mostra()
+        poke2.mostra()
+        print("* Turno de", atacante.nome, "*\n")
         ataque = escolhe_ataque(atacante)
+
+        limpa_tela()
         realiza_ataque(atacante, defensor, ataque)
         atacante, defensor = defensor, atacante
 
-    print(atacante.get_nome() + " foi nocauteado!")
-    print(defensor.get_nome() + " vence a batalha! :D")
+    if poke1.hp <= 0 and poke2.hp <= 0:
+        print("Houve empate!")
+        return
+
+    vitorioso = poke1 if poke1.hp > 0 else poke2
+    derrotado = poke2 if poke1 == vitorioso else poke1
+    print(derrotado.get_nome() + " foi nocauteado!")
+    print(vitorioso.get_nome() + " vence a batalha! :D")
 
 
 def ordem_inicio(poke1, poke2):
     """Compara o SPD dos dois Pokémons e decide quem inicia a batalha."""
-
     if poke1.get_spd() > poke2.get_spd():
         return poke1, poke2
     if poke1.get_spd() < poke2.get_spd():
@@ -38,25 +46,6 @@ def ordem_inicio(poke1, poke2):
     return poke2, poke1
 
 
-def escolhe_ataque(atacante):
-    """Mostra a lista de ataques do Pokémon e lê a escolha do usuário."""
-    n = atacante.mostra_ataques()
-
-    if atacante.todos_ataques_sem_pp():
-        print(atacante.get_nome(), "não tem golpes sobrando!")
-        time.sleep(3)
-        limpa_tela()
-        return struggle
-
-    while True:
-        x = int(input("Digite o nº do ataque: "))
-        if x > 0 and x <= n and atacante.get_ataque(x-1) is not None:
-            break
-
-    limpa_tela()
-    return atacante.get_ataque(x-1)
-
-
 def limpa_tela():
     """Limpa a tela após a escolha do ataque pelo usuário"""
     if sys.platform == "linux":
@@ -65,9 +54,30 @@ def limpa_tela():
         subprocess.call("cls")
 
 
+def escolhe_ataque(atacante):
+    """Mostra a lista de ataques do Pokémon e lê a escolha do usuário."""
+    n = atacante.mostra_ataques()
+
+    # Se não tiver mais com o que atacar, usa Struggle
+    if atacante.todos_ataques_sem_pp():
+        print(atacante.get_nome(), "não tem golpes sobrando", end="")
+        for cont in range(3):
+            print(".", end="")
+            sys.stdout.flush()
+            time.sleep(1)
+        print()
+        return struggle
+
+    while True:
+        x = int(input("Digite o nº do ataque: "))
+        if x in range(n+1) and atacante.get_ataque(x-1) is not None:
+            break
+
+    return atacante.get_ataque(x-1)
+
+
 def realiza_ataque(atacante, defensor, ataque):
     """Calcula o dano causado usando a fórmula da 1ª geração."""
-
     ataque.usa_pp()
     print(atacante.get_nome() + " usa " + ataque.get_nome() + "!")
 
@@ -95,7 +105,6 @@ def realiza_ataque(atacante, defensor, ataque):
             dano //= 2
             print(atacante.get_nome(), "perdeu", dano, "HP pelo recuo!")
             atacante.remove_hp(dano)
-
     else:
         print("O ataque de " + atacante.get_nome() + " errou!")
 
@@ -134,7 +143,6 @@ def critico(atacante):
 
 def efetividade(ataque, defensor):
     """Aplica o multiplicador de efetividade presente na tabela."""
-
     # Calcula o multiplicador
     typ_ataque = ataque.typ.get_numero()
     mult = pokemon.tabela_eff[typ_ataque][defensor.tipo1.get_numero()]
