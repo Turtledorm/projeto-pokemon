@@ -1,6 +1,7 @@
 import os
 
 max_ataques = 4  # Nº máximo de ataques que um Pokémon pode possuir
+barra_max = 20   # Comprimento máximo da barra de vida
 tabela_eff = []  # Tabela com multiplicadores de efetividade
 tipos = []       # Lista de tipos
 
@@ -32,7 +33,7 @@ class Pokemon:
         print("(" + self.tipo1.nome +
               (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "")
               + ")", "Nível", self.lvl)
-        print("[" + str(self.hp) + "/" + str(self.hp_max) + "]", "HP")
+        self.barra_de_vida()
 
         if full:
             print("ATK =", self.atk)
@@ -42,13 +43,26 @@ class Pokemon:
 
         print()
 
-    def mostra_ataques(self):
+    def barra_de_vida(self):
+        """Imprime uma barra para facilitar a leitura do HP de um Pokémon"""
+        # Pega o comprimento relativo à vida atual
+        length = int(barra_max * self.hp/self.hp_max)
+        if length == 0 and self.hp > 0:
+            length = 1
+
+        # Imprime a barra
+        print("[", end="")
+        print("-" * length, end="")
+        print(" " * (barra_max - length), end="")
+        print("]  " + str(self.hp) + "/" + str(self.hp_max), "HP")
+
+    def mostra_ataques(self, full=False):
         """Mostra lista de ataques do Pokémon e devolve quantos são."""
         print("<<< Ataques >>>")
         i = 1
         for ataque in self.ataques:
             print(i, "-", end=" ")
-            ataque.mostra()
+            ataque.mostra(full)
             i += 1
         print()
         return len(self.ataques)
@@ -120,7 +134,7 @@ class Ataque:
         else:
             print(self.nome, "(" + str(self.typ.nome) + ")")
             print(str(self.pp) + "/" + str(self.pp_max), "PP")
-            print("Acurácia:", self.acu, "\n")
+            print("Acurácia:", self.acu)
             print("Poder:", self.pwr)
 
     def get_nome(self):

@@ -70,7 +70,10 @@ def escolhe_ataque(atacante):
         return struggle
 
     while True:
-        x = int(input("Digite o nº do ataque: "))
+        try:
+            x = int(input("Digite o nº do ataque: "))
+        except ValueError:
+            continue
         if x in range(n+1) and atacante.get_ataque(x-1) is not None:
             break
 
