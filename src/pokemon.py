@@ -26,14 +26,12 @@ class Pokemon:
 
         self.ataques = dados.pop()
 
-        print("'" + self.nome + "' lido com sucesso!")
-
     def mostra(self, full=False):
         """
         Exibe nome, tipo(s) e HP atualm/máximo do Pokémon.
         Se full=True, mostra também os atributos restantes.
         """
-        print(">>>", self.nome, "{" + str(self.lvl) + "} <<<")
+        print(">>>", self.nome, "{Lv " + str(self.lvl) + "} <<<")
         print("(" + self.tipo1.nome +
               (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "")
               + ")")
