@@ -23,6 +23,7 @@ def le_pokemon():
         ataques.append(Ataque(le_ataque()))
     dados.append(ataques)
 
+    print("'" + dados[0] + "' lido com sucesso!")
     return dados
 
 
@@ -42,7 +43,11 @@ def le_ataque():
 
     return dados
 
-
-poke1 = Pokemon(le_pokemon())
-poke2 = Pokemon(le_pokemon())
-batalha(poke1, poke2)
+try:
+    poke1 = Pokemon(le_pokemon())
+    poke2 = Pokemon(le_pokemon())
+    batalha(poke1, poke2)
+except KeyboardInterrupt:
+    exit(1)
+except EOFError:
+    print("EOF detectado!")
