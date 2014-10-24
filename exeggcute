@@ -43,7 +43,9 @@ for arg in "$@"; do
 done
 
 if (( $# == 0 )); then
-    cat `find $POKEDIR/* | shuf -r -n 2` - | ./$SRCDIR/main.py
+    # A implementação permite ter uma batalha de mesmos Pokémons!
+    arq=`find $POKEDIR/* | shuf -n 1`
+    cat $arq `find $POKEDIR/* | shuf -n 1` - | ./$SRCDIR/main.py
 else
     if [ -f "$POKEDIR/$1.txt" ]; then
         if [ -f "$POKEDIR/$2.txt" ]; then
