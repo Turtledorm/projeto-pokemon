@@ -2,6 +2,7 @@ import os
 
 MAX_ATAQUES = 4  # Nº máximo de ataques que um Pokémon pode possuir
 BARRA_MAX = 20   # Comprimento máximo da barra de vida
+
 tabela_eff = []  # Tabela com multiplicadores de efetividade
 tipos = []       # Lista de tipos
 
@@ -10,7 +11,7 @@ class Pokemon:
 
     def __init__(self, _dados):
         """Recebe uma lista contendo dados e cria um Pokémon."""
-        dados = list(_dados)  # Faz uma cópia bruta da lista original 
+        dados = list(_dados)  # Faz uma cópia bruta da lista original
         dados.reverse()
 
         self._nome = dados.pop()
@@ -28,8 +29,10 @@ class Pokemon:
         print("'" + self.nome + "' lido com sucesso!")
 
     def mostra(self, full=False):
-        """Exibe nome, tipo(s) e HP atualm/máximo do Pokémon.
-           Se full=True, mostra também os atributos restantes."""
+        """
+        Exibe nome, tipo(s) e HP atualm/máximo do Pokémon.
+        Se full=True, mostra também os atributos restantes.
+        """
         print(">>>", self.nome, "{" + str(self.lvl) + "} <<<")
         print("(" + self.tipo1.nome +
               (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "")
@@ -69,6 +72,7 @@ class Pokemon:
         return len(self.ataques)
 
     def remove_hp(self, dano):
+        """Reduz quantidade de HP equivalente ao dano."""
         self._hp -= dano
         if self._hp < 0:
             self._hp = 0
@@ -78,7 +82,7 @@ class Pokemon:
         for ataque in self.ataques:
             if ataque.pp > 0:
                 return False
-        return True    
+        return True
 
     @property
     def nome(self):
@@ -141,8 +145,10 @@ class Ataque:
         self._pp = self.pp_max = dados.pop()
 
     def mostra(self, full=False):
-        """Exibe nome e PP atual/máximo do ataque.
-           Se full=True, mostra também os atributos restantes."""
+        """
+        Exibe nome e PP atual/máximo do ataque.
+        Se full=True, mostra também os atributos restantes.
+        """
         if not full:
             print(self.nome, "(" + str(self.typ.nome) + ")",
                   "[" + str(self.pp) + "/" + str(self.pp_max) + "]")
@@ -168,7 +174,7 @@ class Ataque:
     def pwr(self):
         return self._pwr
 
-    @property        
+    @property
     def pp(self):
         return self._pp
 
@@ -179,11 +185,13 @@ class Ataque:
 class Tipo:
 
     def __init__(self, numero, nome, is_especial):
+        """Inicializa o tipo."""
         self._numero = numero
         self._nome = nome
         self._is_especial = is_especial
 
     def mostra(self):
+        """Exibe informações do tipo."""
         print(str(self.numero) + ":", self.nome,
               "(Especial)" if self.is_especial else "")
 
@@ -204,8 +212,8 @@ def le_tipos(nome_arquivo):
     """Lê tipos do arquivo, guarda-os e constrói a tabela de efetividade."""
     # Permite que o script leia o arquivo mesmo
     # se executado de fora do diretório de onde ele está.
-    __diretorio = os.path.join(os.getcwd(), os.path.dirname(__file__))
-    caminho = (os.path.join(__diretorio, nome_arquivo))
+    diretorio = os.path.join(os.getcwd(), os.path.dirname(__file__))
+    caminho = (os.path.join(diretorio, nome_arquivo))
 
     with open(caminho) as arquivo:
         n = int(arquivo.readline())
@@ -223,6 +231,13 @@ def le_tipos(nome_arquivo):
             linha = arquivo.readline().split()
             linha = list(map(float, linha))
             tabela_eff.append(linha)
+
+    return n
+
+
+def get_eff(i, j):
+    """Devolve o valor da efetividade dos tipos 'i' contra 'j'."""
+    return tabela_eff[i][j]
 
 
 def erro_leitura(mensagem):

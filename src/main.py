@@ -3,7 +3,7 @@
 from pokemon import Pokemon, Ataque, le_tipos
 
 # Lê de arquivo tipos e tabela de efetividade
-le_tipos("tipos.txt")
+num_tipos = le_tipos("tipos.txt")
 
 from batalha import batalha
 
@@ -31,10 +31,10 @@ def le_ataque():
     dados = [input()]  # Começa com o nome
 
     # Leitura do tipo
-    num_typ = int(input())
-    if num_typ not in range(16):
+    n = int(input())
+    if n not in range(16):
         erro_leitura("tipo de um ataque")
-    dados.append(num_typ)
+    dados.append(n)
 
     # Leitura de ACU, PWR e PP
     for i in range(3):

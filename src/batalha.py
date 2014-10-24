@@ -1,7 +1,8 @@
-import random
-import pokemon
 import sys
+import random
 import subprocess
+
+import pokemon
 
 # Define Struggle como um possível ataque
 struggle = pokemon.Ataque(["Struggle", 0, 100, 50, 10])
@@ -101,8 +102,8 @@ def realiza_ataque(atacante, defensor, ataque):
         # Calcula o dano, aplicando os modificadores
         dano = (2*lvl + 10)/250 * atk/dfs * base + 2
         eff = efetividade(ataque, defensor)
-        dano *= stab(ataque, atacante) * critico(atacante, eff) \
-            * eff * aleatorio()
+        dano *= (stab(ataque, atacante) * critico(atacante, eff)
+                 * eff * aleatorio())
         dano = int(dano)
 
         if dano > 0:
@@ -153,9 +154,9 @@ def efetividade(ataque, defensor):
     """Aplica o multiplicador de efetividade presente na tabela."""
     # Calcula o multiplicador
     typ_ataque = ataque.typ.numero
-    mult = pokemon.tabela_eff[typ_ataque][defensor.tipo1.numero]
+    mult = pokemon.get_eff(typ_ataque, defensor.tipo1.numero)
     if defensor.tipo2.nome != "Blank":
-        mult *= pokemon.tabela_eff[typ_ataque][defensor.tipo2.numero]
+        mult *= pokemon.get_eff(typ_ataque, defensor.tipo2.numero)
 
     # Exibe mensagem
     if mult > 1:

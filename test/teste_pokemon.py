@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 
-import random
-import unittest
-import unittest.mock
 import os
 import sys
+import random
+import unittest
 
 # Diz onde procurar pelo módulo pokemon
 sys.path.insert(1, os.path.join(sys.path[0], '../src'))
@@ -35,10 +34,12 @@ class PokeTestCase(unittest.TestCase):
                         ["n3", 3, 23, 12, 248],
                         ["n4", 4, 24, 13, 249]]
 
+        # Cria uma lista de objetos da classe Ataque
+        lista_ataques = [Ataque(self.ataques[i]) for i in range(4)]
+
         # Cria Pokémon com os dados gerados anteriormente
         dados = [self.nome, self.lvl, self.hp, self.atk, self.dfs,
-                 self.spd, self.spc, self.tipo1, self.tipo2,
-                 [Ataque(self.ataques[i]) for i in range(4)]]
+                 self.spd, self.spc, self.tipo1, self.tipo2, lista_ataques]
         self.t = Pokemon(dados)
 
     def test_pokemons(self):
@@ -64,6 +65,6 @@ class PokeTestCase(unittest.TestCase):
             self.assertEqual(ataque.pp, self.ataques[i][4])
 
 
-# Inicializa o unittest, que cuidará do resto
+# Inicializa o unittest, que fará todo o trabalho
 if __name__ == '__main__':
     unittest.main()
