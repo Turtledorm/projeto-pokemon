@@ -26,12 +26,12 @@ def batalha(poke1, poke2):
     vencedor = poke1 if poke1.hp > 0 else poke2
     perdedor = poke2 if poke1 == vencedor else poke1
 
-    print(perdedor.nome + " foi nocauteado!")
+    print(">", perdedor.nome + " foi nocauteado!")
     if vencedor.hp <= 0:
-        print(vencedor.nome + " foi nocauteado!")
-        print("A batalha terminou em empate!")
+        print(">", vencedor.nome + " foi nocauteado!")
+        print("> A batalha terminou em empate!")
     else:
-        print(vencedor.nome + " vence a batalha! :D")
+        print(">", vencedor.nome + " vence a batalha! :D")
 
 
 def ordem_inicio(poke1, poke2):
