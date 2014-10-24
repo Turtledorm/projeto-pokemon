@@ -59,7 +59,7 @@ def limpa_tela():
     if sys.platform == "linux":
         subprocess.call("clear")
     elif sys.platform == "win32":
-        subprocess.call("cls")
+        subprocess.call("cls", shell=True)
 
 
 def escolhe_ataque(atacante):
