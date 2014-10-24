@@ -79,3 +79,4 @@ class RandomPoke:
     def ataques(self):
         return self._ataques  
        
+    
