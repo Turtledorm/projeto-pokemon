@@ -73,12 +73,12 @@ class BatalhaTestCase(unittest.TestCase):
     def test_acertou(self):
         chance = (self.poke1.ataques[0].acu * self.poke1.ataques[0].acu)
         chance /= 10000.0
-
+        maior_chance = chance + 0.001  
         valores_menores = []
         valores_maiores = []
         for i in range(100):
             valores_menores.append(random.uniform(0.0, chance))
-            valores_maiores.append(random.uniform(chance, 1.0))
+            valores_maiores.append(random.uniform(maior_chance, 1.0))
         valores = valores_menores + valores_maiores
 
         """Usamos valores conhecidos para testar a unidade do batalha.acertou
@@ -122,11 +122,12 @@ class BatalhaTestCase(unittest.TestCase):
     def test_critico(self):
         res = (2 * self.poke1.lvl + 5) / (self.poke1.lvl + 5)
         chance = self.poke1.spd / 512
+        maior_chance = chance + 0.001
         valores_menores = []
         valores_maiores = []
         for i in range(100):
             valores_menores.append(random.uniform(0.0, chance))
-            valores_maiores.append(random.uniform(chance, 1.0))
+            valores_maiores.append(random.uniform(maior_chance, 1.0))
         valores = valores_menores + valores_maiores
 
         """Novamente usamos valores conhecidos para testar a
@@ -207,8 +208,7 @@ class BatalhaTestCase(unittest.TestCase):
             mult = get_eff(typ_ataque, poke1.tipo1.numero)
             if poke1.tipo2.nome != "Blank":
                 mult *= get_eff(typ_ataque, poke1.tipo2.numero)
-            """ Vamos checar se batalha.efetividade de fato calcula conforme
-                 a fórmula """
+            """ Vamos checar se batalha.efetividade de fato calcula """
             self.assertEquals(mult, efetividade(ataque, poke1))
 
     def tearDown(self):
