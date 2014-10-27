@@ -10,7 +10,7 @@ MAC0242 - Relatório (Parte 1)
 
 ### Introdução
 
-  A primeira parte deste projeto visou implementar um jogo (em modo texto) muito semelhante à primeira geração de Pokémon. A exibição se dá todo pelo terminal, sem interface gráfica, onde são recebidos ataques do usuário e exibidas mensagens com o resultado dos mesmos: qual foi o dano, se foi crítico, efetividade, etc. É possível selecionar alguns Pokémons (com atributos fiéis ao jogo original) e usá-los na batalha. Por meio do script de execução, também é possível selecioná-los aleatoriamente.
+  A primeira parte deste projeto visou implementar um jogo (em modo texto) muito semelhante à primeira geração de Pokémon. A exibição se dá todo pelo terminal, sem interface gráfica, onde são recebidos ataques do usuário e exibidas mensagens com o resultado dos mesmos: qual foi o dano, se foi crítico, efetividade, etc. É possível selecionar alguns Pokémons (com atributos fiéis ao jogo original) e usá-los na batalha. Por meio do script de execução, também é possível sorteá-los aleatoriamente.
 
 
 ### Visão geral
@@ -40,8 +40,8 @@ MAC0242 - Relatório (Parte 1)
 ###### test/
 
   - ***teste_pokemon.py***: Verifica se os Pokémons e seus respectivos ataques estão sendo gerados automaticamente, sem nenhuma anomalia nos atributos.
-  - ***random_poke.py***: Gera um Pokémon aleatoriamente. Auxiliar de *teste_pokemon*.
   - ***teste_batalha.py***: Simula uma batalha pelo recebimento um input "falso". Verifica se a batalha decorre normalmente e se não há nenhuma irregularidade com o dano, os ataques e efeitos subsequentes.
+  - ***random_poke.py***: Gera um Pokémon aleatoriamente. Auxiliar dos outros módulos de teste.
 
   
 ### Simulação

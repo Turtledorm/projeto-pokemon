@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+"""Módulo principal do projeto."""
+
 from pokemon import Pokemon, Ataque, le_tipos
 
 # Lê de arquivo tipos e tabela de efetividade
@@ -43,11 +45,16 @@ def le_ataque():
 
     return dados
 
+
 try:
     poke1 = Pokemon(le_pokemon())
     poke2 = Pokemon(le_pokemon())
     batalha(poke1, poke2)
+
+# Ctrl-C
 except KeyboardInterrupt:
     exit(1)
+
+# Ctrl-D
 except EOFError:
     print("EOF detectado!")

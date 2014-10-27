@@ -1,10 +1,14 @@
 #!/usr/bin/python3
 
+"""Testa se a batalha entre dois Pokémons está ocorrendo 
+   segundo os conformes. O programa gera pokémons aleatórios
+   e simula uma entrada consistindo de ataques."""
+
 import os
 import sys
 import random
 import unittest
-from mock import Mock, MagicMock, patch, PropertyMock
+from mock import Mock, patch, PropertyMock
 
 # Diz onde procurar pelo módulo pokemon
 sys.path.insert(1, os.path.join(sys.path[0], '../src'))
@@ -150,13 +154,8 @@ class BatalhaTestCase(unittest.TestCase):
         self.assertRaises(AttributeError, critico, None, self.poke1.nome)
         self.assertRaises(AttributeError, critico, None, self.poke1.hp)
 
-    def tearDown(self):
-        """Encerra os testes."""
-        sys.stdout.close()  # Fechando o os.devnull
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-
     def test_realiza_ataque(self):
+        """Verifica se ataque e suas consequências ocorrem sem problemas."""
         batalha.input = Mock(return_value="ok")
 
         # Geramos novos Pokémons para podermos realizar vários
@@ -203,6 +202,7 @@ class BatalhaTestCase(unittest.TestCase):
                 self.assertEquals(poke2.hp, poke4.hp)
 
     def test_efetividade(self):
+        """Verifica se o cálculo de efetividade é feito corretamente."""
         # Novamente geramos um novo Pokémon para podermos realizar vários
         # testes com resultados diferentes.
         for i in range(100):
@@ -216,8 +216,13 @@ class BatalhaTestCase(unittest.TestCase):
             if poke1.tipo2.nome != "Blank":
                 mult *= get_eff(typ_ataque, poke1.tipo2.numero)
 
-            # Verificamos se batalha.efetividade de fato calcula corretamente
             self.assertEquals(mult, efetividade(ataque, poke1))
+
+    def tearDown(self):
+        """Encerra os testes."""
+        sys.stdout.close()  # Fechando o os.devnull
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
 
 
 # Inicializa o unittest, que cuidará do resto

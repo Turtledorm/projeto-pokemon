@@ -1,3 +1,5 @@
+"""Contém as principais classes que envolvem Pokémons."""
+
 import os
 
 MAX_ATAQUES = 4  # Nº máximo de ataques que um Pokémon pode possuir
@@ -8,6 +10,8 @@ tipos = []       # Lista de tipos
 
 
 class Pokemon:
+
+    """Representa um Pokémon, unidade de batalha no jogo."""
 
     def __init__(self, _dados):
         """Recebe uma lista contendo dados e cria um Pokémon."""
@@ -24,13 +28,11 @@ class Pokemon:
         self._tipo1 = tipos[dados.pop()]
         self._tipo2 = tipos[dados.pop()]
 
-        self.ataques = dados.pop()
+        self._ataques = dados.pop()
 
     def mostra(self, full=False):
-        """
-        Exibe nome, tipo(s) e HP atualm/máximo do Pokémon.
-        Se full=True, mostra também os atributos restantes.
-        """
+        """ Exibe nome, tipo(s) e HP atualm/máximo do Pokémon.
+            Se full=True, mostra também os atributos restantes."""
         print(">>>", self.nome, "{Lv " + str(self.lvl) + "} <<<")
         print("(" + self.tipo1.nome +
               (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "")
@@ -122,6 +124,10 @@ class Pokemon:
     def tipo2(self):
         return self._tipo2
 
+    @property
+    def ataques(self):
+        return self._ataques
+
     def get_ataque(self, n):
         """Retorna o n-ésimo ataque do Pokémon se existir e tiver PP > 0."""
         if n >= MAX_ATAQUES or self.ataques[n].pp <= 0:
@@ -130,6 +136,8 @@ class Pokemon:
 
 
 class Ataque:
+
+    """Representa um ataque de Pokémon."""
 
     def __init__(self, _dados):
         """Recebe uma lista de dados e cria um ataque."""
@@ -143,10 +151,8 @@ class Ataque:
         self._pp = self.pp_max = dados.pop()
 
     def mostra(self, full=False):
-        """
-        Exibe nome e PP atual/máximo do ataque.
-        Se full=True, mostra também os atributos restantes.
-        """
+        """Exibe nome e PP atual/máximo do ataque.
+        Se full=True, mostra também os atributos restantes."""
         if not full:
             print(self.nome, "(" + str(self.typ.nome) + ")",
                   "[" + str(self.pp) + "/" + str(self.pp_max) + "]")
@@ -181,6 +187,8 @@ class Ataque:
 
 
 class Tipo:
+
+    """Representa um tipo de Pokémon/ataque."""
 
     def __init__(self, numero, nome, is_especial):
         """Inicializa o tipo."""

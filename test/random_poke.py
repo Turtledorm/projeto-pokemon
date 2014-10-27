@@ -4,10 +4,13 @@ from random import randint, choice
 from string import ascii_lowercase, ascii_uppercase
 
 sys.path.insert(1, os.path.join(sys.path[0], '../src'))
-from pokemon import le_tipos, Ataque
+from pokemon import Pokemon, Ataque, le_tipos
 
 
-class RandomPoke:
+class RandomPoke(Pokemon):
+
+    """Representa um Pokémon. Ao invés de receber dados pré-lidos, porém,
+       gera os atributos aleatoriamente."""
 
     def __init__(self):
         """Inicializa os dados para teste."""
@@ -37,6 +40,7 @@ class RandomPoke:
                       [Ataque(self._ataques[i]) for i in range(4)]]
 
     def gera_ataque(self):
+        """Gera um ataque com atributos aleatórios."""
         return [''.join(choice(ascii_lowercase + ascii_uppercase)
                         for x in range(randint(2, 10))),
                 randint(0, 16),
@@ -48,43 +52,3 @@ class RandomPoke:
         """Retorna a lista que deve ser passada a pokemon.Pokemon
            para criar um pokemon com os valores acima gerados."""
         return self.dados
-
-    @property
-    def nome(self):
-        return self._nome
-
-    @property
-    def lvl(self):
-        return self._lvl
-
-    @property
-    def hp(self):
-        return self._hp
-
-    @property
-    def atk(self):
-        return self._atk
-
-    @property
-    def dfs(self):
-        return self._dfs
-
-    @property
-    def spd(self):
-        return self._spd
-
-    @property
-    def spc(self):
-        return self._spc
-
-    @property
-    def tipo1(self):
-        return self._tipo1
-
-    @property
-    def tipo2(self):
-        return self._tipo2
-
-    @property
-    def ataques(self):
-        return self._ataques

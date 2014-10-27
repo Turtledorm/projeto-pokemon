@@ -1,3 +1,5 @@
+"""Trata dos eventos de batalha do jogo."""
+
 import sys
 import random
 import subprocess

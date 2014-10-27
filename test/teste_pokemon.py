@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+"""Testa se um Pokémon aleatório e seus ataques são válidos."""
+
 import os
 import sys
 import random
@@ -14,6 +16,7 @@ from random_poke import RandomPoke
 class PokeTestCase(unittest.TestCase):
 
     def setUp(self):
+        """Inicializa o teste."""
         sys.stdout = open(os.devnull, 'w')  # Suprime o output de batalha.py
         self.ctrl = RandomPoke()
         self.test = Pokemon(self.ctrl.gera())
@@ -41,6 +44,7 @@ class PokeTestCase(unittest.TestCase):
             self.assertEqual(ataque.pp, self.ctrl.ataques[i][4])
 
     def tearDown(self):
+        """Finaliza o teste."""
         sys.stdout.close()  # Fechando o os.devnull
         sys.stdout = sys.__stdout__
 
