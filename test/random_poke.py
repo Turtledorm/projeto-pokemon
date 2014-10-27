@@ -27,16 +27,16 @@ class RandomPoke:
             if (self._tipo2 != self._tipo1):
                 break
 
-        self._ataques = [gera_ataque(),
-                         gera_ataque(),
-                         gera_ataque(),
-                         gera_ataque()]
+        self._ataques = [self.gera_ataque(),
+                         self.gera_ataque(),
+                         self.gera_ataque(),
+                         self.gera_ataque()]
 
         self.dados = [self._nome, self._lvl, self._hp, self._atk, self._dfs,
                       self._spd, self._spc, self._tipo1, self._tipo2,
                       [Ataque(self._ataques[i]) for i in range(4)]]
 
-    def gera_ataque():
+    def gera_ataque(self):
         return [''.join(choice(ascii_lowercase + ascii_uppercase)
                         for x in range(randint(2, 10))),
                 randint(0, 16),

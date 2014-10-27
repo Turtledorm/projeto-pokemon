@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import os
 import sys
 import random
 import unittest
@@ -13,7 +14,7 @@ le_tipos("tipos.txt")
 import batalha
 from batalha import ordem_inicio, escolhe_ataque, mostra_pokemons, \
     struggle, acertou, stab, critico, efetividade, realiza_ataque, aleatorio
-from random_poke import RandomPoke, gera_ataque
+from random_poke import RandomPoke
 
 
 class BatalhaTestCase(unittest.TestCase):
@@ -30,8 +31,9 @@ class BatalhaTestCase(unittest.TestCase):
     def test_ordem_inicio(self):
         """Verifica se a função ordem_inicio retorna
            a tupla com o Pokemon de maior SPD primeiro."""
-        primeiro = poke1 if self.poke1.spd > self.poke2.spd else poke2
-        segundo = poke2 if primeiro == poke1 else poke1
+        primeiro = (self.poke1 if self.poke1.spd > self.poke2.spd
+                    else self.poke2)
+        segundo = self.poke2 if primeiro == self.poke1 else self.poke1
 
         self.assertEqual(ordem_inicio(primeiro, segundo),
                                      (primeiro, segundo))
@@ -53,7 +55,7 @@ class BatalhaTestCase(unittest.TestCase):
         # Primeiro testamos como se nosso pokemons estivesse sem pp.
         # O comportamento esperado é que utilize Struggle.
         batalha.input = Mock(return_value="ok")
-        with patch(poke + ".todos_ataques_sem_pp", return_value=True):
+        with patch("pokemon.Pokemon.todos_ataques_sem_pp", return_value=True):
             self.assertEqual(self.poke2.todos_ataques_sem_pp(), True)
             self.assertEqual(escolhe_ataque(self.poke1), struggle)
 
@@ -169,7 +171,7 @@ class BatalhaTestCase(unittest.TestCase):
             with patch('batalha.random.uniform', return_value=1.0):
                 # Aqui começa o cálculo do dano
                 lvl = poke1.lvl
-                ataque = Ataque(gera_ataque())
+                ataque = Ataque(a.gera_ataque())
                 if ataque.typ.is_especial:
                     atk = poke1.spc
                     dfs = poke2.spc
@@ -206,7 +208,7 @@ class BatalhaTestCase(unittest.TestCase):
         for i in range(100):
             a = RandomPoke()
             poke1 = Pokemon(a.gera())
-            ataque = Ataque(gera_ataque())
+            ataque = Ataque(a.gera_ataque())
 
             # Esta é a fórmula para calcular efetividade
             typ_ataque = ataque.typ.numero
