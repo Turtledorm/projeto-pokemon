@@ -10,8 +10,7 @@ MAC0242 - Relatório (Parte 1)
 
 ### Introdução
 
-  A primeira parte deste projeto visou implementar um jogo (em modo texto) muito semelhante à primeira geração de Pokémon. A exibição se dá todo pelo terminal, sem interface gráfica, onde são recebidos ataques do usuário e exibidas mensagens com o resultado dos mesmos: qual foi o dano, se foi crítico, efetividade, etc. É possível selecionar alguns Pokémons (com atributos fiéis ao jogo original) e usá-los na batalha. Por meio do script de execução, também é possível sorteá-los aleatoriamente.
-
+  A primeira parte deste projeto visou implementar um jogo (em modo texto) muito semelhante à primeira geração de Pokémon. O programação recebe como entrada dados de dois Pokémons e simula uma batalha entre eles, recebendo ataques do usuário e exibindo mensagens conforme o resultado das ações: qual foi o dano, se foi crítico, efetividade aplicada, etc.
 
 ### Visão geral
 
@@ -29,8 +28,8 @@ MAC0242 - Relatório (Parte 1)
   
 ###### src/
 
-  - ***main.py***: Módulo principal onde o programa é iniciado. Faz a leitura dos Pokémons e seus respectivos ataques, dos tipos e tabela de efetividade e, por fim, chama a batalha.
-  - ***pokemon.py***: Contém as três principais classes desta fase. É importante notar que, ao invés de getters, estamos usando com o mesmo intuito nas classes a sintaxe *@property* do python, que permite acessar atributos de maneira direta e sem perder o encapsulamento.
+  - ***main.py***: Módulo principal onde o programa é iniciado. Faz a leitura dos Pokémons e de seus respectivos ataques, dos tipos e da tabela de efetividade e, por fim, chama a batalha.
+  - ***pokemon.py***: Contém as três principais classes desta fase. É importante notar que, ao invés de getters nas classes, estamos usando com o mesmo intuito a sintaxe *@property* do python, que permite acessar atributos de maneira direta e sem perder o encapsulamento.
     - *Pokemon*: Representa um Pokémon com seus atributos.
     - *Ataque*: Representa um ataque de Pokémon.
     - *Tipo*: Representa um dos possíveis tipos de ataque/Pokémon do jogo.
@@ -53,7 +52,7 @@ MAC0242 - Relatório (Parte 1)
 
 #### Uso
 
-  - O programa é executado chamando o script ***exeggcute***. Veja como executá-lo usando-o:
+  - O programa é executado chamando o script ***exeggcute***, que recebe dois nomes de Pokémon como argumento ou simplesmente sorteia-os aleatoriamente, caso não seja informado nenhum. Veja como executá-lo rodando:
 
   **$ ./exeggcute -h**
 
