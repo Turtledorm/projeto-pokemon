@@ -10,13 +10,14 @@ sys.path.insert(1, os.path.join(sys.path[0], '../src'))
 from pokemon import Pokemon, Ataque, tipos, le_tipos
 from random_poke import RandomPoke
 
+
 class PokeTestCase(unittest.TestCase):
 
     def setUp(self):
-        sys.stdout = open(os.devnull, 'w') #Para suprimir o output das funções do bataha
+        sys.stdout = open(os.devnull, 'w')  # Suprime o output de batalha.py
         self.ctrl = RandomPoke()
         self.test = Pokemon(self.ctrl.gera())
-    
+
     def test_pokemons(self):
         """Verifica se os valores do Pokémon coincidem com os anteriores."""
         self.assertEqual(self.test.nome, self.ctrl.nome)
@@ -38,10 +39,11 @@ class PokeTestCase(unittest.TestCase):
             self.assertEqual(ataque.acu, self.ctrl.ataques[i][2])
             self.assertEqual(ataque.pwr, self.ctrl.ataques[i][3])
             self.assertEqual(ataque.pp, self.ctrl.ataques[i][4])
-     
+
     def tearDown(self):
-        sys.stdout.close() #Fechando o os.devnull
+        sys.stdout.close()  # Fechando o os.devnull
         sys.stdout = sys.__stdout__
+
 
 # Inicializa o unittest, que fará todo o trabalho
 if __name__ == '__main__':
