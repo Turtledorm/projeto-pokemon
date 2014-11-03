@@ -2,7 +2,7 @@
 
 """Módulo principal do projeto."""
 
-from pokemon import Pokemon, Ataque, le_tipos
+from pokemon import Pokemon, Ataque, le_tipos, erro_leitura
 
 # Lê de arquivo tipos e tabela de efetividade
 num_tipos = le_tipos("tipos.txt")
