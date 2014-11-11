@@ -31,7 +31,7 @@ class Pokemon:
         self._ataques = dados.pop()
 
     def mostra(self, full=False):
-        """ Exibe nome, tipo(s) e HP atualm/máximo do Pokémon.
+        """ Exibe nome, tipo(s) e HP atual/máximo do Pokémon.
             Se full=True, mostra também os atributos restantes."""
         print(">>>", self.nome, "{Lv " + str(self.lvl) + "} <<<")
         print("(" + self.tipo1.nome +

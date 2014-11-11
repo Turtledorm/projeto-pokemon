@@ -1,9 +1,13 @@
-import httplib
-import urllib
+#!/usr/bin/env python3
+
+from flask import Flask
+from flask import request
+
+app = Flask(__name__)
 
 
 def inicia_batalha(poke):
-    
+
     battle_state = BattleState(poke)
     path = "/battle/"
 
@@ -38,6 +42,23 @@ class BattleState:
 
     def __init__(self, _poke):
         self.poke_server = _poke
-    
+
     def add_foe(self, _poke):
         self.poke_foe = _poke
+
+
+@app.route('/')
+def hello_world():
+    x = input("Digite o nº do ataque: ")
+    return "Hello World!"
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['the_file']
+        f.save('/var/www/uploads/uploaded_file.txt')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)  # Usar host='0.0.0.0' para server público
