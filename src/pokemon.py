@@ -134,6 +134,37 @@ class Pokemon:
             return None
         return self.ataques[n]
 
+    def to_xml(self):
+        """Gera uma string XML contendo as informações do Pokémon."""
+        xml = "<pokemon>"
+        xml += _tag("name", self.nome)
+        xml += _tag("level", self.lvl)
+
+        xml += "<attributes>"
+        xml += _tag("health", self.hp)
+        xml += _tag("attack", self.atk)
+        xml += _tag("defense", self.dfs)
+        xml += _tag("speed", self.spd)
+        xml += _tag("special", self.spc)
+        xml += "</attributes>"
+
+        xml += _tag("type", self.tipo1.numero)
+        if self.tipo2 != "Blank":
+            xml += _tag("type", self.tipo2.numero)
+
+        xml += "<attacks>"
+        for ataque in self.ataques:
+            xml += _tag("id", self.ataques.index(ataque) + 1)
+            xml += _tag("name", ataque.nome)
+            xml += _tag("type", ataque.typ.numero)
+            xml += _tag("power", ataque.pwr)
+            xml += _tag("accuracy", ataque.acu)
+            xml += _tag("power_points", ataque.pp)
+        xml += "</attacks>"
+        xml += "</pokemon>"
+
+        return xml
+
 
 class Ataque:
 
@@ -250,3 +281,8 @@ def erro_leitura(mensagem):
     """Imprime mensagem de erro."""
     raise Exception("Erro ao ler " + mensagem + "!")
     exit(1)
+
+
+# Função auxiliar de to_xml
+def _tag(nome, valor):
+    return "<" + nome + ">" + str(valor) + "</" + nome + ">"

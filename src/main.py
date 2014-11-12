@@ -49,7 +49,8 @@ def le_ataque():
 try:
     poke1 = Pokemon(le_pokemon())
     poke2 = Pokemon(le_pokemon())
-    batalha(poke1, poke2)
+    print(poke1.to_xml())
+    # batalha(poke1, poke2)
 
 # Ctrl-C
 except KeyboardInterrupt:
