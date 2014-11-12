@@ -39,7 +39,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/nfs/home/bcc/cyrus/Desktop/projeto-pokemon"
+VIRTUAL_ENV="/nfs/home/bcc/cyrus/Documents/projeto-pokemon"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

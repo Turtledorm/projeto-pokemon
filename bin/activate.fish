@@ -32,7 +32,7 @@ end
 # unset irrelevant variables
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/nfs/home/bcc/cyrus/Desktop/projeto-pokemon"
+set -gx VIRTUAL_ENV "/nfs/home/bcc/cyrus/Documents/projeto-pokemon"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
