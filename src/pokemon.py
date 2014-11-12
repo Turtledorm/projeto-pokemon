@@ -1,4 +1,4 @@
-"""Contém as principais classes que envolvem Pokémons."""
+"""Classes para representar Pokémons, ataques e tipos"""
 
 import os
 

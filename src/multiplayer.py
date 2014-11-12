@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 
 from flask import Flask, Response, request
+from main import *
+from pokemon import *
 
 app = Flask(__name__)
 
+poke = Pokemon(le_pokemon())
 
-@app.route("/battle", methods=["POST"])
-def inicia_batalha(battle_state):
-    pass
+@app.route("/battle/")
+def inicia_batalha(poke):
+    battle_state = cria_bs(poke)
+    return battle_state
+    
 
 
 ### <TESTES> ###
@@ -27,7 +32,13 @@ def upload_file():
 ### </TESTES> ###
 
 
+def cria_bs(poke):
+    return ('<?xml version="1.0" encoding="utf-8"?>'
+          + "<battle_state>"
+          + poke.to_xml()
+          + "</battle_state>")
 
-if __name__ == '__main__':
+
+
     app.debug = True
     app.run()  # Usar host='0.0.0.0' para server público

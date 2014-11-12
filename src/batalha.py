@@ -1,10 +1,42 @@
-"""Trata dos eventos de batalha do jogo."""
+"""Eventos de batalha do jogo."""
 
 import sys
 import random
 import subprocess
+from flask import Flask, Response, request, current_app
 
 import pokemon
+from __init__ import app
+
+
+@app.route("/battle/")
+def inicia_batalha(poke):
+    battle_state = cria_bs(poke)
+    return battle_state
+
+
+def cria_bs(poke):
+    return ('<?xml version="1.0" encoding="utf-8"?>'
+          + "<battle_state>"
+          + poke.to_xml()
+          + "</battle_state>")
+    
+
+### <TESTES> ###
+
+@app.route('/')
+def hello():
+    return "Hello World!"
+
+
+@app.route("/upload", methods=["POST"])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['the_file']
+        f.save('/var/www/uploads/uploaded_file.txt')
+
+### </TESTES> ###
+
 
 # Define Struggle como um possível ataque
 struggle = pokemon.Ataque(["Struggle", 0, 100, 50, 10])
