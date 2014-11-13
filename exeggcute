@@ -45,11 +45,12 @@ done
 if (( $# == 0 )); then
     # A implementação permite ter uma batalha de mesmos Pokémons!
     arq=`find $POKEDIR/* | shuf -n 1`
-    cat $arq `find $POKEDIR/* | shuf -n 1` - | ./$SRCDIR/main.py
+    # cat $arq `find $POKEDIR/* | shuf -n 1` - | ./$SRCDIR/main.py
+    cat $arq `find $POKEDIR/* | shuf -n 1` - | ./run.py
 else
     if [ -f "$POKEDIR/$1.txt" ]; then
         if [ -f "$POKEDIR/$2.txt" ]; then
-            cat "$POKEDIR/$1.txt" "$POKEDIR/$2.txt" - | ./$SRCDIR/main.py
+            cat "$POKEDIR/$1.txt" "$POKEDIR/$2.txt" - | ./run.py
         else
             echo "'$2.txt' não encontrado!"
         fi

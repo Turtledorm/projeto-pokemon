@@ -3,15 +3,24 @@
 import sys
 import random
 import subprocess
-from flask import Flask, Response, request, current_app
+from flask import Flask, Response, request, render_template
 
-import pokemon
-from __init__ import app
+import src.pokemon as pokemon
+from src.entrada import le_pokemon
+from src import app
+
+# Cria Pokémon inicial
+poke = pokemon.Pokemon(le_pokemon())
 
 
-@app.route("/battle/")
-def inicia_batalha(poke):
+@app.route("/battle/", methods=["GET", "POST"])
+def inicia_batalha():
     battle_state = cria_bs(poke)
+    print(battle_state)
+
+    if request.method == 'POST':
+        return request.data
+
     return battle_state
 
 
@@ -24,22 +33,14 @@ def cria_bs(poke):
 
 ### <TESTES> ###
 
-@app.route('/')
-def hello():
-    return "Hello World!"
-
-
-@app.route("/upload", methods=["POST"])
-def upload_file():
-    if request.method == 'POST':
-        f = request.files['the_file']
-        f.save('/var/www/uploads/uploaded_file.txt')
+# @app.route('/')
+# def hello():
+#     return "Hello World!"
 
 ### </TESTES> ###
 
-
 # Define Struggle como um possível ataque
-struggle = pokemon.Ataque(["Struggle", 0, 100, 50, 10])
+# struggle = pokemon.Ataque(["Struggle", 0, 100, 50, 10])
 
 
 def batalha(poke1, poke2):

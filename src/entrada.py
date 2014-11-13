@@ -1,20 +1,9 @@
-#!/usr/bin/env python3
+"""Inicialização e funções de leitura."""
 
-"""Módulo principal do projeto."""
-
-from flask import Flask, current_app
-from __init__ import app
-
-from pokemon import Pokemon, Ataque, le_tipos, erro_leitura
+from src.pokemon import Pokemon, Ataque, le_tipos, erro_leitura
 
 # Lê de arquivo tipos e tabela de efetividade
 num_tipos = le_tipos("tipos.txt")
-
-# Roda o flask
-app.debug = True
-app.run()
-
-import batalha
 
 
 def le_pokemon():
@@ -51,15 +40,3 @@ def le_ataque():
         dados.append(int(input()))
 
     return dados
-
-
-try:
-    poke = Pokemon(le_pokemon())
-
-# Ctrl-C
-except KeyboardInterrupt:
-    exit(1)
-
-# Ctrl-D
-except EOFError:
-    print("EOF detectado!")
