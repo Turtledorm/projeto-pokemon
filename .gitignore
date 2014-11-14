@@ -1,6 +1,13 @@
-# Arquivos a serem ignorados pelo git
+### Arquivos a serem ignorados pelo git
+
+# Arquivos gerais
 *.tar
 *.pyc
 *~
 __pycache__
 .nfs*
+
+# Arquivos do virtualenv
+bin/*
+include/*
+lib/*

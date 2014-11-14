@@ -1,4 +1,4 @@
-"""Inicialização e funções de leitura."""
+"""Funções de leitura para criar objetos de uma classe."""
 
 from pokemon import Pokemon, Ataque, le_tipos, erro_leitura
 
@@ -7,7 +7,7 @@ num_tipos = le_tipos("tipos.txt")
 
 
 def le_pokemon():
-    """Recebe dados do Pokémon, guarda-os numa lista e devolve-a."""
+    """Recebe dados do Pokémon e cria um objeto dessa classe."""
     dados = [input()]  # Começa com o nome
 
     # Leitura de LVL, HP, ATK, DEF, SPD, SPC, Tipo 1 e Tipo 2
@@ -22,12 +22,12 @@ def le_pokemon():
     dados.append(ataques)
 
     print("'" + dados[0] + "' lido com sucesso!")
-    
+
     return Pokemon(dados)
 
 
 def le_ataque():
-    """Recebe dados de um ataque e devolve uma lista contendo-os."""
+    """Recebe dados de um ataque e cria um objeto dessa classe."""
     dados = [input()]  # Começa com o nome
 
     # Leitura do tipo

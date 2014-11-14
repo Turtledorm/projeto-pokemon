@@ -40,9 +40,9 @@ def batalha(poke1, poke2):
 def quem_comeca(poke1, poke2):
     """Compara o SPD dos dois Pokémons e decide quem inicia a batalha."""
     if poke1.spd > poke2.spd:
-        return poke1, poke2
+        return poke1
     if poke1.spd < poke2.spd:
-        return poke2, poke1
+        return poke2
 
     # Se o SPD for igual, a escolha é aleatória
     if random.randint(1, 2) == 1:

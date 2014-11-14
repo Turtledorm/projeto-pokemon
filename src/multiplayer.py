@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
+"""Funções relacionadas à interação cliente-servidor"""
 
 import requests
-import sys
 from flask import Flask, request, abort
 
 from entrada import le_pokemon
@@ -9,6 +8,9 @@ from batalha import batalha, escolhe_ataque, realiza_ataque
 from pokemon import Pokemon
 
 app = Flask(__name__)
+
+# Cria Pokémon inicial
+poke_server = poke_cliente = None
 
 
 @app.route("/battle/", methods=["POST"])
@@ -45,17 +47,16 @@ def ataque(id):
 
 def cria_bs(poke1, poke2=None):
     xml = ('<?xml version="1.0" encoding="utf-8"?>'
-         + "<battle_state>"
-         + poke1.to_xml())
+           + "<battle_state>"
+           + poke1.to_xml())
     if poke2 is not None:
         xml += poke2.to_xml
     xml += "</battle_state>"
     return xml
 
 
-
 def cliente_init(poke):
-    #payload = {'key1': 'value1', 'key2': 'value2'}
+    # payload = {'key1': 'value1', 'key2': 'value2'}
     battle_state = cria_bs(poke)
     requests.post("http://127.0.0.1:5000/battle/", data=battle_state)
 
@@ -70,16 +71,14 @@ def server_ataque():
     ataque = escolhe_ataque(poke_server)
     realiza_ataque(poke_server, poke_cliente, ataque)
 
-
 # -------------------------------------------------------------------
 
-# Cria Pokémon inicial
-poke_server = poke_cliente = None
 
-for arg in sys.argv[1:]:
-    if arg == "-c":
-        poke_cliente = le_pokemon()
-        cliente_init(poke_cliente)
-    elif arg == "-s":
-        app.debug = True
-        app.run()
+def programa_cliente():
+    poke_cliente = le_pokemon()
+    cliente_init(poke_cliente)
+
+
+def programa_server():
+    app.debug = True
+    app.run()

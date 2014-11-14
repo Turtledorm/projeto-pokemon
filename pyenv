@@ -1,0 +1,38 @@
+#!/bin/bash
+# Script que acrescenta um virtualenv em um diretório já existente.
+
+REQ="doc/requirements.txt"  # Arquivo com as dependências
+
+# --------------------------------------------------------------------
+# Mostra como usar o script.
+
+function uso {
+    echo -e "\e[1mUSO\e[0m"
+    echo -e "\t$1 [\e[1m-h\e[0m]\n"
+
+    echo -e "\e[1mDESCRIÇÃO\e[0m"
+    echo -e "\tCria um virtualenv para Python 3 no diretório atual."
+    echo -e "\tTambém instala as dependências encontradas em '$REQ'.\n"
+
+    echo -e "\e[1mOPÇÕES\e[0m"
+    echo -e "\t\e[1m-h\e[0m\tMostra como usar o script, além de abandoná-lo.\n"
+
+    exit
+}
+
+# --------------------------------------------------------------------
+# MAIN 
+
+# Argumentos por linha de comando
+for arg in "$@"; do
+    if [ "$arg" == "-h" ]; then uso "$0"; fi
+done
+
+virtualenv -p python3 ../${PWD##*/}
+if [ -f "$REQ" ]; then
+    source bin/activate
+    echo "Installing requirements from $REQ..."
+    pip3 install -r $REQ
+fi
+
+echo "Done!"
