@@ -3,4 +3,4 @@
 from src import app
 
 # Roda o Flask
-app.run()
+# app.run()

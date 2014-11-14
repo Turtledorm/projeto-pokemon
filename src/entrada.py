@@ -1,6 +1,6 @@
 """Inicialização e funções de leitura."""
 
-from src.pokemon import Pokemon, Ataque, le_tipos, erro_leitura
+from pokemon import Pokemon, Ataque, le_tipos, erro_leitura
 
 # Lê de arquivo tipos e tabela de efetividade
 num_tipos = le_tipos("tipos.txt")
@@ -18,11 +18,12 @@ def le_pokemon():
     ataques = []
     num_ataques = int(input())
     for i in range(num_ataques):
-        ataques.append(Ataque(le_ataque()))
+        ataques.append(le_ataque())
     dados.append(ataques)
 
     print("'" + dados[0] + "' lido com sucesso!")
-    return dados
+    
+    return Pokemon(dados)
 
 
 def le_ataque():
@@ -39,4 +40,4 @@ def le_ataque():
     for i in range(3):
         dados.append(int(input()))
 
-    return dados
+    return Ataque(dados)

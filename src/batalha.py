@@ -3,49 +3,17 @@
 import sys
 import random
 import subprocess
-from flask import Flask, Response, request, render_template
 
-import src.pokemon as pokemon
-from src.entrada import le_pokemon
-from src import app
-
-# Cria Pokémon inicial
-poke = pokemon.Pokemon(le_pokemon())
-
-
-@app.route("/battle/", methods=["GET", "POST"])
-def inicia_batalha():
-    battle_state = cria_bs(poke)
-    print(battle_state)
-
-    if request.method == 'POST':
-        return request.data
-
-    return battle_state
-
-
-def cria_bs(poke):
-    return ('<?xml version="1.0" encoding="utf-8"?>'
-          + "<battle_state>"
-          + poke.to_xml()
-          + "</battle_state>")
-    
-
-### <TESTES> ###
-
-# @app.route('/')
-# def hello():
-#     return "Hello World!"
-
-### </TESTES> ###
+import pokemon
 
 # Define Struggle como um possível ataque
-# struggle = pokemon.Ataque(["Struggle", 0, 100, 50, 10])
+struggle = pokemon.Ataque(["Struggle", 0, 100, 50, 10])
 
 
 def batalha(poke1, poke2):
     """Simula uma batalha entre dois Pokémons até decidir o vencedor."""
-    atacante, defensor = ordem_inicio(poke1, poke2)
+    atacante = quem_comeca(poke1, poke2)
+    defensor = poke2 if atacante == poke1 else poke1
 
     # Loop principal da batalha e do jogo
     while poke1.hp > 0 and poke2.hp > 0:
@@ -69,7 +37,7 @@ def batalha(poke1, poke2):
         print(">", vencedor.nome + " vence a batalha! :D")
 
 
-def ordem_inicio(poke1, poke2):
+def quem_comeca(poke1, poke2):
     """Compara o SPD dos dois Pokémons e decide quem inicia a batalha."""
     if poke1.spd > poke2.spd:
         return poke1, poke2
@@ -78,8 +46,8 @@ def ordem_inicio(poke1, poke2):
 
     # Se o SPD for igual, a escolha é aleatória
     if random.randint(1, 2) == 1:
-        return poke1, poke2
-    return poke2, poke1
+        return poke1
+    return poke2
 
 
 def mostra_pokemons(poke1, poke2):
