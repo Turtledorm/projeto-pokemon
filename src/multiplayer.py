@@ -11,10 +11,9 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
-# Cria Pokémon inicial
 poke_server = None
 poke_cliente = None
-
+server_ip = None
 
 @app.route("/battle/", methods=["POST"])
 def inicia_servidor():
@@ -75,11 +74,14 @@ def cria_bs(poke1, poke2=None):
 def cliente_init(poke):
     global poke_cliente, poke_server
     battle_state = cria_bs(poke)
+
     try:
-        bs = requests.post("http://0.0.0.0:5000/battle/", data=battle_state)
+        
+        bs = requests.post("http://" + ip + ":5000/battle/", data=battle_state)
     except requests.exceptions.ConnectionError:
         print("Não foi possível se conectar ao servidor!")
         exit(1)
+
     cliente_temp, poke_server = bs_to_poke(bs.text)
     poke_cliente.hp = cliente_temp.hp
 
@@ -95,7 +97,7 @@ def cliente_ataque():
     # Tenta mandar a escolha ao servidor
     try:
         print("Esperando resposta do servidor...")
-        bs = requests.post("http://0.0.0.0:5000/battle/attack/" + str(id))
+        bs = requests.post("http://" + ip + ":5000/battle/attack/" + str(id))
     except requests.exceptions.ConnectionError:
         print("A conexão com o servidor caiu!")
         exit(1)
@@ -167,17 +169,22 @@ def xml_to_poke(xml):
 
 
 def programa_cliente():
-    global poke_cliente, poke_server
+    global poke_cliente, poke_server, ip
     poke_cliente = le_pokemon()
+    ip = input("Digite o endereço IP do servidor: ")
     cliente_init(poke_cliente)
+
     while True:
         if poke_cliente.hp <= 0 or poke_server.hp <= 0:
             break
         cliente_ataque()
+
     mostra_pokemons(poke_server, poke_cliente)
     resultado(poke_cliente, poke_server)
 
 
 def programa_server():
     app.debug = True
-    app.run(host='0.0.0.0')
+    app.run(host="0.0.0.0")
+
+

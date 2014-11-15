@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """Verificação dos argumentos por linha de comando."""
 
 import sys
