@@ -8,6 +8,7 @@ BARRA_MAX = 20   # Comprimento máximo da barra de vida
 tabela_eff = []  # Tabela com multiplicadores de efetividade
 tipos = []       # Lista de tipos
 
+
 class Pokemon:
 
     """Representa um Pokémon, unidade de batalha no jogo."""
@@ -49,7 +50,10 @@ class Pokemon:
     def imprime_barra(self):
         """Imprime uma barra para facilitar a leitura do HP do Pokémon."""
         # Pega o comprimento relativo à vida atual
-        length = int(BARRA_MAX * self.hp/self.hp_max)
+        if self.hp_max != 0:  # TEMPORÁRIO
+            length = int(BARRA_MAX * self.hp/self.hp_max)
+        else:
+            length = 1
         if length == 0 and self.hp > 0:
             length = 1
 
@@ -94,6 +98,10 @@ class Pokemon:
     @property
     def hp(self):
         return self._hp
+
+    @hp.setter
+    def hp(self, valor):
+        self._hp = valor
 
     @property
     def hp_max(self):
@@ -163,7 +171,8 @@ class Pokemon:
         xml += "</pokemon>"
 
         return xml
-        
+
+
 class Ataque:
 
     """Representa um ataque de Pokémon."""

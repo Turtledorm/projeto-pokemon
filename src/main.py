@@ -13,5 +13,3 @@ for arg in sys.argv[1:]:
         programa_server()
     elif arg == "-l":
         batalha(le_pokemon(), le_pokemon())
-
-

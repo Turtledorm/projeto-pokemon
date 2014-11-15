@@ -26,9 +26,12 @@ def batalha(poke1, poke2):
     mostra_pokemons(poke1, poke2)
 
     # Define Pokémon vencedor e perdedor
+    resultado(poke1, poke2)
+
+
+def resultado(poke1, poke2):
     vencedor = poke1 if poke1.hp > 0 else poke2
     perdedor = poke2 if poke1 == vencedor else poke1
-
     print(">", perdedor.nome + " foi nocauteado!")
     if vencedor.hp <= 0:
         print(">", vencedor.nome + " foi nocauteado!")

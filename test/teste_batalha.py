@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Testa se a batalha entre dois Pokémons está ocorrendo 
+"""Testa se a batalha entre dois Pokémons está ocorrendo
    segundo os conformes. O programa gera pokémons aleatórios
    e simula uma entrada consistindo de ataques."""
 

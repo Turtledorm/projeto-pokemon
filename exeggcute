@@ -72,7 +72,11 @@ pokes=(${pokes// / })
 if (( $cont == 0 )); then
     # A implementação permite ter uma batalha de mesmos Pokémons!
     arq=`find $POKEDIR* | shuf -n 1`
-    cat $arq `find $POKEDIR* | shuf -n 1` - | ./$SRCDIR/main.py "$param"
+    if [[ $param != "-l" ]]; then
+        cat $arq - | ./$SRCDIR/main.py "$param"
+    else
+        cat $arq `find $POKEDIR* | shuf -n 1` - | ./$SRCDIR/main.py "$param"
+    fi
 else
     poke1="$POKEDIR${pokes[0]}.txt"
     poke2="$POKEDIR${pokes[1]}.txt"
