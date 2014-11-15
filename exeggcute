@@ -10,20 +10,29 @@ SRCDIR="src/"
 # Mostra como usar o script.
 
 function uso {
+    ARGS="[\e[1m-h\e[0m] [\e[1m-i\e[0m] [\e[1m-l\e[0m] [\e[1m-c\e[0m] [\e[1m-s\e[0m]\n"
+
     echo -e "\e[1mUSO\e[0m"
-    echo -e "\t$1 [\e[1mPokémon 1\e[0m] [\e[1mPokémon 2\e[0m] [\e[1m-h\e[0m] [\e[1m-i\e[0m]\n"
+    echo -e "\t$1 [\e[1mPokémon 1\e[0m] [\e[1mPokémon 2\e[0m] $ARGS"
 
     echo -e "\e[1mDESCRIÇÃO\e[0m"
     echo -e "\tExecuta o '${SRCDIR}main.py' com os Pokémons em '${POKEDIR}' citados como parâmetros."
     echo -e "\tOs Pokémons devem ser digitados sem a extensão '.txt'. Por exemplo:\n"
-    echo -e "\t$0 Blastoise Charizard\n"
+    echo -e "\t$0 Blastoise Charizard -l\n"
     echo -e "\tSe nenhum Pokémon for passado como parâmetro, a escolha será aleatória.\n"
 
-    echo -e "\e[1mOPÇÕES\e[0m"
+    echo -e "\e[1mOPÇÕES DO EXEGGCUTE\e[0m"
     echo -e "\tSepare cada opção com um espaço.\n"
 
     echo -e "\t\e[1m-h\e[0m\tMostra como usar o script, além de abandoná-lo.\n"
     echo -e "\t\e[1m-i\e[0m\tMostra os Pokémons disponíveis e abandona o script.\n"
+
+    echo -e "\e[1mOPÇÕES DO PROGRAMA PRINCIPAL\e[0m"
+    echo -e "\tSepare cada opção com um espaço.\n"
+
+    echo -e "\t\e[1m-l\e[0m\tRoda o programa localmente (modo offline). Usa dois Pokémons.\n"
+    echo -e "\t\e[1m-c\e[0m\tExecuta o programa como cliente. Usa um Pokémon.\n"
+    echo -e "\t\e[1m-s\e[0m\tExecuta o programa como servidor. Usa um Pokémon.\n"
 
     exit
 }
@@ -31,7 +40,11 @@ function uso {
 # --------------------------------------------------------------------
 # MAIN
 
-# Verifica se há alguma opção especial
+param=""  # Argumento do programa principal
+cont=$#   # Nº de argumentos dados ao script
+pokes=""  # Vetor para guardar os Pokémons passados ao programa principal
+
+# Verifica os argumentos especiais
 for arg in "$@"; do
     case $arg in
     -h)
@@ -39,22 +52,41 @@ for arg in "$@"; do
     -i)
         ls --color=auto $POKEDIR
         exit;;
+    -s)
+        param=$arg
+        cont=$((cont - 1));;
+    -c)
+        param=$arg
+        cont=$((cont - 1));;
+    -l)
+        param=$arg
+        cont=$((cont - 1));;
+    *)
+        pokes="$pokes $arg";;
     esac
 done
 
-if (( $# == 0 )); then
+# Quebra a string "pokes" em um array
+pokes=(${pokes// / })
+
+if (( $cont == 0 )); then
     # A implementação permite ter uma batalha de mesmos Pokémons!
-    arq=`find $POKEDIR/* | shuf -n 1`
-    # cat $arq `find $POKEDIR/* | shuf -n 1` - | ./$SRCDIR/main.py
-    cat $arq `find $POKEDIR/* | shuf -n 1` - | ./src/main.py "$3"
+    arq=`find $POKEDIR* | shuf -n 1`
+    cat $arq `find $POKEDIR* | shuf -n 1` - | ./$SRCDIR/main.py "$param"
 else
-    if [ -f "$POKEDIR/$1.txt" ]; then
-        if [ -f "$POKEDIR/$2.txt" ]; then
-            cat "$POKEDIR/$1.txt" "$POKEDIR/$2.txt" - | ./src/main.py "$3"
+    poke1="$POKEDIR${pokes[0]}.txt"
+    poke2="$POKEDIR${pokes[1]}.txt"
+    if (( ${#pokes[@]} >= 1 )) && [ -f "$poke1" ]; then
+        if (( ${#pokes[@]} >= 2 )); then
+            if [ -f "$poke2" ]; then
+                cat "$poke1" "$poke2" - | ./$SRCDIR/main.py "$param"
+            else
+                echo "${pokes[1]} não encontrado!"
+            fi
         else
-            echo "'$2.txt' não encontrado!"
+            cat "$poke1" - | ./$SRCDIR/main.py "$param"
         fi
     else
-        echo "'$1.txt' não encontrado!"
+        echo "${pokes[0]} não encontrado!"
     fi
 fi
