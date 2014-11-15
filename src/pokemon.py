@@ -8,7 +8,6 @@ BARRA_MAX = 20   # Comprimento máximo da barra de vida
 tabela_eff = []  # Tabela com multiplicadores de efetividade
 tipos = []       # Lista de tipos
 
-
 class Pokemon:
 
     """Representa um Pokémon, unidade de batalha no jogo."""
@@ -164,8 +163,7 @@ class Pokemon:
         xml += "</pokemon>"
 
         return xml
-
-
+        
 class Ataque:
 
     """Representa um ataque de Pokémon."""

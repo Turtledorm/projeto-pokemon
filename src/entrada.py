@@ -22,7 +22,6 @@ def le_pokemon():
     dados.append(ataques)
 
     print("'" + dados[0] + "' lido com sucesso!")
-
     return Pokemon(dados)
 
 

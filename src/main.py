@@ -2,7 +2,7 @@
 """Verificação dos argumentos por linha de comando."""
 
 import sys
-from multiplayer import programa_cliente, programa_server
+from multiplayer import programa_cliente, programa_server, cria_bs
 from entrada import le_pokemon
 from batalha import batalha
 
@@ -13,3 +13,5 @@ for arg in sys.argv[1:]:
         programa_server()
     elif arg == "-l":
         batalha(le_pokemon(), le_pokemon())
+
+
