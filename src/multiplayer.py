@@ -30,7 +30,7 @@ def inicia_servidor():
     global poke_servidor, poke_cliente
 
     # Verifica se outra batalha está em andamento
-    if poke_servidor is not None:
+    if poke_servidor is not None and app.config['TESTING'] is not True:
         return Trancado()
 
     poke_servidor = le_pokemon()

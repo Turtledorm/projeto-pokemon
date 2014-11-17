@@ -35,7 +35,7 @@ class PokeTestCase(unittest.TestCase):
 
     def test_ataques(self):
         """Verifica se os ataques coincidem com os valores pré-estipulados."""
-        for i in range(4):
+        for i in range(len(self.test.ataques)):
             ataque = self.test.ataques[i]
             self.assertEqual(ataque.nome, self.ctrl.ataques[i][0])
             self.assertEqual(ataque.typ.numero, self.ctrl.ataques[i][1])
