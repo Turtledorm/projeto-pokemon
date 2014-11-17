@@ -129,7 +129,6 @@ def cliente_ataque():
     mostra_pokemons(poke_servidor, poke_cliente)
     id = escolhe_ataque(poke_cliente)
     if id not in poke_cliente.ataques:
-        print("id = struggle")
         id = 0
     else:
         id = poke_cliente.ataques.index(id) + 1
