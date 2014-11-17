@@ -12,31 +12,27 @@ from bs4 import BeautifulSoup
 # Instância do Flask
 app = Flask(__name__)
 
-# Variáveis globais para os Pokémons do cliente e servidor
-poke_server = None
-poke_cliente = None
-
 
 @app.route("/battle/", methods=["POST"])
 def inicia_servidor():
     """Recebe um objeto battle_state com o Pokémon do cliente
     e atualiza-o com os dados do servidor."""
-    global poke_server, poke_cliente
+    global poke_servidor, poke_cliente
 
-    poke_server = le_pokemon()
+    poke_servidor = le_pokemon()
 
     # Convertemos o xml para um objeto Pokémon
     poke_cliente = bs_to_poke(request.data)
 
     # Se servidor for jogar primeiro, já contabilizamos o ataque
-    if quem_comeca(poke_server, poke_cliente) == poke_server:
-        server_ataque()
-        mostra_pokemons(poke_cliente, poke_server)
-        if poke_cliente.hp <= 0 or poke_server.hp <= 0:
-            resultado(poke_cliente, poke_server)
+    if quem_comeca(poke_servidor, poke_cliente) == poke_servidor:
+        servidor_ataque()
+        mostra_pokemons(poke_cliente, poke_servidor)
+        if poke_cliente.hp <= 0 or poke_servidor.hp <= 0:
+            resultado(poke_cliente, poke_servidor)
 
     # Atualizamos o battle_state com os dados do Pokémon do cliente
-    battle_state = cria_bs(poke_cliente, poke_server)
+    battle_state = cria_bs(poke_cliente, poke_servidor)
 
     # Descobrir qual condição devemos colocar aqui
     if False:
@@ -49,23 +45,23 @@ def inicia_servidor():
 def ataque(id):
     """Contabiliza os ataques escolhidos dos dois jogadores,
        retornando o resultado em um objeto battle_state."""
-    global poke_cliente, poke_server
+    global poke_cliente, poke_servidor
 
     if id != 0:
-        realiza_ataque(poke_cliente, poke_server,
+        realiza_ataque(poke_cliente, poke_servidor,
                        poke_cliente.get_ataque(id-1))
     else:
         # Caso especial: Struggle
-        realiza_ataque(poke_cliente, poke_server, struggle)
+        realiza_ataque(poke_cliente, poke_servidor, struggle)
 
-    if poke_cliente.hp > 0 and poke_server.hp > 0:
-        server_ataque()
+    if poke_cliente.hp > 0 and poke_servidor.hp > 0:
+        servidor_ataque()
 
     # Modificamos o battle_state com ambos os ataques contabilizados
-    battle_state = cria_bs(poke_cliente, poke_server)
+    battle_state = cria_bs(poke_cliente, poke_servidor)
 
-    if poke_cliente.hp <= 0 or poke_server.hp <= 0:
-        resultado(poke_cliente, poke_server)
+    if poke_cliente.hp <= 0 or poke_servidor.hp <= 0:
+        resultado(poke_cliente, poke_servidor)
 
     return battle_state
 
@@ -93,26 +89,27 @@ def cria_bs(poke1, poke2=None):
 
 def cliente_init(poke):
     """Envia um objeto battle_state com dados do cliente ao servidor."""
-    global poke_cliente, poke_server
+    global poke_cliente, poke_servidor
 
     battle_state = cria_bs(poke)
     try:
-        bs = requests.post("http://" + ip + ":5000/battle/", data=battle_state)
+        bs = requests.post("http://" + servidor + "/battle/",
+                            data=battle_state)
         bs.raise_for_status()
     except requests.exceptions.ConnectionError:
         print("Não foi possível se conectar ao servidor!")
         exit(1)
 
-    cliente_temp, poke_server = bs_to_poke(bs.text)
+    cliente_temp, poke_servidor = bs_to_poke(bs.text)
     poke_cliente.hp = cliente_temp.hp
 
 
 def cliente_ataque():
     """Envia a escolha de ataque do cliente ao servidor."""
-    global poke_cliente, poke_server
+    global poke_cliente, poke_servidor
 
     # Cliente escolhe seu ataque
-    mostra_pokemons(poke_server, poke_cliente)
+    mostra_pokemons(poke_servidor, poke_cliente)
     id = escolhe_ataque(poke_cliente)
     if id not in poke_cliente.ataques:
         print("id = struggle")
@@ -123,7 +120,7 @@ def cliente_ataque():
     # Tenta mandar a escolha ao servidor
     try:
         print("Esperando resposta do servidor...")
-        bs = requests.post("http://" + ip + ":5000/battle/attack/" + str(id))
+        bs = requests.post("http://" + servidor + "/battle/attack/" + str(id))
     except requests.exceptions.ConnectionError:
         print("A conexão com o servidor caiu!")
         exit(1)
@@ -131,18 +128,18 @@ def cliente_ataque():
     # Atualiza dados do cliente
     cliente_temp, server_temp = bs_to_poke(bs.text)
     poke_cliente.hp = cliente_temp.hp
-    poke_server.hp = server_temp.hp
+    poke_servidor.hp = servidor_temp.hp
     if id > 0:
         poke_cliente.get_ataque(id-1).usa_pp()
 
 
-def server_ataque():
+def servidor_ataque():
     """Contabiliza o ataque escolhido pelo servidor na batalha."""
-    global poke_cliente, poke_server
+    global poke_cliente, poke_servidor
 
-    mostra_pokemons(poke_cliente, poke_server)
-    ataque = escolhe_ataque(poke_server)
-    realiza_ataque(poke_server, poke_cliente, ataque)
+    mostra_pokemons(poke_cliente, poke_servidor)
+    ataque = escolhe_ataque(poke_servidor)
+    realiza_ataque(poke_servidor, poke_cliente, ataque)
 
 
 def bs_to_poke(battle_state):
@@ -203,25 +200,30 @@ def xml_to_poke(xml):
 
 def programa_cliente():
     """Executa o programa no modo cliente."""
-    global poke_cliente, poke_server, ip
+    global poke_cliente, poke_servidor, servidor
 
     poke_cliente = le_pokemon()
     ip = input("Digite o endereço IP do servidor: ")
+    try:
+        port = int(input("Digite a porta de conexão: "))
+    except ValueError:
+        port = 5000
+    servidor = ip + ":" + str(port)
 
     cliente_init(poke_cliente)
-    while poke_cliente.hp > 0 and poke_server.hp > 0:
+    while poke_cliente.hp > 0 and poke_servidor.hp > 0:
         cliente_ataque()
 
-    mostra_pokemons(poke_server, poke_cliente)
-    resultado(poke_cliente, poke_server)
+    mostra_pokemons(poke_servidor, poke_cliente)
+    resultado(poke_cliente, poke_servidor)
 
     # Envia pedido para fechar o servidor
-    requests.post("http://" + ip + ":5000/shutdown/")
+    requests.post("http://" + servidor + "/shutdown/")
 
 
-def programa_server():
+def programa_servidor():
     """Executa o programa no modo servidor."""
     try:
         app.run(host="0.0.0.0", debug=True)
     except OSError:
-        print("Endereço do server já em uso!")
+        print("Endereço do servidor já em uso!")
