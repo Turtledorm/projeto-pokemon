@@ -16,7 +16,7 @@ from pokemon import Pokemon, Ataque, le_tipos, get_eff
 le_tipos("tipos.txt")
 
 import batalha
-from batalha import ordem_inicio, escolhe_ataque, mostra_pokemons, \
+from batalha import quem_comeca, escolhe_ataque, mostra_pokemons, \
     struggle, acertou, stab, critico, efetividade, realiza_ataque, aleatorio
 from random_poke import RandomPoke
 
@@ -32,21 +32,19 @@ class BatalhaTestCase(unittest.TestCase):
         self.poke1 = Pokemon(self.a.gera())
         self.poke2 = Pokemon(self.b.gera())
 
-    def test_ordem_inicio(self):
-        """Verifica se a função ordem_inicio retorna
+    def test_quem_comeca(self):
+        """Verifica se a função quem_comeca retorna
            a tupla com o Pokemon de maior SPD primeiro."""
         primeiro = (self.poke1 if self.poke1.spd > self.poke2.spd
                     else self.poke2)
         segundo = self.poke2 if primeiro == self.poke1 else self.poke1
 
-        self.assertEqual(ordem_inicio(primeiro, segundo),
-                                     (primeiro, segundo))
-        self.assertEqual(ordem_inicio(segundo, primeiro),
-                                     (primeiro, segundo))
+        self.assertEqual(quem_comeca(primeiro, segundo), primeiro)
+        self.assertEqual(quem_comeca(segundo, primeiro), primeiro)
 
-        self.assertRaises(AttributeError, ordem_inicio, None, None)
-        self.assertRaises(AttributeError, ordem_inicio, self.poke1, None)
-        self.assertRaises(AttributeError, ordem_inicio, None, self.poke1)
+        self.assertRaises(AttributeError, quem_comeca, None, None)
+        self.assertRaises(AttributeError, quem_comeca, self.poke1, None)
+        self.assertRaises(AttributeError, quem_comeca, None, self.poke1)
 
     def test_mostra(self):
         """Apenas verifica se a função levanta erros de atributos."""
@@ -64,7 +62,7 @@ class BatalhaTestCase(unittest.TestCase):
             self.assertEqual(escolhe_ataque(self.poke1), struggle)
 
         # Testando se escolhe_ataque está retornando os ataques corretos
-        for i in range(4):
+        for i in range(len(self.poke1.ataques)):
             batalha.input = Mock(return_value=(i+1))
             self.assertEqual(escolhe_ataque(self.poke1), self.poke1.ataques[i])
 
