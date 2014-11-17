@@ -20,6 +20,8 @@ MAC0242 - Relatório (Parte 2)
 
   - ***Etapa2.pdf***: O enunciado da segunda etapa.
   - ***requirements.txt***: Dependências do programa a serem instaladas pelo pip.
+  - ***uml/Classes2.dia***: Diagrama de classes desta fase do projeto. Feito no programa Dia. É importante notar que, embora alguns módulos (*batalha* e *entrada*) contenham funções sem classes, eles em si foram, por clareza, considerados como classes não instanciáveis.
+  - ***uml/Classes2.png***: Versão em imagem do anterior.
 
 ###### src/
 
