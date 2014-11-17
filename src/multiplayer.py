@@ -2,6 +2,7 @@
 
 import requests
 from flask import Flask, request, abort
+from werkzeug.exceptions import HTTPException
 
 from entrada import le_pokemon
 from batalha import batalha, escolhe_ataque, realiza_ataque, \
@@ -9,8 +10,17 @@ from batalha import batalha, escolhe_ataque, realiza_ataque, \
 from pokemon import Pokemon, Ataque
 from bs4 import BeautifulSoup
 
+poke_cliente = None
+poke_servidor = None
+
 # Instância do Flask
 app = Flask(__name__)
+
+
+class Trancado(HTTPException):
+    """Exception para o erro 423: Locked"""
+    code = 423
+    description = "Locked"
 
 
 @app.route("/battle/", methods=["POST"])
@@ -18,6 +28,10 @@ def inicia_servidor():
     """Recebe um objeto battle_state com o Pokémon do cliente
     e atualiza-o com os dados do servidor."""
     global poke_servidor, poke_cliente
+
+    # Verifica se outra batalha está em andamento
+    if poke_servidor is not None:
+        return Trancado()
 
     poke_servidor = le_pokemon()
 
@@ -27,16 +41,13 @@ def inicia_servidor():
     # Se servidor for jogar primeiro, já contabilizamos o ataque
     if quem_comeca(poke_servidor, poke_cliente) == poke_servidor:
         servidor_ataque()
-        mostra_pokemons(poke_cliente, poke_servidor)
         if poke_cliente.hp <= 0 or poke_servidor.hp <= 0:
             resultado(poke_cliente, poke_servidor)
+    else:
+        mostra_pokemons(poke_cliente, poke_servidor)
 
     # Atualizamos o battle_state com os dados do Pokémon do cliente
     battle_state = cria_bs(poke_cliente, poke_servidor)
-
-    # Descobrir qual condição devemos colocar aqui
-    if False:
-        abort(423)
 
     return battle_state
 
@@ -73,7 +84,7 @@ def shutdown():
     if func is None:
         raise RuntimeError("Não é um servidor Werkzeug!")
     func()
-    return "Server finalizado!"
+    return "Servidor finalizado!"
 
 
 def cria_bs(poke1, poke2=None):
@@ -92,12 +103,18 @@ def cliente_init(poke):
     global poke_cliente, poke_servidor
 
     battle_state = cria_bs(poke)
+
     try:
         bs = requests.post("http://" + servidor + "/battle/",
-                            data=battle_state)
+                           data=battle_state)
         bs.raise_for_status()
+
     except requests.exceptions.ConnectionError:
         print("Não foi possível se conectar ao servidor!")
+        exit(1)
+
+    except requests.exceptions.HTTPError:
+        print("Já existe um jogo em andamento no servidor!")
         exit(1)
 
     cliente_temp, poke_servidor = bs_to_poke(bs.text)
@@ -126,7 +143,7 @@ def cliente_ataque():
         exit(1)
 
     # Atualiza dados do cliente
-    cliente_temp, server_temp = bs_to_poke(bs.text)
+    cliente_temp, servidor_temp = bs_to_poke(bs.text)
     poke_cliente.hp = cliente_temp.hp
     poke_servidor.hp = servidor_temp.hp
     if id > 0:
@@ -140,6 +157,7 @@ def servidor_ataque():
     mostra_pokemons(poke_cliente, poke_servidor)
     ataque = escolhe_ataque(poke_servidor)
     realiza_ataque(poke_servidor, poke_cliente, ataque)
+    mostra_pokemons(poke_cliente, poke_servidor)
 
 
 def bs_to_poke(battle_state):
