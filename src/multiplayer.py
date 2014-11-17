@@ -1,35 +1,39 @@
-"""Funções relacionadas à interação cliente-servidor"""
+"""Funções relacionadas à interação cliente-servidor."""
 
 import requests
 from flask import Flask, request, abort
 
 from entrada import le_pokemon
 from batalha import batalha, escolhe_ataque, realiza_ataque, \
-    quem_comeca, mostra_pokemons, resultado
+    quem_comeca, mostra_pokemons, resultado, struggle
 from pokemon import Pokemon, Ataque
 from bs4 import BeautifulSoup
 
+# Instância do Flask
 app = Flask(__name__)
 
+# Variáveis globais para os Pokémons do cliente e servidor
 poke_server = None
 poke_cliente = None
 
+
 @app.route("/battle/", methods=["POST"])
 def inicia_servidor():
+    """Recebe um objeto battle_state com o Pokémon do cliente
+    e atualiza-o com os dados do servidor."""
     global poke_server, poke_cliente
+
+    poke_server = le_pokemon()
 
     # Convertemos o xml para um objeto Pokémon
     poke_cliente = bs_to_poke(request.data)
 
-    poke_server = le_pokemon()
-
     # Se servidor for jogar primeiro, já contabilizamos o ataque
     if quem_comeca(poke_server, poke_cliente) == poke_server:
         server_ataque()
+        mostra_pokemons(poke_cliente, poke_server)
         if poke_cliente.hp <= 0 or poke_server.hp <= 0:
             resultado(poke_cliente, poke_server)
-    else:
-        mostra_pokemons(poke_cliente, poke_server)
 
     # Atualizamos o battle_state com os dados do Pokémon do cliente
     battle_state = cria_bs(poke_cliente, poke_server)
@@ -43,10 +47,17 @@ def inicia_servidor():
 
 @app.route("/battle/attack/<int:id>", methods=["POST"])
 def ataque(id):
+    """Contabiliza os ataques escolhidos dos dois jogadores,
+       retornando o resultado em um objeto battle_state."""
     global poke_cliente, poke_server
 
-    # Realiza os ataques do cliente e do servidor
-    realiza_ataque(poke_cliente, poke_server, poke_cliente.get_ataque(id))
+    if id != 0:
+        realiza_ataque(poke_cliente, poke_server,
+                       poke_cliente.get_ataque(id-1))
+    else:
+        # Caso especial: Struggle
+        realiza_ataque(poke_cliente, poke_server, struggle)
+
     if poke_cliente.hp > 0 and poke_server.hp > 0:
         server_ataque()
 
@@ -59,13 +70,18 @@ def ataque(id):
     return battle_state
 
 
-@app.route('/shutdown/', methods=['POST'])
+@app.route("/shutdown/", methods=["POST"])
 def shutdown():
-    finaliza_server()
-    return 'Server finalizado!'
+    """Fecha o servidor."""
+    func = request.environ.get("werkzeug.server.shutdown")
+    if func is None:
+        raise RuntimeError("Não é um servidor Werkzeug!")
+    func()
+    return "Server finalizado!"
 
 
 def cria_bs(poke1, poke2=None):
+    """Cria um xml battle_state com dados de até dois Pokémons."""
     xml = ('<?xml version="1.0" encoding="utf-8"?>'
            + "<battle_state>"
            + poke1.to_xml())
@@ -76,12 +92,13 @@ def cria_bs(poke1, poke2=None):
 
 
 def cliente_init(poke):
+    """Envia um objeto battle_state com dados do cliente ao servidor."""
     global poke_cliente, poke_server
-    battle_state = cria_bs(poke)
 
+    battle_state = cria_bs(poke)
     try:
-        
         bs = requests.post("http://" + ip + ":5000/battle/", data=battle_state)
+        bs.raise_for_status()
     except requests.exceptions.ConnectionError:
         print("Não foi possível se conectar ao servidor!")
         exit(1)
@@ -91,12 +108,17 @@ def cliente_init(poke):
 
 
 def cliente_ataque():
+    """Envia a escolha de ataque do cliente ao servidor."""
     global poke_cliente, poke_server
 
     # Cliente escolhe seu ataque
     mostra_pokemons(poke_server, poke_cliente)
     id = escolhe_ataque(poke_cliente)
-    id = poke_cliente.ataques.index(id)
+    if id not in poke_cliente.ataques:
+        print("id = struggle")
+        id = 0
+    else:
+        id = poke_cliente.ataques.index(id) + 1
 
     # Tenta mandar a escolha ao servidor
     try:
@@ -110,10 +132,12 @@ def cliente_ataque():
     cliente_temp, server_temp = bs_to_poke(bs.text)
     poke_cliente.hp = cliente_temp.hp
     poke_server.hp = server_temp.hp
-    poke_cliente.get_ataque(id).usa_pp()
+    if id > 0:
+        poke_cliente.get_ataque(id-1).usa_pp()
 
 
 def server_ataque():
+    """Contabiliza o ataque escolhido pelo servidor na batalha."""
     global poke_cliente, poke_server
 
     mostra_pokemons(poke_cliente, poke_server)
@@ -121,26 +145,24 @@ def server_ataque():
     realiza_ataque(poke_server, poke_cliente, ataque)
 
 
-def finaliza_server():
-    func = request.environ.get("werkzeug.server.shutdown")
-    if func is None:
-        raise RuntimeError("Not running with the Werkzeug Server")
-    func()
-
-
 def bs_to_poke(battle_state):
-    """Retorna até dois objetos Pokémon cujos dados estão no battle_state"""
+    """Retorna até dois objetos Pokémon cujos dados estão no battle_state."""
     battle_state = str(battle_state)
-    xml = battle_state.split('</pokemon>', 1)  # O primeiro poke no xml[0]
+
+    # Converte o primeiro Pokémon em xml[0]
+    xml = battle_state.split("</pokemon>", 1)
     data_poke1 = xml_to_poke(xml[0])
-    if len(xml[1]) > 100:  # Caso tenha vindo 2 pokes no battle_state
+
+    # Segundo Pokémon
+    if len(xml[1]) > 100:
         data_poke2 = xml_to_poke(xml[1])
         return Pokemon(data_poke1), Pokemon(data_poke2)
+
     return Pokemon(data_poke1)
 
 
 def xml_to_poke(xml):
-    """Recebe uma string xml e devolve uma lista de dados do Pokémon"""
+    """Recebe uma string xml e devolve uma lista de dados do Pokémon."""
     data = BeautifulSoup(xml)  # Objeto que representa o xml
     # Pega todos os atributos do pokemon e separa por linhas
     data = data.pokemon.get_text("\n")
@@ -180,21 +202,26 @@ def xml_to_poke(xml):
 
 
 def programa_cliente():
+    """Executa o programa no modo cliente."""
     global poke_cliente, poke_server, ip
+
     poke_cliente = le_pokemon()
     ip = input("Digite o endereço IP do servidor: ")
-    cliente_init(poke_cliente)
 
-    while True:
-        if poke_cliente.hp <= 0 or poke_server.hp <= 0:
-            break
+    cliente_init(poke_cliente)
+    while poke_cliente.hp > 0 and poke_server.hp > 0:
         cliente_ataque()
 
     mostra_pokemons(poke_server, poke_cliente)
     resultado(poke_cliente, poke_server)
-    requests.post("http://" + ip + ":5000/shutdown/")  # Fecha o servidor
+
+    # Envia pedido para fechar o servidor
+    requests.post("http://" + ip + ":5000/shutdown/")
 
 
 def programa_server():
-    app.debug = True
-    app.run(host="0.0.0.0")
+    """Executa o programa no modo servidor."""
+    try:
+        app.run(host="0.0.0.0", debug=True)
+    except OSError:
+        print("Endereço do server já em uso!")

@@ -18,7 +18,6 @@ def batalha(poke1, poke2):
     # Loop principal da batalha e do jogo
     while poke1.hp > 0 and poke2.hp > 0:
         mostra_pokemons(poke1, poke2)
-        print("* Turno de", atacante.nome, "*\n")
         ataque = escolhe_ataque(atacante)
         realiza_ataque(atacante, defensor, ataque)
         atacante, defensor = defensor, atacante
@@ -27,17 +26,6 @@ def batalha(poke1, poke2):
 
     # Define Pokémon vencedor e perdedor
     resultado(poke1, poke2)
-
-
-def resultado(poke1, poke2):
-    vencedor = poke1 if poke1.hp > 0 else poke2
-    perdedor = poke2 if poke1 == vencedor else poke1
-    print(">", perdedor.nome + " foi nocauteado!")
-    if vencedor.hp <= 0:
-        print(">", vencedor.nome + " foi nocauteado!")
-        print("> A batalha terminou em empate!")
-    else:
-        print(">", vencedor.nome + " vence a batalha! :D")
 
 
 def quem_comeca(poke1, poke2):
@@ -70,6 +58,7 @@ def limpa_tela():
 
 def escolhe_ataque(atacante):
     """Mostra a lista de ataques do Pokémon e lê a escolha do usuário."""
+    print("* Turno de", atacante.nome, "*\n")
     n = atacante.mostra_ataques()
 
     # Se não tiver mais com o que atacar, usa Struggle
@@ -178,3 +167,16 @@ def efetividade(ataque, defensor):
 def aleatorio():
     """Gera um número aleatório a ser usado na fórmula de dano."""
     return random.uniform(0.85, 1)
+
+
+def resultado(poke1, poke2):
+    """Imprime o resultado da batalha baseado no HP dos Pokémons"""
+    vencedor = poke1 if poke1.hp > 0 else poke2
+    perdedor = poke2 if poke1 == vencedor else poke1
+
+    print(">", perdedor.nome + " foi nocauteado!")
+    if vencedor.hp <= 0:
+        print(">", vencedor.nome + " foi nocauteado!")
+        print("> A batalha terminou em empate!")
+    else:
+        print(">", vencedor.nome + " vence a batalha! :D")

@@ -50,10 +50,7 @@ class Pokemon:
     def imprime_barra(self):
         """Imprime uma barra para facilitar a leitura do HP do Pokémon."""
         # Pega o comprimento relativo à vida atual
-        if self.hp_max != 0:  # TEMPORÁRIO
-            length = int(BARRA_MAX * self.hp/self.hp_max)
-        else:
-            length = 1
+        length = int(BARRA_MAX * self.hp/self.hp_max)
         if length == 0 and self.hp > 0:
             length = 1
 

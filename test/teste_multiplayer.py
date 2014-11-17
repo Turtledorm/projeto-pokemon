@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""Testa a conversão de um Pokémon para xml e vice-versa."""
+
 import unittest
 import random
 import sys
