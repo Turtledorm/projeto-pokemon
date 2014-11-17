@@ -62,6 +62,7 @@ class MultiplayerTestCase(unittest.TestCase):
                     """Vamos testar se os resultados são os mesmo se simularmos 
                     no modo offline, já testado pelos outros arquivos de teste 
                     e plenamente operante"""
+
                     self.assertEqual(cria_bs(poke_cliente, poke_server), 
                                              bs_multi)
 
