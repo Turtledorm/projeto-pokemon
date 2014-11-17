@@ -10,7 +10,7 @@ MAC0242 - Relatório (Parte 1)
 
 ### Introdução
 
-  A primeira parte deste projeto visou implementar um jogo (em modo texto) muito semelhante à primeira geração de Pokémon. O programação recebe como entrada dados de dois Pokémons e simula uma batalha entre eles, recebendo ataques do usuário e exibindo mensagens conforme o resultado das ações: qual foi o dano, se foi crítico, efetividade aplicada, etc.
+  A primeira parte deste projeto visou implementar um jogo (em modo texto) muito semelhante à primeira geração de Pokémon. O programa recebe como entrada dados de dois Pokémons e simula uma batalha entre eles, recebendo ataques do usuário e exibindo mensagens conforme o resultado das ações: qual foi o dano, se foi crítico, efetividade aplicada, etc.
 
 ### Visão geral
 
@@ -18,7 +18,7 @@ MAC0242 - Relatório (Parte 1)
 
 ###### doc/
 
-  - ***Classes.dia***: Diagrama de classes desta fase do projeto. Feito no programa Dia. É importante notar que, embora alguns módulos (*batalha* e *main*) contenham funções sem classes, eles em si foram, por clareza, considerados como classes não instanciávels.
+  - ***Classes.dia***: Diagrama de classes desta fase do projeto. Feito no programa Dia. É importante notar que, embora alguns módulos (*batalha* e *main*) contenham funções sem classes, eles em si foram, por clareza, considerados como classes não instanciáveis.
   - ***Classes.png***: Versão em imagem do anterior.
   - ***Etapa1.pdf***: O enunciado da primeira etapa.
 
