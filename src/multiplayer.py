@@ -13,7 +13,6 @@ app = Flask(__name__)
 
 poke_server = None
 poke_cliente = None
-server_ip = None
 
 @app.route("/battle/", methods=["POST"])
 def inicia_servidor():
@@ -50,15 +49,20 @@ def ataque(id):
     realiza_ataque(poke_cliente, poke_server, poke_cliente.get_ataque(id))
     if poke_cliente.hp > 0 and poke_server.hp > 0:
         server_ataque()
-        # Modificamos o battle_state com ambos os ataques contabilizados
-        battle_state = cria_bs(poke_cliente, poke_server)
-    else:
-        resultado(poke_cliente, poke_server)
+
+    # Modificamos o battle_state com ambos os ataques contabilizados
+    battle_state = cria_bs(poke_cliente, poke_server)
 
     if poke_cliente.hp <= 0 or poke_server.hp <= 0:
         resultado(poke_cliente, poke_server)
 
     return battle_state
+
+
+@app.route('/shutdown/', methods=['POST'])
+def shutdown():
+    finaliza_server()
+    return 'Server finalizado!'
 
 
 def cria_bs(poke1, poke2=None):
@@ -115,6 +119,13 @@ def server_ataque():
     mostra_pokemons(poke_cliente, poke_server)
     ataque = escolhe_ataque(poke_server)
     realiza_ataque(poke_server, poke_cliente, ataque)
+
+
+def finaliza_server():
+    func = request.environ.get("werkzeug.server.shutdown")
+    if func is None:
+        raise RuntimeError("Not running with the Werkzeug Server")
+    func()
 
 
 def bs_to_poke(battle_state):
@@ -181,10 +192,9 @@ def programa_cliente():
 
     mostra_pokemons(poke_server, poke_cliente)
     resultado(poke_cliente, poke_server)
+    requests.post("http://" + ip + ":5000/shutdown/")  # Fecha o servidor
 
 
 def programa_server():
     app.debug = True
     app.run(host="0.0.0.0")
-
-
