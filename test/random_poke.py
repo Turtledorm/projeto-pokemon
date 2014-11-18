@@ -30,27 +30,26 @@ class RandomPoke(Pokemon):
             if (self._tipo2 != self._tipo1):
                 break
 
-        #Essa lista conterá os atributos do pokemon no formato linear, o que
-        # é normalmente passado pela entrada padrão. Será útil para o 
+        # Esta lista conterá os atributos do pokemon no formato linear, o que
+        # é normalmente passado pela entrada padrão. Será útil para o
         # teste_multiplayer
-        self.dados_linear = [self._nome, self._lvl, self._hp, self._atk, self._dfs,
-                          self._spd, self._spc, self._tipo1, self._tipo2]
-        
+        self.dados_linear = [self._nome, self._lvl, self._hp,
+                             self._atk, self._dfs, self._spd, self._spc,
+                             self._tipo1, self._tipo2]
+
         self._ataques = []
-        num_ataques = randint(1, 4)                 
+        num_ataques = randint(1, 4)
         self.dados_linear.append(num_ataques)
-        for i in range(num_ataques):                 
+        for i in range(num_ataques):
             gera_ataque = self.gera_ataque()
             self._ataques.append(gera_ataque)
             for att in gera_ataque:
-                self.dados_linear.append(att) 
-        
+                self.dados_linear.append(att)
+
         self.dados = [self._nome, self._lvl, self._hp, self._atk, self._dfs,
                       self._spd, self._spc, self._tipo1, self._tipo2,
                       [Ataque(self._ataques[i]) for i in range(num_ataques)]]
- 
-    
-    
+
     def gera_ataque(self):
         """Gera um ataque com atributos aleatórios."""
         return [''.join(choice(ascii_lowercase + ascii_uppercase)
@@ -64,7 +63,7 @@ class RandomPoke(Pokemon):
         """Retorna a lista que deve ser passada a pokemon.Pokemon
            para criar um pokemon com os valores acima gerados."""
         return self.dados
-    
+
     def gera_linear(self):
         """Retorna a lista com os atributos do pokemon no formato linear"""
         return self.dados_linear
