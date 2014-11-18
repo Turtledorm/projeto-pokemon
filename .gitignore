@@ -2,6 +2,7 @@
 
 # Arquivos gerais
 *.tar
+*.gz
 *.pyc
 *~
 __pycache__

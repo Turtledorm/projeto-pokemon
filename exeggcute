@@ -2,23 +2,28 @@
 # Script que executa de forma simplificada o programa em Python de Pokémon.
 # O nome é uma homenagem a um Pokémon chamado Exeggcute (sim, é uma piada ruim).
 
+# Diretório do projeto
+DIR=`cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd`
+
 # Nome dos diretórios
-POKEDIR="pokemon/"
-SRCDIR="src/"
+POKEDIR="$DIR/pokemon/"
+SRCDIR="$DIR/src/"
 
 # --------------------------------------------------------------------
 # Mostra como usar o script.
 
 function uso {
     ARGS="[\e[1m-h\e[0m] [\e[1m-i\e[0m] [\e[1m-l\e[0m] [\e[1m-c\e[0m] [\e[1m-s\e[0m]\n"
+    POKENAME=`basename $POKEDIR`
+    SRCNAME=`basename $SRCDIR`
 
     echo -e "\e[1mUSO\e[0m"
-    echo -e "\t$1 [\e[1mPokémon 1\e[0m] [\e[1mPokémon 2\e[0m] $ARGS"
+    echo -e "\t./`basename $0` [\e[1mPokémon 1\e[0m] [\e[1mPokémon 2\e[0m] $ARGS"
 
     echo -e "\e[1mDESCRIÇÃO\e[0m"
-    echo -e "\tExecuta o '${SRCDIR}main.py' com os Pokémons em '${POKEDIR}' citados como parâmetros."
+    echo -e "\tExecuta o '${SRCNAME}/main.py' com os Pokémons em '${POKENAME}' citados como parâmetros."
     echo -e "\tOs Pokémons devem ser digitados sem a extensão '.txt'. Por exemplo:\n"
-    echo -e "\t$0 Blastoise Charizard -l\n"
+    echo -e "\t./`basename $0` Blastoise Charizard -l\n"
     echo -e "\tSe nenhum Pokémon for passado como parâmetro, a escolha será aleatória.\n"
 
     echo -e "\e[1mOPÇÕES DO EXEGGCUTE\e[0m"
@@ -48,7 +53,7 @@ pokes=""  # Vetor para guardar os Pokémons passados ao programa principal
 for arg in "$@"; do
     case $arg in
     -h)
-        uso "$0";;
+        uso;;
     -i)
         ls --color=auto $POKEDIR
         exit;;
@@ -73,9 +78,9 @@ if (( $cont == 0 )); then
     # A implementação permite ter uma batalha de mesmos Pokémons!
     arq=`find $POKEDIR* | shuf -n 1`
     if [[ $param != "-l" ]]; then
-        cat $arq - | ./$SRCDIR/main.py "$param"
+        cat $arq - | $SRCDIR/main.py "$param"
     else
-        cat $arq `find $POKEDIR* | shuf -n 1` - | ./$SRCDIR/main.py "$param"
+        cat $arq `find $POKEDIR* | shuf -n 1` - | $SRCDIR/main.py "$param"
     fi
 else
     poke1="$POKEDIR${pokes[0]}.txt"
@@ -83,12 +88,12 @@ else
     if (( ${#pokes[@]} >= 1 )) && [ -f "$poke1" ]; then
         if (( ${#pokes[@]} >= 2 )); then
             if [ -f "$poke2" ]; then
-                cat "$poke1" "$poke2" - | ./$SRCDIR/main.py "$param"
+                cat "$poke1" "$poke2" - | $SRCDIR/main.py "$param"
             else
                 echo "${pokes[1]} não encontrado!"
             fi
         else
-            cat "$poke1" - | ./$SRCDIR/main.py "$param"
+            cat "$poke1" - | $SRCDIR/main.py "$param"
         fi
     else
         echo "${pokes[0]} não encontrado!"
