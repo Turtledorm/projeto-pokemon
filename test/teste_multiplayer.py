@@ -106,6 +106,14 @@ class MultiplayerTestCase(unittest.TestCase):
         """Verifica se o programa está sendo encerrado corretamente."""
         self.assertRaises(RuntimeError, self.app.post, "/shutdown/")
 
+    def test_locked(self):
+        """Como no setUp iniciamos o app, todas as vezes que tentarmos
+           mandar um POST para /battle/ resultará no erro 423."""
+        app.config["TESTING"] = False
+        erro_423 = self.app.post("/battle/")
+        erro_423 = self.padroniza(erro_423.data)
+        self.assertTrue("Locked" in erro_423)
+
     def test_xml(self):
         """Verifica integridade e corretude dos xmls gerados."""
         for i in range(300):

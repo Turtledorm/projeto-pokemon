@@ -10,11 +10,18 @@ from batalha import batalha, escolhe_ataque, realiza_ataque, \
     quem_comeca, mostra_pokemons, resultado, struggle
 from pokemon import Pokemon, Ataque
 
+# Variáveis globais para os dois Pokémons
 poke_cliente = None
 poke_servidor = None
 
 # Instância do Flask
 app = Flask(__name__)
+
+
+class Trancado(HTTPException):
+    """Exception para o erro 423: Locked"""
+    code = 423
+    description = "Locked"
 
 
 @app.route("/battle/", methods=["POST"])
