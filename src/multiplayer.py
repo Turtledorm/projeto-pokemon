@@ -3,24 +3,18 @@
 import requests
 from flask import Flask, request, abort
 from werkzeug.exceptions import HTTPException
+from bs4 import BeautifulSoup
 
 from entrada import le_pokemon
 from batalha import batalha, escolhe_ataque, realiza_ataque, \
     quem_comeca, mostra_pokemons, resultado, struggle
 from pokemon import Pokemon, Ataque
-from bs4 import BeautifulSoup
 
 poke_cliente = None
 poke_servidor = None
 
 # Instância do Flask
 app = Flask(__name__)
-
-
-class Trancado(HTTPException):
-    """Exception para o erro 423: Locked"""
-    code = 423
-    description = "Locked"
 
 
 @app.route("/battle/", methods=["POST"])
@@ -33,6 +27,7 @@ def inicia_servidor():
     if poke_servidor is not None and app.config['TESTING'] is not True:
         return Trancado()
 
+    # Recebe por entrada o Pokémon do servidor
     poke_servidor = le_pokemon()
 
     # Convertemos o xml para um objeto Pokémon
@@ -160,6 +155,9 @@ def servidor_ataque():
     mostra_pokemons(poke_cliente, poke_servidor)
 
 
+# -----------------------------------------------------------------------------
+
+
 def bs_to_poke(battle_state):
     """Retorna até dois objetos Pokémon cujos dados estão no battle_state."""
     battle_state = str(battle_state)
@@ -178,22 +176,24 @@ def bs_to_poke(battle_state):
 
 def xml_to_poke(xml):
     """Recebe uma string xml e devolve uma lista de dados do Pokémon."""
-    data = BeautifulSoup(xml)  # Objeto que representa o xml
+    # Objeto que representa o xml
+    data = BeautifulSoup(xml)
+
     # Pega todos os atributos do pokemon e separa por linhas
     data = data.pokemon.get_text("\n")
     data = data.split("\n")
+
     # Converte o que for número de str para int
     data = [int(n) if n.isdigit() else n for n in data]
 
     # Agora vamos criar os objetos Ataque:
-
-    # Contém todos os campos de cada ataque (nome, acu, pwr, pp etc)
+    # Contém todos os campos de cada ataque (nome, ACU, PWR, PP etc)
     ataques = data[9:]
 
     i = 0
     while i < len(ataques) - 5:
         ataques.pop(i)  # Remove o id
-        # Troca as posições do acu e pwr para ficar como o esperado por Ataque
+        # Troca as posições do ACU e PWR para ficar como o esperado por Ataque
         aux = ataques[2 + i]
         ataques[2 + i] = ataques[3 + i]
         ataques[3 + i] = aux
@@ -210,10 +210,11 @@ def xml_to_poke(xml):
             ataque.append(ataques.pop(0))
         lista_ataques.append(Ataque(ataque))
     data.append(lista_ataques)
+
     return data
 
 
-# -------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 
 def programa_cliente():
