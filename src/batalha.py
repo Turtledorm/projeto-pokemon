@@ -19,7 +19,7 @@ def batalha(poke1, poke2):
     while poke1.hp > 0 and poke2.hp > 0:
         mostra_pokemons(poke1, poke2)
         ataque = escolhe_ataque(atacante)
-        realiza_ataque(atacante, defensor, ataque)
+        realiza_ataque(ataque, atacante, defensor)
         atacante, defensor = defensor, atacante
 
     mostra_pokemons(poke1, poke2)
@@ -78,28 +78,13 @@ def escolhe_ataque(atacante):
     return atacante.get_ataque(x-1)
 
 
-def realiza_ataque(atacante, defensor, ataque):
-    """Calcula o dano causado usando a fórmula da 1ª geração."""
+def realiza_ataque(ataque, atacante, defensor):
+    """Realiza um ataque de atacante contra defensor."""
     ataque.usa_pp()
     print("\n>", atacante.nome + " usa " + ataque.nome + "!")
 
     if acertou(ataque):
-        # Pega os valores básicos para calcular dano
-        lvl = atacante.lvl
-        base = ataque.pwr
-        if ataque.typ.is_especial:
-            atk = atacante.spc
-            dfs = defensor.spc
-        else:
-            atk = atacante.atk
-            dfs = defensor.dfs
-
-        # Calcula o dano, aplicando os modificadores
-        dano = (2*lvl + 10)/250 * atk/dfs * base + 2
-        eff = efetividade(ataque, defensor)
-        dano *= (stab(ataque, atacante) * critico(atacante, eff)
-                 * eff * aleatorio())
-        dano = int(dano)
+        dano = calcula_dano(ataque, atacante, defensor)
 
         if dano > 0:
             defensor.remove_hp(dano)
@@ -113,6 +98,32 @@ def realiza_ataque(atacante, defensor, ataque):
         print("> O ataque de " + atacante.nome + " errou!")
 
     input()  # Aguarda por usuário antes de limpar a tela
+
+
+def calcula_dano(ataque, atacante, defensor, random=True):
+    """Calcula o dano causado usando a fórmula da 1ª geração.
+       Se random=False, aleatório e crítico não são contabilizados."""
+    # Pega os valores básicos para calcular dano
+    lvl = atacante.lvl
+    base = ataque.pwr
+    if ataque.typ.is_especial:
+        atk = atacante.spc
+        dfs = defensor.spc
+    else:
+        atk = atacante.atk
+        dfs = defensor.dfs
+
+    eff = efetividade(ataque, defensor)
+
+    # Calcula o dano base, sem modificadores aleatórios
+    dano = (2*lvl + 10)/250 * atk/dfs * base + 2
+    dano *= stab(ataque, atacante) * eff
+
+    # Aplica o modificador de crítico e aleatório
+    if random:
+        dano *= critico(atacante, eff) * aleatorio()
+
+    return int(dano)
 
 
 def acertou(ataque):

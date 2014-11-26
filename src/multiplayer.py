@@ -61,11 +61,11 @@ def ataque(id):
     global poke_cliente, poke_servidor
 
     if id != 0:
-        realiza_ataque(poke_cliente, poke_servidor,
-                       poke_cliente.get_ataque(id-1))
+        realiza_ataque(poke_cliente.get_ataque(id-1),
+                       poke_cliente, poke_servidor)
     else:
         # Caso especial: Struggle
-        realiza_ataque(poke_cliente, poke_servidor, struggle)
+        realiza_ataque(struggle, poke_cliente, poke_servidor)
 
     if poke_cliente.hp > 0 and poke_servidor.hp > 0:
         servidor_ataque()
@@ -157,7 +157,7 @@ def servidor_ataque():
 
     mostra_pokemons(poke_cliente, poke_servidor)
     ataque = escolhe_ataque(poke_servidor)
-    realiza_ataque(poke_servidor, poke_cliente, ataque)
+    realiza_ataque(ataque, poke_servidor, poke_cliente)
     mostra_pokemons(poke_cliente, poke_servidor)
 
 
