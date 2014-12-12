@@ -4,7 +4,8 @@ import sys
 import random
 import subprocess
 
-# from ia import melhor_ataque
+from ataque import Ataque
+from ia import melhor_ataque
 
 
 def batalha(poke1, poke2):
@@ -62,7 +63,7 @@ def escolhe_ataque(atacante, defensor):
     if atacante.todos_ataques_sem_pp():
         print(atacante.nome, "não tem golpes sobrando...", end="")
         input()
-        struggle = pokemon.Ataque(["Struggle", 0, 100, 50, 10])
+        struggle = Ataque(["Struggle", 0, 100, 50, 10])
         return struggle
 
     if atacante.cpu is True:

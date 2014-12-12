@@ -4,6 +4,7 @@ from flask import Flask, request, abort
 from werkzeug.exceptions import HTTPException
 
 from entrada import le_pokemon
+from ataque import Ataque
 from battle_state import cria_bs, bs_to_poke
 from batalha import quem_comeca, mostra_pokemons, escolhe_ataque, \
     acabou, resultado

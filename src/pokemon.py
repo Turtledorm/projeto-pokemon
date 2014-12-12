@@ -132,8 +132,9 @@ class Pokemon:
     def ataques(self):
         return self._ataques
 
+    @property
     def cpu(self):
-        self._cpu = True
+        return self._cpu    
 
     def get_ataque(self, n):
         """Retorna o n-ésimo ataque do Pokémon se existir e tiver PP > 0."""

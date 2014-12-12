@@ -2,6 +2,7 @@
 
 from dano import calcula_dano
 
+
 def melhor_ataque(atacante, defensor):
     """Devolve o golpe do atacante que causa, em média, mais dano
        no defensor. Supõe que algum golpe tenha PP."""
