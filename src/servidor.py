@@ -1,13 +1,12 @@
-"""Classe que representa o servidor na parte multiplayer."""
+"""Contém a classe do servidor."""
 
 from flask import Flask, request, abort
 from werkzeug.exceptions import HTTPException
 
 from entrada import le_pokemon
-from ataque import Ataque
 from battle_state import cria_bs, bs_to_poke
-from batalha import quem_comeca, mostra_pokemons, escolhe_ataque, \
-    acabou, resultado
+from batalha import quem_comeca, mostra_pokemons, acabou, resultado
+from ataque import Ataque
 
 
 class Trancado(HTTPException):
@@ -17,18 +16,23 @@ class Trancado(HTTPException):
 
 
 class Servidor:
-    """ ??? """
 
-    def __init__(self):
+    """Representa o servidor na parte multiplayer."""
+
+    def __init__(self, is_cpu):
         """Executa o programa no modo servidor."""
         self.conectado = False
+        self.is_cpu = is_cpu
         self.app = Flask(__name__)
+
+        # ---------------------------------------
+        # A seguir estão contidos os métodos POST
+        # ---------------------------------------
 
         @self.app.route("/battle/", methods=["POST"])
         def recebe_cliente():
             """Recebe um objeto battle_state com o Pokémon do cliente
             e atualiza-o com os dados do servidor."""
-
             # Verifica se outra batalha está em andamento
             if self.conectado is True and \
                self.app.config['TESTING'] is not True:
@@ -37,11 +41,12 @@ class Servidor:
             # Indica que a conexão está estabelecida
             self.conectado = True
 
-            # Lê o Ṕokémon do servidor
-            self.poke_servidor = le_pokemon()
+            # Lê o Pokémon do servidor
+            self.poke_servidor = le_pokemon(self.is_cpu)
 
             # Convertemos o xml para um objeto Pokémon (do cliente)
-            self.poke_cliente = bs_to_poke(request.data)
+            battle_state = request.data.decode("UTF-8")
+            self.poke_cliente = bs_to_poke(battle_state)
 
             # Se servidor for jogar primeiro, já contabilizamos o ataque
             if quem_comeca(self.poke_servidor, self.poke_cliente) == \
@@ -62,9 +67,9 @@ class Servidor:
             """Recebe um id correspondente ao ataque do cliente.
                Contabiliza os ataques de cliente e servidor,
                devolvendo o resultado em um objeto battle_state."""
-
             if id != 0:
-                self.poke_cliente.realiza_ataque(self.poke_cliente.get_ataque(id-1), self.poke_servidor)
+                self.poke_cliente.realiza_ataque(
+                    self.poke_cliente.get_ataque(id-1), self.poke_servidor)
             else:
                 # Caso especial: Struggle
                 struggle = Ataque(["Struggle", 0, 100, 50, 10])
@@ -93,6 +98,6 @@ class Servidor:
     def servidor_ataque(self):
         """Contabiliza o ataque escolhido pelo servidor na batalha."""
         mostra_pokemons(self.poke_cliente, self.poke_servidor)
-        ataque = escolhe_ataque(self.poke_servidor, self.poke_cliente) 
+        ataque = self.poke_servidor.escolhe_ataque(self.poke_cliente)
         self.poke_servidor.realiza_ataque(ataque, self.poke_cliente)
         mostra_pokemons(self.poke_cliente, self.poke_servidor)

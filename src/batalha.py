@@ -1,22 +1,21 @@
-"""Eventos de batalha do jogo."""
+"""Funções que cuidam dos eventos de batalha do jogo."""
 
 import sys
 import random
 import subprocess
 
-from ataque import Ataque
 from ia import melhor_ataque
 
 
-def batalha(poke1, poke2):
-    """Simula uma batalha entre dois Pokémons até decidir o vencedor."""
+def batalha_local(poke1, poke2):
+    """Simula uma batalha entre dois Pokémons, no modo offline."""
     atacante = quem_comeca(poke1, poke2)
     defensor = poke2 if atacante == poke1 else poke1
 
     # Loop principal da batalha e do jogo
     while not acabou(poke1, poke2):
         mostra_pokemons(poke1, poke2)
-        ataque = escolhe_ataque(atacante, defensor)
+        ataque = atacante.escolhe_ataque(defensor)
         atacante.realiza_ataque(ataque, defensor)
         atacante, defensor = defensor, atacante
 
@@ -52,32 +51,6 @@ def limpa_tela():
         subprocess.call("clear")
     elif sys.platform == "win32":
         subprocess.call("cls", shell=True)
-
-
-def escolhe_ataque(atacante, defensor):
-    """Mostra a lista de ataques do Pokémon e lê a escolha do usuário."""
-    print("* Turno de", atacante.nome, "*\n")
-    n = atacante.mostra_ataques()
-
-    # Se não tiver mais com o que atacar, usa Struggle
-    if atacante.todos_ataques_sem_pp():
-        print(atacante.nome, "não tem golpes sobrando...", end="")
-        input()
-        struggle = Ataque(["Struggle", 0, 100, 50, 10])
-        return struggle
-
-    if atacante.cpu is True:
-        x = melhor_ataque(atacante, defensor)
-    else:
-        while True:
-            try:
-                x = int(input("Digite o nº do ataque: "))
-            except ValueError:
-                continue
-            if x in range(n+1) and atacante.get_ataque(x-1) is not None:
-                break
-
-    return atacante.get_ataque(x-1)
 
 
 def acabou(poke1, poke2):

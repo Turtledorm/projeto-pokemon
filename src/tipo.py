@@ -33,6 +33,10 @@ class Tipo:
     def is_especial(self):
         return self._is_especial
 
+    def get_eff_contra(self, outro):
+        """Devolve o valor da efetividade de um ataque do tipo contra outro."""
+        return tabela_eff[self.numero][outro.numero]
+
 
 def le_tipos(nome_arquivo):
     """Lê tipos do arquivo, guarda-os e constrói a tabela de efetividade."""
@@ -64,8 +68,3 @@ def le_tipos(nome_arquivo):
 def get_tipo(i):
     """Devolve o tipo de número 'i'."""
     return tipos[i]
-    
-
-def get_eff(i, j):
-    """Devolve o valor da efetividade dos tipos 'i' contra 'j'."""
-    return tabela_eff[i][j]

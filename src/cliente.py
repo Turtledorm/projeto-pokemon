@@ -1,18 +1,19 @@
-"""Classe que representa o cliente na parte multiplayer."""
+"""Contém a classe do cliente."""
 
 import requests
 
 from entrada import le_pokemon
-from batalha import escolhe_ataque, mostra_pokemons, resultado, acabou
+from batalha import mostra_pokemons, resultado, acabou
 from battle_state import cria_bs, bs_to_poke
 
 
 class Cliente:
-    """ ??? """
 
-    def __init__(self):
+    """Representa o cliente no jogo multiplayer."""
+
+    def __init__(self, is_cpu):
         """Lê o Pokémon do cliente o endereço do servidor."""
-        self.poke_cliente = le_pokemon()
+        self.poke_cliente = le_pokemon(is_cpu)
 
         ip = input("Digite o endereço IP do servidor: ")
         if ip == "":
@@ -23,38 +24,38 @@ class Cliente:
             port = 5000
         self.servidor = ip + ":" + str(port)
 
-    def conecta_servidor(self):
+    def conecta_ao_servidor(self):
         """Envia um objeto battle_state com dados do cliente ao servidor."""
-        battle_state = cria_bs(self.poke_cliente)
+        bs = cria_bs(self.poke_cliente)
 
         try:
-            bs = requests.post("http://" + self.servidor + "/battle/",
-                               data=battle_state)
-            bs.raise_for_status()
+            data = requests.post("http://" + self.servidor + "/battle/",
+                                 data=bs)
+            data.raise_for_status()
+            bs = data.text
 
         except requests.exceptions.ConnectionError:
             print("Não foi possível se conectar ao servidor!")
             exit(1)
 
         except requests.exceptions.HTTPError:
-            print("Já existe um jogo em andamento no servidor!")
+            print("Erro interno do servidor!")
             exit(1)
 
-        cliente_temp, self.poke_servidor = bs_to_poke(bs.text)
+        cliente_temp, self.poke_servidor = bs_to_poke(bs)
         self.poke_cliente.hp = cliente_temp.hp
 
     def jogada(self):
         """Envia a escolha de ataque do cliente ao servidor."""
-
         # Cliente escolhe seu ataque
         mostra_pokemons(self.poke_servidor, self.poke_cliente)
-        id = escolhe_ataque(self.poke_cliente, self.poke_servidor)
+        id = self.poke_cliente.escolhe_ataque(self.poke_servidor)
         if id not in self.poke_cliente.ataques:
             id = 0
         else:
             id = self.poke_cliente.ataques.index(id) + 1
 
-        # Tenta mandar a escolha ao servidor
+        # Faz o envio da escolha ao servidor
         try:
             print("Esperando resposta do servidor...")
             bs = requests.post("http://" + self.servidor + "/battle/attack/"
@@ -71,7 +72,7 @@ class Cliente:
             self.poke_cliente.get_ataque(id-1).usa_pp()
 
     def acabou_batalha(self):
-        """Verifica se algum dos Pokémons foi nocauteado."""
+        """Verifica se a batalha terminou."""
         return acabou(self.poke_servidor, self.poke_cliente)
 
     def finaliza(self):

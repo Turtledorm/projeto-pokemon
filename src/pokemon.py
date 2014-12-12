@@ -2,9 +2,10 @@
 
 import os
 import random
+import time
 
-from dano import calcula_dano
 from tipo import get_tipo
+from ataque import Ataque
 
 MAX_ATAQUES = 4  # Nº máximo de ataques de um Pokémon
 BARRA_MAX = 20   # Comprimento máximo da barra de vida
@@ -12,7 +13,12 @@ BARRA_MAX = 20   # Comprimento máximo da barra de vida
 
 class Pokemon:
 
-    def __init__(self, _dados):
+    """Representa um Pokémon que batalha no jogo."""
+
+    # Define Struggle como possível ataque
+    struggle = Ataque(["Struggle", 0, 100, 50, 10])
+
+    def __init__(self, _dados, is_cpu=False):
         """Recebe uma lista contendo dados e cria um Pokémon."""
         dados = list(_dados)  # Faz uma cópia bruta da lista original
         dados.reverse()
@@ -26,7 +32,7 @@ class Pokemon:
         self._spc = dados.pop()
         self._tipo1 = get_tipo(dados.pop())
         self._tipo2 = get_tipo(dados.pop())
-        self._cpu = False
+        self._is_cpu = is_cpu
 
         self._ataques = dados.pop()
 
@@ -36,7 +42,7 @@ class Pokemon:
         print(">>>", self.nome, "{Lv " + str(self.lvl) + "} <<<")
         print("(" + self.tipo1.nome +
               (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "")
-              + ")")
+              + ")" + ((" [CPU]") if self.is_cpu is True else ""))
         self.imprime_barra()
 
         if full:
@@ -133,8 +139,8 @@ class Pokemon:
         return self._ataques
 
     @property
-    def cpu(self):
-        return self._cpu    
+    def is_cpu(self):
+        return self._is_cpu
 
     def get_ataque(self, n):
         """Retorna o n-ésimo ataque do Pokémon se existir e tiver PP > 0."""
@@ -142,19 +148,45 @@ class Pokemon:
             return None
         return self.ataques[n]
 
+    def escolhe_ataque(self, defensor):
+        """Mostra a lista de ataques do Pokémon e lê a escolha do usuário."""
+        print("* Turno de", self.nome, "*\n")
+        n = self.mostra_ataques()
+
+        # Se não tiver mais com o que atacar, usa Struggle
+        if self.todos_ataques_sem_pp():
+            print(self.nome, "não tem golpes sobrando...", end="")
+            input()
+            return self.struggle
+
+        ataque = None
+        if self.is_cpu:
+            ataque = melhor_ataque(self, defensor)
+        else:
+            while True:
+                try:
+                    i = int(input("Digite o nº do ataque: "))
+                except ValueError:
+                    continue
+                if self.get_ataque(i-1) is not None:
+                    ataque = self.get_ataque(i-1)
+                    break
+
+        return ataque
+
     def realiza_ataque(self, ataque, defensor):
         """Realiza um ataque contra outro Pokémon."""
         ataque.usa_pp()
         print("\n>", self.nome + " usa " + ataque.nome + "!")
 
         if ataque.acertou():
-            dano = calcula_dano(ataque, self, defensor)
+            dano = ataque.calcula_dano(self, defensor)
 
             if dano > 0:
                 defensor.remove_hp(dano)
                 print(">", defensor.nome, "perdeu", dano, "HP!")
 
-                if ataque.is_struggle():
+                if ataque == self.struggle:
                     dano //= 2
                     print(">", self.nome, "perdeu", dano, "HP pelo recuo!")
                     self.remove_hp(dano)

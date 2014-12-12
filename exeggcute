@@ -13,7 +13,7 @@ SRCDIR="$DIR/src/"
 # Mostra como usar o script.
 
 function uso {
-    ARGS="[\e[1m-h\e[0m] [\e[1m-i\e[0m] [\e[1m-l\e[0m] [\e[1m-c\e[0m] [\e[1m-s\e[0m]\n"
+    ARGS="[\e[1m-h\e[0m] [\e[1m-p\e[0m] [\e[1m-l\e[0m] [\e[1m-c\e[0m] [\e[1m-s\e[0m] [\e[1m-a/-a1/-a2\e[0m]\n"
     POKENAME=`basename $POKEDIR`
     SRCNAME=`basename $SRCDIR`
 
@@ -30,7 +30,7 @@ function uso {
     echo -e "\tSepare cada opção com um espaço.\n"
 
     echo -e "\t\e[1m-h\e[0m\tMostra como usar o script, além de abandoná-lo.\n"
-    echo -e "\t\e[1m-i\e[0m\tMostra os Pokémons disponíveis e abandona o script.\n"
+    echo -e "\t\e[1m-p\e[0m\tMostra os Pokémons disponíveis e abandona o script.\n"
 
     echo -e "\e[1mOPÇÕES DO PROGRAMA PRINCIPAL\e[0m"
     echo -e "\tSepare cada opção com um espaço.\n"
@@ -38,6 +38,10 @@ function uso {
     echo -e "\t\e[1m-l\e[0m\tRoda o programa localmente (modo offline). Usa dois Pokémons.\n"
     echo -e "\t\e[1m-c\e[0m\tExecuta o programa como cliente. Usa um Pokémon.\n"
     echo -e "\t\e[1m-s\e[0m\tExecuta o programa como servidor. Usa um Pokémon.\n"
+    echo -e "\t\e[1m-a\e[0m\tFaz com que todos os Pokémons sejam CPUs.\n"
+    echo -e "\t\e[1m-a1\e[0m\tFaz com que o primeiro Pokémon seja um CPU.\n"
+    echo -e "\t\e[1m-a2\e[0m\tFaz com que o segundo Pokémon seja um CPU
+             \t(ou o primeiro, no caso cliente/servidor).\n"
 
     exit
 }
@@ -45,57 +49,68 @@ function uso {
 # --------------------------------------------------------------------
 # MAIN
 
-param=""  # Argumento do programa principal
-cont=$#   # Nº de argumentos dados ao script
-pokes=""  # Vetor para guardar os Pokémons passados ao programa principal
+param=()  # Vetor guardando os argumentos do programa principal
+cont=0    # Número de argumentos do programa principal
+l=false   # Argumento para batalha local
+
+pokes=""  # String para guardar os Pokémons passados ao programa principal
+p=0       # Número de Pokémons passados como parâmetro
+
 
 # Verifica os argumentos especiais
 for arg in "$@"; do
     case $arg in
     -h)
         uso;;
-    -i)
+    -p)
         ls --color=auto $POKEDIR
         exit;;
-    -s)
-        param=$arg
-        cont=$((cont - 1));;
-    -c)
-        param=$arg
-        cont=$((cont - 1));;
-    -l)
-        param=$arg
-        cont=$((cont - 1));;
+    -[l,s,c,a])
+        if [[ $arg == "-l" ]]; then l=true; fi
+        param[$cont]="$arg"
+        cont=$((cont + 1));;
+    -a[1-2])
+        if [[ $arg == "-l" ]]; then l=true; fi
+        param[$cont]="$arg"
+        cont=$((cont + 1));;
     *)
-        pokes="$pokes $arg";;
+        pokes="$pokes $arg"
+        p=$((p + 1));;
     esac
 done
 
 # Quebra a string "pokes" em um array
 pokes=(${pokes// / })
 
-if (( $cont == 0 )); then
+if (( $p == 0 )); then
     # A implementação permite ter uma batalha de mesmos Pokémons!
     arq=`find $POKEDIR* | shuf -n 1`
-    if [[ $param != "-l" ]]; then
-        cat $arq - | $SRCDIR/main.py "$param"
+    if [[ $l == true ]]; then
+        cat $arq `find $POKEDIR* | shuf -n 1` - | $SRCDIR/main.py ${param[*]}
     else
-        cat $arq `find $POKEDIR* | shuf -n 1` - | $SRCDIR/main.py "$param"
+        cat $arq - | $SRCDIR/main.py ${param[*]}
     fi
+
 else
+
     poke1="$POKEDIR${pokes[0]}.txt"
     poke2="$POKEDIR${pokes[1]}.txt"
-    if (( ${#pokes[@]} >= 1 )) && [ -f "$poke1" ]; then
-        if (( ${#pokes[@]} >= 2 )); then
+    if (( $p >= 1 )) && [ -f "$poke1" ]; then
+        if (( $p >= 2 )); then
             if [ -f "$poke2" ]; then
-                cat "$poke1" "$poke2" - | $SRCDIR/main.py "$param"
+                cat "$poke1" "$poke2" - | $SRCDIR/main.py ${param[*]}
             else
                 echo "${pokes[1]} não encontrado!"
             fi
         else
-            cat "$poke1" - | $SRCDIR/main.py "$param"
+            if [[ $l == true ]]; then
+                cat $poke1 `find $POKEDIR* | shuf -n 1` - | $SRCDIR/main.py ${param[*]}
+            else
+                cat "$poke1" - | $SRCDIR/main.py ${param[*]}
+            fi
         fi
     else
         echo "${pokes[0]} não encontrado!"
     fi
+
 fi
