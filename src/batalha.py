@@ -15,7 +15,7 @@ def batalha(poke1, poke2):
     # Loop principal da batalha e do jogo
     while not acabou(poke1, poke2):
         mostra_pokemons(poke1, poke2)
-        ataque = escolhe_ataque(atacante)
+        ataque = escolhe_ataque(atacante, defensor)
         atacante.realiza_ataque(ataque, defensor)
         atacante, defensor = defensor, atacante
 
@@ -53,7 +53,7 @@ def limpa_tela():
         subprocess.call("cls", shell=True)
 
 
-def escolhe_ataque(atacante):
+def escolhe_ataque(atacante, defensor):
     """Mostra a lista de ataques do Pokémon e lê a escolha do usuário."""
     print("* Turno de", atacante.nome, "*\n")
     n = atacante.mostra_ataques()
@@ -65,13 +65,16 @@ def escolhe_ataque(atacante):
         struggle = pokemon.Ataque(["Struggle", 0, 100, 50, 10])
         return struggle
 
-    while True:
-        try:
-            x = int(input("Digite o nº do ataque: "))
-        except ValueError:
-            continue
-        if x in range(n+1) and atacante.get_ataque(x-1) is not None:
-            break
+    if atacante.cpu is True:
+        x = melhor_ataque(atacante, defensor)
+    else:
+        while True:
+            try:
+                x = int(input("Digite o nº do ataque: "))
+            except ValueError:
+                continue
+            if x in range(n+1) and atacante.get_ataque(x-1) is not None:
+                break
 
     return atacante.get_ataque(x-1)
 

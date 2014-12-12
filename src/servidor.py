@@ -7,7 +7,7 @@ from entrada import le_pokemon
 from battle_state import cria_bs, bs_to_poke
 from batalha import quem_comeca, mostra_pokemons, escolhe_ataque, \
     acabou, resultado
-from pokemon import Pokemon
+from pokemon import Pokemon, Ataque
 
 
 class Trancado(HTTPException):
@@ -67,6 +67,7 @@ class Servidor:
                 self.poke_cliente.realiza_ataque(self.poke_cliente.get_ataque(id-1), self.poke_servidor)
             else:
                 # Caso especial: Struggle
+                struggle = Ataque(["Struggle", 0, 100, 50, 10])
                 self.poke_cliente.realiza_ataque(struggle, self.poke_servidor)
 
             if not acabou(self.poke_cliente, self.poke_servidor):
@@ -92,6 +93,6 @@ class Servidor:
     def servidor_ataque(self):
         """Contabiliza o ataque escolhido pelo servidor na batalha."""
         mostra_pokemons(self.poke_cliente, self.poke_servidor)
-        ataque = escolhe_ataque(self.poke_servidor) 
+        ataque = escolhe_ataque(self.poke_servidor, self.poke_cliente) 
         self.poke_servidor.realiza_ataque(ataque, self.poke_cliente)
         mostra_pokemons(self.poke_cliente, self.poke_servidor)

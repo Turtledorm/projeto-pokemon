@@ -27,6 +27,7 @@ class Pokemon:
         self._spc = dados.pop()
         self._tipo1 = tipos[dados.pop()]
         self._tipo2 = tipos[dados.pop()]
+        self._cpu = False
 
         self._ataques = dados.pop()
 
@@ -132,6 +133,9 @@ class Pokemon:
     def ataques(self):
         return self._ataques
 
+    def cpu(self):
+        self._cpu = True
+
     def get_ataque(self, n):
         """Retorna o n-ésimo ataque do Pokémon se existir e tiver PP > 0."""
         if n >= MAX_ATAQUES or self.ataques[n].sem_pp():
@@ -150,16 +154,15 @@ class Pokemon:
                 defensor.remove_hp(dano)
                 print(">", defensor.nome, "perdeu", dano, "HP!")
 
-                struggle = Ataque(["Struggle", 0, 100, 50, 10])
-
-                if ataque == struggle:
+                print(ataque.is_struggle())
+                if ataque.is_struggle():
                     dano //= 2
                     print(">", self.nome, "perdeu", dano, "HP pelo recuo!")
                     self.remove_hp(dano)
         else:
             print("> O ataque de " + self.nome + " errou!")
 
-        # input()  # Aguarda por usuário antes de limpar a tela
+        input()  # Aguarda por usuário antes de limpar a tela
 
     def to_xml(self):
         """Gera uma string XML contendo as informações do Pokémon."""
@@ -249,9 +252,14 @@ class Ataque:
     def acertou(self):
         """Verifica se o ataque resultou em acerto ou erro."""
         chance = (self.acu * self.acu)/10000
-        if random.uniform(0, 1) <= chance:
-            return True
-        return False
+        return random.uniform(0, 1) <= chance
+
+    def is_struggle(self):
+        """Verifica se o ataque em questão é o Struggle."""
+        return (self.nome == "Struggle"
+                and self.typ.nome == "Normal"
+                and self.acu == 100
+                and self.pwr == 50)
 
 
 class Tipo:

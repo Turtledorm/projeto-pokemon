@@ -49,7 +49,7 @@ class Cliente:
 
         # Cliente escolhe seu ataque
         mostra_pokemons(self.poke_servidor, self.poke_cliente)
-        id = escolhe_ataque(self.poke_cliente)
+        id = escolhe_ataque(self.poke_cliente, self.poke_servidor)
         if id not in self.poke_cliente.ataques:
             id = 0
         else:

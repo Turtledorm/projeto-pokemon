@@ -1,16 +1,7 @@
-"""Inteligência artificial dos Pokémons. Em ordem de prioridade,
-   as ideias são:
-   1) Usar o golpe com melhor 'custo-benefício', não levando em
-      conta a chance de crítico e com pior caso de aleatoriedade.
-   2) Se mais de um golpe nocauteia o oponente, usar o que
-      tem melhor acurácia (em caso de empate, escolher o que
-      possui mais PP).
-   3) Se HP < 20%, usar o golpe mais forte (em caso de empate,
-      escolher o que possui mais acurácia).
-   4) Se nenhum golpe possuir PP sobrando, usar Struggle."""
+"""Inteligência artificial dos Pokémons."""
 
 from pokemon import Pokemon, Ataque
-
+from batalha import calcula_dano
 
 def melhor_ataque(atacante, defensor):
     """Devolve o golpe do atacante que causa, em média, mais dano
