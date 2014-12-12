@@ -1,7 +1,8 @@
 """ Funções que criam e traduzem um objeto battle_state, feito em xml."""
 
-from pokemon import Pokemon, Ataque
 from bs4 import BeautifulSoup
+from pokemon import Pokemon
+from ataque import Ataque
 
 
 def cria_bs(poke1, poke2=None):

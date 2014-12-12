@@ -1,14 +1,13 @@
-"""Classes para representar Pokémons, ataques e tipos"""
+"""Contém a classe que representa um Pokémon."""
 
 import os
+import random
+
+from dano import calcula_dano
+from tipo import get_tipo
 
 MAX_ATAQUES = 4  # Nº máximo de ataques de um Pokémon
 BARRA_MAX = 20   # Comprimento máximo da barra de vida
-
-tabela_eff = []  # Tabela com multiplicadores de efetividade
-tipos = []       # Lista de tipos
-
-from batalha import random, calcula_dano
 
 
 class Pokemon:
@@ -25,8 +24,8 @@ class Pokemon:
         self._dfs = dados.pop()
         self._spd = dados.pop()
         self._spc = dados.pop()
-        self._tipo1 = tipos[dados.pop()]
-        self._tipo2 = tipos[dados.pop()]
+        self._tipo1 = get_tipo(dados.pop())
+        self._tipo2 = get_tipo(dados.pop())
         self._cpu = False
 
         self._ataques = dados.pop()
@@ -154,7 +153,6 @@ class Pokemon:
                 defensor.remove_hp(dano)
                 print(">", defensor.nome, "perdeu", dano, "HP!")
 
-                print(ataque.is_struggle())
                 if ataque.is_struggle():
                     dano //= 2
                     print(">", self.nome, "perdeu", dano, "HP pelo recuo!")
@@ -194,138 +192,6 @@ class Pokemon:
         xml += "</pokemon>"
 
         return xml
-
-
-class Ataque:
-
-    """Representa um ataque de Pokémon."""
-
-    def __init__(self, _dados):
-        """Recebe uma lista de dados e cria um ataque."""
-        dados = list(_dados)
-        dados.reverse()
-
-        self._nome = dados.pop()
-        self._typ = tipos[dados.pop()]
-        self._acu = dados.pop()
-        self._pwr = dados.pop()
-        self._pp = self.pp_max = dados.pop()
-
-    def mostra(self, full=False):
-        """Exibe nome e PP atual/máximo do ataque.
-        Se full=True, mostra também os atributos restantes."""
-        if not full:
-            print(self.nome, "(" + str(self.typ.nome) + ")",
-                  "[" + str(self.pp) + "/" + str(self.pp_max) + "]")
-        else:
-            print(self.nome, "(" + str(self.typ.nome) + ")")
-            print(str(self.pp) + "/" + str(self.pp_max), "PP")
-            print("Acurácia:", self.acu)
-            print("Poder:", self.pwr)
-
-    @property
-    def nome(self):
-        return self._nome
-
-    @property
-    def typ(self):
-        return self._typ
-
-    @property
-    def acu(self):
-        return self._acu
-
-    @property
-    def pwr(self):
-        return self._pwr
-
-    @property
-    def pp(self):
-        return self._pp
-
-    def usa_pp(self):
-        self._pp -= 1
-
-    def sem_pp(self):
-        return self.pp <= 0
-
-    def acertou(self):
-        """Verifica se o ataque resultou em acerto ou erro."""
-        chance = (self.acu * self.acu)/10000
-        return random.uniform(0, 1) <= chance
-
-    def is_struggle(self):
-        """Verifica se o ataque em questão é o Struggle."""
-        return (self.nome == "Struggle"
-                and self.typ.nome == "Normal"
-                and self.acu == 100
-                and self.pwr == 50)
-
-
-class Tipo:
-
-    """Representa um tipo de Pokémon/ataque."""
-
-    def __init__(self, numero, nome, is_especial):
-        """Inicializa o tipo."""
-        self._numero = numero
-        self._nome = nome
-        self._is_especial = is_especial
-
-    def mostra(self):
-        """Exibe informações do tipo."""
-        print(str(self.numero) + ":", self.nome,
-              "(Especial)" if self.is_especial else "")
-
-    @property
-    def numero(self):
-        return self._numero
-
-    @property
-    def nome(self):
-        return self._nome
-
-    @property
-    def is_especial(self):
-        return self._is_especial
-
-
-def le_tipos(nome_arquivo):
-    """Lê tipos do arquivo, guarda-os e constrói a tabela de efetividade."""
-    # Permite que o script leia o arquivo mesmo
-    # se executado de fora do diretório de onde ele está.
-    diretorio = os.path.join(os.getcwd(), os.path.dirname(__file__))
-    caminho = (os.path.join(diretorio, nome_arquivo))
-
-    with open(caminho) as arquivo:
-        n = int(arquivo.readline())
-
-        # Leitura dos nomes e categoria
-        for i in range(n):
-            nome, especial = arquivo.readline().split()
-            tipos.append(Tipo(i, nome, bool(int(especial))))
-
-        # Adiciona o tipo Blank ao final da lista
-        tipos.append(Tipo(n, "Blank", False))
-
-        # Leitura da tabela de tipos
-        for i in range(n):
-            linha = arquivo.readline().split()
-            linha = list(map(float, linha))
-            tabela_eff.append(linha)
-
-    return n
-
-
-def get_eff(i, j):
-    """Devolve o valor da efetividade dos tipos 'i' contra 'j'."""
-    return tabela_eff[i][j]
-
-
-def erro_leitura(mensagem):
-    """Imprime mensagem de erro."""
-    raise Exception("Erro ao ler " + mensagem + "!")
-    exit(1)
 
 
 # Função auxiliar de to_xml

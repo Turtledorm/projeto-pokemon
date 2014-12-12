@@ -3,7 +3,6 @@
 import requests
 
 from entrada import le_pokemon
-from pokemon import Pokemon, Ataque
 from batalha import escolhe_ataque, mostra_pokemons, resultado, acabou
 from battle_state import cria_bs, bs_to_poke
 

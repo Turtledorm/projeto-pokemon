@@ -7,7 +7,6 @@ from entrada import le_pokemon
 from battle_state import cria_bs, bs_to_poke
 from batalha import quem_comeca, mostra_pokemons, escolhe_ataque, \
     acabou, resultado
-from pokemon import Pokemon, Ataque
 
 
 class Trancado(HTTPException):

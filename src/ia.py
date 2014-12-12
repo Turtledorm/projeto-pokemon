@@ -1,7 +1,6 @@
 """Inteligência artificial dos Pokémons."""
 
-from pokemon import Pokemon, Ataque
-from batalha import calcula_dano
+from dano import calcula_dano
 
 def melhor_ataque(atacante, defensor):
     """Devolve o golpe do atacante que causa, em média, mais dano
