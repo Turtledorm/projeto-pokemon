@@ -6,9 +6,6 @@ import subprocess
 
 import pokemon
 
-# Define Struggle como um possível ataque
-struggle = pokemon.Ataque(["Struggle", 0, 100, 50, 10])
-
 
 def batalha(poke1, poke2):
     """Simula uma batalha entre dois Pokémons até decidir o vencedor."""
@@ -16,10 +13,10 @@ def batalha(poke1, poke2):
     defensor = poke2 if atacante == poke1 else poke1
 
     # Loop principal da batalha e do jogo
-    while poke1.hp > 0 and poke2.hp > 0:
+    while not acabou(poke1, poke2):
         mostra_pokemons(poke1, poke2)
         ataque = escolhe_ataque(atacante)
-        realiza_ataque(ataque, atacante, defensor)
+        atacante.realiza_ataque(ataque, defensor)
         atacante, defensor = defensor, atacante
 
     mostra_pokemons(poke1, poke2)
@@ -65,6 +62,7 @@ def escolhe_ataque(atacante):
     if atacante.todos_ataques_sem_pp():
         print(atacante.nome, "não tem golpes sobrando...", end="")
         input()
+        struggle = pokemon.Ataque(["Struggle", 0, 100, 50, 10])
         return struggle
 
     while True:
@@ -76,28 +74,6 @@ def escolhe_ataque(atacante):
             break
 
     return atacante.get_ataque(x-1)
-
-
-def realiza_ataque(ataque, atacante, defensor):
-    """Realiza um ataque de atacante contra defensor."""
-    ataque.usa_pp()
-    print("\n>", atacante.nome + " usa " + ataque.nome + "!")
-
-    if acertou(ataque):
-        dano = calcula_dano(ataque, atacante, defensor)
-
-        if dano > 0:
-            defensor.remove_hp(dano)
-            print(">", defensor.nome, "perdeu", dano, "HP!")
-
-            if ataque == struggle:
-                dano //= 2
-                print(">", atacante.nome, "perdeu", dano, "HP pelo recuo!")
-                atacante.remove_hp(dano)
-    else:
-        print("> O ataque de " + atacante.nome + " errou!")
-
-    input()  # Aguarda por usuário antes de limpar a tela
 
 
 def calcula_dano(ataque, atacante, defensor, random=True):
@@ -124,14 +100,6 @@ def calcula_dano(ataque, atacante, defensor, random=True):
         dano *= critico(atacante, eff) * aleatorio()
 
     return int(dano)
-
-
-def acertou(ataque):
-    """Verifica se o ataque resultou em acerto ou erro."""
-    chance = (ataque.acu * ataque.acu)/10000
-    if random.uniform(0, 1) <= chance:
-        return True
-    return False
 
 
 def stab(ataque, atacante):
@@ -178,6 +146,11 @@ def efetividade(ataque, defensor):
 def aleatorio():
     """Gera um número aleatório a ser usado na fórmula de dano."""
     return random.uniform(0.85, 1)
+
+
+def acabou(poke1, poke2):
+    """Verifica se algum dos Pokémons foi nocauteado."""
+    return poke1.hp <= 0 or poke2.hp <= 0
 
 
 def resultado(poke1, poke2):

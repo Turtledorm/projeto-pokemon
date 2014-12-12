@@ -2,16 +2,16 @@
 
 import os
 
-MAX_ATAQUES = 4  # Nº máximo de ataques que um Pokémon pode possuir
+MAX_ATAQUES = 4  # Nº máximo de ataques de um Pokémon
 BARRA_MAX = 20   # Comprimento máximo da barra de vida
 
 tabela_eff = []  # Tabela com multiplicadores de efetividade
 tipos = []       # Lista de tipos
 
+from batalha import random, calcula_dano
+
 
 class Pokemon:
-
-    """Representa um Pokémon, unidade de batalha no jogo."""
 
     def __init__(self, _dados):
         """Recebe uma lista contendo dados e cria um Pokémon."""
@@ -80,7 +80,7 @@ class Pokemon:
     def todos_ataques_sem_pp(self):
         """Verifica se todos os ataques estão com PP 0."""
         for ataque in self.ataques:
-            if ataque.pp > 0:
+            if not ataque.sem_pp():
                 return False
         return True
 
@@ -134,9 +134,32 @@ class Pokemon:
 
     def get_ataque(self, n):
         """Retorna o n-ésimo ataque do Pokémon se existir e tiver PP > 0."""
-        if n >= MAX_ATAQUES or self.ataques[n].pp <= 0:
+        if n >= MAX_ATAQUES or self.ataques[n].sem_pp():
             return None
         return self.ataques[n]
+
+    def realiza_ataque(self, ataque, defensor):
+        """Realiza um ataque contra outro Pokémon."""
+        ataque.usa_pp()
+        print("\n>", self.nome + " usa " + ataque.nome + "!")
+
+        if ataque.acertou():
+            dano = calcula_dano(ataque, self, defensor)
+
+            if dano > 0:
+                defensor.remove_hp(dano)
+                print(">", defensor.nome, "perdeu", dano, "HP!")
+
+                struggle = Ataque(["Struggle", 0, 100, 50, 10])
+
+                if ataque == struggle:
+                    dano //= 2
+                    print(">", self.nome, "perdeu", dano, "HP pelo recuo!")
+                    self.remove_hp(dano)
+        else:
+            print("> O ataque de " + self.nome + " errou!")
+
+        # input()  # Aguarda por usuário antes de limpar a tela
 
     def to_xml(self):
         """Gera uma string XML contendo as informações do Pokémon."""
@@ -219,6 +242,16 @@ class Ataque:
 
     def usa_pp(self):
         self._pp -= 1
+
+    def sem_pp(self):
+        return self.pp <= 0
+
+    def acertou(self):
+        """Verifica se o ataque resultou em acerto ou erro."""
+        chance = (self.acu * self.acu)/10000
+        if random.uniform(0, 1) <= chance:
+            return True
+        return False
 
 
 class Tipo:

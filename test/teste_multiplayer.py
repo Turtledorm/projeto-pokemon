@@ -11,8 +11,8 @@ from mock import patch
 sys.path.insert(1, os.path.join(sys.path[0], "../src"))
 
 from pokemon import Pokemon
-import multiplayer
-from multiplayer import *
+from cliente import *
+from servidor import *
 from random_poke import RandomPoke
 import entrada
 from batalha import *
