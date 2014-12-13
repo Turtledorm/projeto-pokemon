@@ -4,7 +4,11 @@ from random import randint, choice
 from string import ascii_lowercase, ascii_uppercase
 
 sys.path.insert(1, os.path.join(sys.path[0], '../src'))
-from pokemon import Pokemon, Ataque, le_tipos
+from tipo import le_tipos
+le_tipos("tipos.txt")
+from pokemon import Pokemon
+from ataque import Ataque
+
 
 
 class RandomPoke(Pokemon):

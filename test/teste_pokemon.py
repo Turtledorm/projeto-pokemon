@@ -6,10 +6,12 @@ import os
 import sys
 import random
 import unittest
-
+from mock import patch
 # Diz onde procurar pelo módulo pokemon
 sys.path.insert(1, os.path.join(sys.path[0], '../src'))
-from pokemon import Pokemon, Ataque, tipos, le_tipos
+from tipo import le_tipos
+le_tipos("tipos.txt")
+from pokemon import Pokemon
 from random_poke import RandomPoke
 
 
@@ -43,6 +45,26 @@ class PokeTestCase(unittest.TestCase):
             self.assertEqual(ataque.pwr, self.ctrl.ataques[i][3])
             self.assertEqual(ataque.pp, self.ctrl.ataques[i][4])
 
+    def test_acertou(self):
+        chance = (self.test.ataques[0].acu * self.test.ataques[0].acu)/10000
+        maior_chance = chance + 0.001
+        valores_menores = []
+        valores_maiores = []
+
+        for i in range(100):
+            valores_menores.append(random.uniform(0, chance))
+            valores_maiores.append(random.uniform(maior_chance, 1))
+        valores =  valores_menores + valores_maiores
+
+        # Usamos valores conhecidos para testar a unidade do .acertou
+        # que usa números pseudo-aleatórios.
+        with patch("batalha.random.uniform", side_effect=valores):
+            for i in range(100):
+                self.assertTrue(self.test.ataques[0].acertou())
+            for i in range(100):
+                self.assertFalse(self.test.ataques[0].acertou())
+    
+    
     def tearDown(self):
         """Finaliza o teste."""
         sys.stdout.close()  # Fechando o os.devnull

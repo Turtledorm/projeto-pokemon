@@ -7,16 +7,17 @@ import unittest
 import random
 import sys
 import os
-from mock import patch
+from mock import patch, Mock
 sys.path.insert(1, os.path.join(sys.path[0], "../src"))
-
+from tipo import le_tipos
+le_tipos("tipos.txt")
 from pokemon import Pokemon
 from cliente import *
 from servidor import *
 from random_poke import RandomPoke
-import entrada
+import entrada, batalha, pokemon, servidor
 from batalha import *
-
+from battle_state import *
 
 class MultiplayerTestCase(unittest.TestCase):
 
@@ -24,8 +25,9 @@ class MultiplayerTestCase(unittest.TestCase):
         """Inicializa dados para teste."""
         sys.stdout = open(os.devnull, "w")  # Suprime o output de batalha.py
         sys.stderr = sys.stdout
-        app.config["TESTING"] = True
-        self.app = app.test_client()
+        self.srv = Servidor(False)
+        self.srv.app.config["TESTING"] = True
+        self.app = self.srv.app.test_client()
         self.data1 = RandomPoke()
         self.data2 = RandomPoke()
         self.dados1 = self.data1.gera()
@@ -53,7 +55,8 @@ class MultiplayerTestCase(unittest.TestCase):
                 # O número do ataque nos será pedido pelo stdin; vamos escolher
                 # sempre o primeiro.
                 with patch("batalha.input", return_value=1):
-
+                    pokemon.input = Mock(return_value="\n")
+                        
                     # Façamos primeiro o teste multiplayer
                     bs_multi = self.app.post("/battle/",
                                              data=poke_cliente.to_xml())
@@ -62,15 +65,15 @@ class MultiplayerTestCase(unittest.TestCase):
                     bs_multi = self.padroniza(bs_multi.data)
 
                     # Vamos realizar a mesma batalha agora no modo offline
-                    realiza_ataque(poke_servidor, poke_cliente,
-                                   escolhe_ataque(poke_servidor))
+                    poke_servidor.realiza_ataque(escolhe_ataque(poke_servidor, 
+                                                 poke_cliente), poke_cliente)
 
                     # Vamos testar se os resultados são os mesmo se simularmos
                     # no modo offline, já testado pelos outros arquivos de
                     # teste e plenamente operante.
                     self.assertEqual(cria_bs(poke_cliente, poke_servidor),
                                      bs_multi)
-
+        
     def test_cliente_ataca(self):
         """Procedemos da mesma maneira que no método test_servidor_ataca(),
            mas aqui também testamos o ataque do cliente."""
@@ -84,35 +87,38 @@ class MultiplayerTestCase(unittest.TestCase):
             with patch("batalha.random.uniform", return_value=float(0.5)):
                 with patch("batalha.input", return_value=1):
 
+                    pokemon.input = Mock(return_value="\n")
                     self.app.post("/battle/", data=poke_cliente.to_xml())
-                    id = escolhe_ataque(poke_cliente)
+                    id = escolhe_ataque(poke_cliente, poke_servidor)
                     id = poke_cliente.ataques.index(id) + 1
                     multi_bs = self.app.post("/battle/attack/" + str(id))
                     multi_bs = self.padroniza(multi_bs.data)
 
-                    realiza_ataque(poke_servidor, poke_cliente,
-                                   escolhe_ataque(poke_servidor))
-                    realiza_ataque(poke_cliente, poke_servidor,
-                                   poke_cliente.get_ataque(id-1))
+                    poke_servidor.realiza_ataque(escolhe_ataque(poke_servidor, 
+                                                 poke_cliente), poke_cliente)
+                    poke_cliente.realiza_ataque(poke_cliente.get_ataque(id-1),
+                                                poke_servidor)
 
                     if poke_cliente.hp > 0 and poke_servidor.hp > 0:
-                        ataque = escolhe_ataque(poke_servidor)
-                        realiza_ataque(poke_servidor, poke_cliente, ataque)
+                        ataque = escolhe_ataque(poke_servidor, poke_cliente)
+                        poke_servidor.realiza_ataque(ataque, poke_cliente)
                     off_bs = cria_bs(poke_cliente, poke_servidor)
 
                     self.assertEqual(off_bs, multi_bs)
-
+    
     def test_shutdown(self):
         """Verifica se o programa está sendo encerrado corretamente."""
         self.assertRaises(RuntimeError, self.app.post, "/shutdown/")
-
+    
     def test_locked(self):
         """Como no setUp iniciamos o app, todas as vezes que tentarmos
            mandar um POST para /battle/ resultará no erro 423."""
-        app.config["TESTING"] = False
-        erro_423 = self.app.post("/battle/")
-        erro_423 = self.padroniza(erro_423.data)
-        self.assertTrue("Locked" in erro_423)
+        self.srv.app.config["TESTING"] = False
+        with patch("entrada.input", side_effect=self.data1.gera_linear()):
+            self.app.post("/battle/")
+            erro_423 = self.app.post("/battle/")
+            erro_423 = self.padroniza(erro_423.data)
+            self.assertTrue("Locked" in erro_423)
 
     def test_xml(self):
         """Verifica integridade e corretude dos xmls gerados."""
