@@ -6,6 +6,7 @@ import time
 
 from tipo import get_tipo
 from ataque import Ataque
+from ia import melhor_ataque
 
 MAX_ATAQUES = 4  # Nº máximo de ataques de um Pokémon
 BARRA_MAX = 20   # Comprimento máximo da barra de vida

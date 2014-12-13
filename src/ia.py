@@ -5,7 +5,7 @@ def melhor_ataque(atacante, defensor):
     """Devolve o golpe do atacante que causa, em média, mais dano
        no defensor. Supõe que algum golpe tenha PP."""
     estado_critico = False
-    eficiencia = []
+    eficiencias = []
 
     # Caso HP < 20%, usar o golpe que causa mais dano (esqueça acurácia)
     if atacante.hp < atacante.hp_max/5:
@@ -17,30 +17,33 @@ def melhor_ataque(atacante, defensor):
         if ataque.pp > 0:
             efc = ataque.calcula_dano(atacante, defensor, is_basico=True)
             if not estado_critico:
-                efc *= ataque.acu/100
-            eficiencia.append(efc)
+                efc *= (ataque.acu*ataque.acu)/10000
+            eficiencias.append(efc)
+        else:
+            eficiencias.append(0)
 
     # Cria, se existir, uma lista de ataques que podem
     # nocautear o inimigo num acerto só.
-    suficiente = []
-    for efc in eficiencia:
+    suficientes = []
+    for efc in eficiencias:
         if efc >= defensor.hp:
-            suficiente.append(efc)
+            suficientes.append(efc)
 
     # Encontra o melhor ataque
-    if len(suficiente) > 1:
-        return mais_preciso(atacante, suficiente)
+    if len(suficientes) > 1:
+        return mais_preciso(atacante, suficientes)
     else:
-        return max(eficiencia)
+        return atacante.get_ataque(eficiencias.index(max(eficiencias)))
 
 
-def mais_preciso(poke, lista):
+def mais_preciso(atacante, suficientes):
     """Devolve o golpe com maior acurácia do Pokémon.
        O critério de desempate é a quantidade de PP."""
     melhor = None
     acu = -1
 
-    for ataque in lista:
+    for efc in suficientes:
+        ataque = atacante.get_ataque(suficientes.index(efc))
         if ataque.acu > acu:
             melhor = ataque
             acu = ataque.acu

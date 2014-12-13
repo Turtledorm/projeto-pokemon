@@ -4,8 +4,6 @@ import sys
 import random
 import subprocess
 
-from ia import melhor_ataque
-
 
 def batalha_local(poke1, poke2):
     """Simula uma batalha entre dois Pokémons, no modo offline."""
