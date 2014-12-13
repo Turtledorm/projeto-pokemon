@@ -7,7 +7,7 @@ def melhor_ataque(atacante, defensor):
     estado_critico = False
     melhor, melhor_efc, melhor_acu = None, -1, -1
 
-    # Caso HP < 20%, usar o golpe que causa mais dano (esqueça acurácia)
+    # Condição especial para caso Pokémon esteja à beira do nocaute
     if atacante.hp < atacante.hp_max/5:
         estado_critico = True
 
@@ -18,10 +18,13 @@ def melhor_ataque(atacante, defensor):
         if ataque.pp > 0:
             efc = ataque.calcula_dano(atacante, defensor, is_basico=True)
             if efc >= defensor.hp:
+                # Se ACU for igual, usa maior PP como critério de desempate
                 if (ataque.acu > melhor_acu or
-                    (ataque.acu == melhor_acu and ataque.pp > melhor.pp)):
+                   (ataque.acu == melhor_acu and ataque.pp > melhor.pp)):
+                    melhor_efc, melhor_acu = efc, ataque.acu
                     melhor = ataque
             else:
+                # Caso HP < 20%, usar golpe com maior dano (esqueça acurácia)
                 if not estado_critico:
                     efc *= (ataque.acu*ataque.acu)/10000
                 if efc > melhor_efc:
