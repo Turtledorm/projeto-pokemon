@@ -1,17 +1,23 @@
+#!/usr/bin/env python3
+
 import os
 import sys
 from random import randint, choice
 from string import ascii_lowercase, ascii_uppercase
 import unittest
 from mock import Mock, patch, PropertyMock
+
 sys.path.insert(1, os.path.join(sys.path[0], '../src'))
+
 from tipo import le_tipos
 le_tipos("tipos.txt")
-from ia import mais_preciso, melhor_ataque
-import pokemon
+
+from ia import melhor_ataque
 from pokemon import Pokemon
 from random_poke import RandomPoke
 from ataque import Ataque
+
+
 class IaTestCase(unittest.TestCase):
         
     def teste_melhor_ataque(self):
@@ -44,14 +50,6 @@ class IaTestCase(unittest.TestCase):
             # dano usando a relação dano x acurácia.
             if max(danos) < defensor.hp:
                 self.assertAlmostEqual(max(danos), melhor, 1)
-
-    def teste_mais_preciso(self):
-        """Para testarmos se a função escolhe o ataque mais preciso, geramos
-        pokemons cujos ataques mais precisos sempre serão os últimos na 
-        lista de ataques do pokemon""" 
-        for j in range(50):
-            poke = self.gera_poke()    
-            self.assertEqual(mais_preciso(poke, [i for i in range(4)]), poke.get_ataque(3))                  
     
     def gera_ataque(self, acu, pwr, pp):
         """Gera um ataque com atributos aleatórios."""

@@ -35,7 +35,9 @@ MAC0242 - Relatório (Parte 3)
 
 ###### test/
 
-  - <to be continued> ???
+  - ***teste_ataque.py***: Verifica as funções relacionadas ao cálculo de dano.
+  - ***teste_battle_state.py***: Testa as funções que criam e traduzem um objeto battle_state de e para xml.
+  - ***teste_ia.py***: Verifica se a inteligência artificial está funcionando corretamente.
 
 ### Inteligência Artificial
 

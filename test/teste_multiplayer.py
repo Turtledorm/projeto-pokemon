@@ -19,6 +19,7 @@ import entrada, batalha, pokemon, servidor
 from batalha import *
 from battle_state import *
 
+
 class MultiplayerTestCase(unittest.TestCase):
 
     def setUp(self):

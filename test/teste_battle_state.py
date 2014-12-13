@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Testa as funcionalidades do módulo battle_state"""
 import os
 import sys
