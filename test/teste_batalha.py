@@ -12,16 +12,16 @@ from mock import Mock, patch, PropertyMock
 
 # Diz onde procurar pelo módulo pokemon
 sys.path.insert(1, os.path.join(sys.path[0], '../src'))
-from tipo import le_tipos, get_eff
+from tipo import le_tipos
 from entrada import le_ataque
 le_tipos("tipos.txt")
 import pokemon
 from pokemon import Pokemon
 from ataque import Ataque
 import batalha
-from batalha import quem_comeca, escolhe_ataque, mostra_pokemons
+from batalha import quem_comeca,  mostra_pokemons
 from random_poke import RandomPoke
-from dano import calcula_dano, efetividade, stab, critico, aleatorio
+
 
 class BatalhaTestCase(unittest.TestCase):
 

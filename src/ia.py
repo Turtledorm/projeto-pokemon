@@ -5,7 +5,7 @@ def melhor_ataque(atacante, defensor):
     """Devolve o golpe do atacante que causa, em média, mais dano
        no defensor. Supõe que algum golpe tenha PP."""
     estado_critico = False
-    melhor, melhor_efc, melhor_acu = None, 0, 0
+    melhor, melhor_efc, melhor_acu = None, -1, -1
 
     # Caso HP < 20%, usar o golpe que causa mais dano (esqueça acurácia)
     if atacante.hp < atacante.hp_max/5:

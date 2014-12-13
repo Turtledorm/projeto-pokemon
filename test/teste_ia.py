@@ -26,13 +26,12 @@ class IaTestCase(unittest.TestCase):
             todos os ataques do pokemon atacante no pokemon defensor."""
 
         for j in range(100):
-            #Cria um pokemon atacante e um defensor
+            # Cria um pokemon atacante e um defensor
             dados_atk = RandomPoke()
             dados_def = RandomPoke()
             atacante = Pokemon(dados_atk.gera())
             defensor = Pokemon(dados_def.gera())
            
-            
             melhor = melhor_ataque(atacante, defensor)
             danos = []
             if atacante.hp < atacante.hp_max/5:
@@ -42,14 +41,15 @@ class IaTestCase(unittest.TestCase):
             for ataque in atacante.ataques:
                 if ataque.pp > 0 and estado_critico is False:
                     dano = ataque.calcula_dano(atacante, defensor, is_basico=True)
-                    danos.append(dano * ataque.acu/100)  
+                    danos.append(dano * (ataque.acu*ataque.acu)/10000)  
                 elif ataque.pp > 0 and estado_critico is True:
                     dano = ataque.calcula_dano(atacante, defensor, is_basico=True)    
             
             # Caso não tire todo o hp, escolhe o que causa (em média) o maior
             # dano usando a relação dano x acurácia.
             if max(danos) < defensor.hp:
-                self.assertAlmostEqual(max(danos), melhor, 1)
+                melhor_dano = melhor.calcula_dano(atacante, defensor, is_basico=True)
+                self.assertEqual(atacante.get_ataque(danos.index(max(danos))), melhor, 1)
     
     def gera_ataque(self, acu, pwr, pp):
         """Gera um ataque com atributos aleatórios."""
