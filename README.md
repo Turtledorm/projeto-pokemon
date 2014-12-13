@@ -54,7 +54,7 @@ MAC0242 - Relatório (Parte 3)
 
   **3.** Se ***2*** não ocorrer, então calcula-se o dano que cada golpe do usuário causará no defensor. O produto do dano pela acurácia de cada ataque resultará no "custo-benefício" do golpe. Assim, escolher-se-á o que possuir maior valor.
 
-  **4.** Se o "custo-benefício" de mais de um ataque em **3** tem chance de nocautear o oponente, então será usado o que possuir maior acurácia. O critério de desempate, se necessário, é o golpe com maior PP.
+  **4.** Se o "custo-benefício" de mais de um ataque em ***3*** tem chance de nocautear o oponente, então será usado o que possuir maior acurácia. O critério de desempate, se necessário, é o golpe com maior PP.
 
 ### Uso
 
