@@ -91,6 +91,7 @@ if [[ $programa == false ]]; then uso; fi
 pokes=(${pokes// / })
 
 # Executa o programa conforme o nº de Pokémons e argumentos passados
+source bin/activate
 if (( $p == 0 )); then
     arq=`find $POKEDIR* | shuf -n 1`  # Busca um Pokémon aleatório
     if [[ $l == true ]]; then
