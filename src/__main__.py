@@ -7,7 +7,7 @@ import sys
 from entrada import le_pokemon
 from batalha import batalha_local
 from cliente import Cliente
-import servidor
+from servidor import Servidor
 
 try:
     is_cpu1 = False
@@ -35,9 +35,9 @@ try:
 
         # Servidor
         elif arg == "-s":
-            servidor = servidor.Servidor(is_cpu1 or is_cpu2)
+            servidor = Servidor(is_cpu1 or is_cpu2)
             try:
-                servidor.app.run(debug=True)
+                servidor.app.run(debug=False)
             except OSError:
                 print("Endereço do servidor já em uso!")
 

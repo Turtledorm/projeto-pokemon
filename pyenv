@@ -1,29 +1,32 @@
 #!/bin/bash
 # Script que acrescenta um virtualenv em um diretório já existente.
 
-# Diretório do projeto
-DIR=`cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd`
+# Sai do script se encontrar erros (como pacote virtualenv não instalado) 
+set -e
+
+# Vai até diretório raiz do projeto
+cd "$(dirname "${BASH_SOURCE[0]}")"
 
 # Arquivo com as dependências
-REQ="$DIR/doc/requirements.txt"
+req="doc/requirements.txt"
 
 # --------------------------------------------------------------------
 # Mostra como usar o script.
 
 function uso {
     echo -e "\e[1mUSO\e[0m"
-    echo -e "\t./`basename $0` [\e[1m-h\e[0m] [\e[1m-r\e[0m]\n"
+    echo -e "\t$0 [\e[1m-h\e[0m] [\e[1m-r\e[0m]\n"
 
     echo -e "\e[1mDESCRIÇÃO\e[0m"
     echo -e "\tCria um virtualenv para Python 3 no diretório atual."
-    echo -e "\tTambém instala as dependências encontradas em '$REQ'.\n"
+    echo -e "\tTambém instala as dependências encontradas em '$req'.\n"
 
     echo -e "\e[1mOPÇÕES\e[0m"
     echo -e "\tSepare cada opção com um espaço.\n"
     echo -e "\t\e[1m-h\e[0m\tMostra como usar o script, além de abandoná-lo.\n"
     echo -e "\t\e[1m-r\e[0m\tRemove os diretórios instalados por este script, além de abandoná-lo.\n"
 
-    exit
+    exit 0
 }
 
 # --------------------------------------------------------------------
@@ -39,11 +42,14 @@ for arg in "$@"; do
     fi
 done
 
-virtualenv -p python3 $DIR
-if [ -f "$REQ" ]; then
-    source $DIR/bin/activate
-    echo "Instalando requisitos contidos em $REQ..."
-    pip3 install -r $REQ
+if [ ! -f "$req" ]; then
+    echo -e "\e[1mERRO:\e[0m Arquivo $req não encontrado."
+    exit 1
 fi
+
+virtualenv -p python3 .
+source bin/activate
+echo "Instalando requisitos contidos em $req..."
+pip3 install -r $req
 
 echo "Pronto! :)"

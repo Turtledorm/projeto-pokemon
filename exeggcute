@@ -2,28 +2,26 @@
 # Script que executa de forma simplificada o programa em Python de Pokémon.
 # O nome é uma homenagem a um Pokémon chamado Exeggcute (sim, é uma piada ruim).
 
-# Diretório do projeto
-DIR=`cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd`
+# Vai até diretório raiz do projeto
+cd "$(dirname "${BASH_SOURCE[0]}")"
 
 # Nome dos diretórios
-POKEDIR="$DIR/pokemon/"
-SRCDIR="$DIR/src/"
+pokedir="pokemon"
+srcdir="src"
 
 # --------------------------------------------------------------------
 # Mostra como usar o script.
 
 function uso {
-    ARGS="[\e[1m-h\e[0m] [\e[1m-p\e[0m] <\e[1m-l\e[0m> <\e[1m-c\e[0m> <\e[1m-s\e[0m> [\e[1m-a\e[0m] [\e[1m-b\e[0m]\n"
-    POKENAME=`basename $POKEDIR`
-    SRCNAME=`basename $SRCDIR`
+    args="[\e[1m-h\e[0m] [\e[1m-p\e[0m] <\e[1m-l\e[0m> <\e[1m-c\e[0m> <\e[1m-s\e[0m> [\e[1m-a\e[0m] [\e[1m-b\e[0m]\n"
 
     echo -e "\e[1mUSO\e[0m"
-    echo -e "\t./`basename $0` [\e[1mPokémon 1\e[0m] [\e[1mPokémon 2\e[0m] $ARGS"
+    echo -e "\t$0 [\e[1mPokémon 1\e[0m] [\e[1mPokémon 2\e[0m] $ARGS"
 
     echo -e "\e[1mDESCRIÇÃO\e[0m"
-    echo -e "\tExecuta o '${SRCNAME}/main.py' com os Pokémons em '${POKENAME}' citados como parâmetros."
+    echo -e "\tExecuta o '${srcdir}/main.py' com os Pokémons em '${pokedir}' citados como parâmetros."
     echo -e "\tOs Pokémons devem ser digitados sem a extensão '.txt'. Por exemplo:\n"
-    echo -e "\t./`basename $0` Blastoise Charizard -l\n"
+    echo -e "\t$0 Blastoise Charizard -l\n"
     echo -e "\tSe nenhum Pokémon for passado como parâmetro, a escolha será aleatória."
     echo -e "\tA ordem em que as opções são digitadas é indiferente à execução.\n"
 
@@ -46,21 +44,20 @@ function uso {
     echo -e "\t\e[1m-a\e[0m\tFaz com que todos os Pokémons sejam CPUs.\n"
     echo -e "\t\e[1m-b\e[0m\tFaz com que o primeiro Pokémon seja um CPU.\n"
 
-    exit
+    exit 0
 }
 
 # --------------------------------------------------------------------
 # MAIN
 
-param=()  # Vetor guardando os argumentos do programa principal
-cont=0    # Número de argumentos do programa principal
+args=()         # Vetor guardando os argumentos do programa principal
+a_cont=0        # Número de argumentos do programa principal
 
-l=false         # Argumento para batalha local
-programa=false  # Flag que analisa se o programa terá execução
+b_local=false   # Argumento para batalha local
+prog=false      # Flag que analisa se o programa terá execução
 
-pokes=""  # String para guardar os Pokémons passados ao programa principal
-p=0       # Número de Pokémons passados como parâmetro
-
+pokes=""        # String para guardar os Pokémons passados ao programa principal
+p_cont=0        # Número de Pokémons passados como parâmetro
 
 # Verifica os argumentos especiais
 for arg in "$@"; do
@@ -68,55 +65,56 @@ for arg in "$@"; do
     -h)
         uso;;
     -p)
-        ls --color=auto $POKEDIR
+        ls --color=auto $pokedir | sed 's/\.txt//' # Exibe Pokémons sem o '.txt'
         exit;;
     -[l,s,c])
-        if [[ $arg == "-l" ]]; then l=true; fi
-        programa=true
-        param[$cont]="$arg"
-        cont=$((cont + 1));;
+        if [[ $arg == "-l" ]]; then b_local=true; fi
+        prog=true
+        args[$a_cont]="$arg"
+        a_cont=$((a_cont + 1));;
     -[a,b])
-        param[$cont]="$arg"
-        cont=$((cont + 1));;
+        args[$a_cont]="$arg"
+        a_cont=$((a_cont + 1));;
     *)
         pokes="$pokes $arg"
-        p=$((p + 1));;
+        p_cont=$((p_cont + 1));;
     esac
 done
 
 # Mostra o modo de uso se o programa não tiver argumento útil
-if [[ $programa == false ]]; then uso; fi
+if [[ $prog == false ]]; then uso; fi
+
+# Verifica se o virtualenv está instalado 
+if [[ ! -f "bin/activate" ]]; then
+    echo -e "\e[1mERRO:\e[0m virtualenv não está instalado."
+    echo -e "Por favor, execute o script 'pyenv' para corrigir o problema."
+    exit 1
+fi;
 
 # Quebra a string "pokes" em um array
 pokes=(${pokes// / })
 
 # Executa o programa conforme o nº de Pokémons e argumentos passados
 source bin/activate
-if (( $p == 0 )); then
-    arq=`find $POKEDIR* | shuf -n 1`  # Busca um Pokémon aleatório
-    if [[ $l == true ]]; then
-        cat $arq `find $POKEDIR* | shuf -n 1` - | $SRCDIR/main.py ${param[*]}
-    else
-        cat $arq - | $SRCDIR/main.py ${param[*]}
-    fi
-else
-    poke1="$POKEDIR${pokes[0]}.txt"
-    poke2="$POKEDIR${pokes[1]}.txt"
-    if (( $p >= 1 )) && [ -f "$poke1" ]; then
-        if (( $p >= 2 )); then
-            if [ -f "$poke2" ]; then
-                cat "$poke1" "$poke2" - | $SRCDIR/main.py ${param[*]}
-            else
-                echo "${pokes[1]} não encontrado!"
-            fi
-        else
-            if [[ $l == true ]]; then
-                cat $poke1 `find $POKEDIR* | shuf -n 1` - | $SRCDIR/main.py ${param[*]}
-            else
-                cat "$poke1" - | $SRCDIR/main.py ${param[*]}
-            fi
-        fi
-    else
-        echo "${pokes[0]} não encontrado!"
-    fi
+rand="ls $pokedir | shuf -n 1 | sed 's/\.txt//'" # Busca um Pokémon aleatório
+if (( $p_cont == 0 )); then
+    pokes[0]=$(eval $rand)
 fi
+pokearq0="$pokedir/${pokes[0]}.txt"
+if [[ ! -f "$pokearq0" ]]; then
+    echo "${pokes[0]} não encontrado!"
+    exit 1
+fi
+arqs=$pokearq0
+if [[ $b_local == true ]]; then
+    if [[ $p_cont < 2 ]]; then
+        pokes[1]=$(eval $rand)
+    fi
+    pokearq1="$pokedir/${pokes[1]}.txt"
+    if [[ ! -f "$pokearq1" ]]; then
+        echo "${pokes[1]} não encontrado!"
+        exit 1
+    fi
+    arqs=$arqs" "$pokearq1
+fi
+cat $arqs - | python3 $srcdir ${args[*]}
