@@ -1,9 +1,9 @@
-"""Inteligência artificial dos Pokémons."""
+"""Inteligência artificial para jogo automatizado."""
 
 
 def melhor_ataque(atacante, defensor):
-    """Devolve o golpe do atacante que causa, em média, mais dano
-       no defensor. Supõe que algum golpe tenha PP."""
+    """Devolve o golpe do atacante que causa maior dano 
+       esperado ao defensor. Supõe que algum golpe tenha PP."""
     estado_critico = False
     melhor, melhor_efc, melhor_acu = None, -1, -1
 
@@ -16,7 +16,7 @@ def melhor_ataque(atacante, defensor):
     # nocauteie o adversário, procurar por aquele que possuir maior acurácia.
     for ataque in atacante.ataques:
         if ataque.pp > 0:
-            efc = ataque.calcula_dano(atacante, defensor, is_basico=True)
+            efc = ataque.calcula_dano(atacante, defensor, ia=True)
             if efc >= defensor.hp:
                 # Se ACU for igual, usa maior PP como critério de desempate
                 if (ataque.acu > melhor_acu or

@@ -13,7 +13,7 @@ def batalha_local(poke1, poke2):
     # Loop principal da batalha e do jogo
     while not acabou(poke1, poke2):
         mostra_pokemons(poke1, poke2)
-        ataque = atacante.escolhe_ataque(defensor)
+        ataque = atacante.escolhe_ataque()
         atacante.realiza_ataque(ataque, defensor)
         atacante, defensor = defensor, atacante
 
@@ -58,8 +58,7 @@ def acabou(poke1, poke2):
 
 def resultado(poke1, poke2):
     """Imprime o resultado da batalha baseado no HP dos Pokémons"""
-    vencedor = poke1 if poke1.hp > 0 else poke2
-    perdedor = poke2 if poke1 == vencedor else poke1
+    vencedor, perdedor = (poke1, poke2) if poke1.hp > 0 else (poke2, poke1)
 
     print(">", perdedor.nome + " foi nocauteado!")
     if vencedor.hp <= 0:

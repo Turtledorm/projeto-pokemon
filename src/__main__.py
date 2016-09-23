@@ -10,24 +10,29 @@ from cliente import Cliente
 from servidor import Servidor
 
 try:
-    is_cpu1 = False
-    is_cpu2 = False
+    cpu1 = False
+    cpu2 = False
+    debug = False
 
-    # Verifica se algum jogador será controlado pelo CPU
+    # Verifica se algum jogador será controlado pelo CPU e modo debug
     for arg in sys.argv[1:]:
         if arg == "-a":
-            is_cpu1 = is_cpu2 = True
+            cpu1 = cpu2 = True
         elif arg == "-b":
-            is_cpu1 = True
+            cpu1 = True
+        if arg == "-d":
+            debug = True
 
     for arg in sys.argv[1:]:
         # Local
         if arg == "-l":
-            batalha_local(le_pokemon(is_cpu1), le_pokemon(is_cpu2))
+            poke1 = le_pokemon(cpu1, debug)
+            poke2 = le_pokemon(cpu2, debug)
+            batalha_local(poke1, poke2)
 
         # Cliente
         elif arg == "-c":
-            cliente = Cliente(is_cpu1 or is_cpu2)
+            cliente = Cliente(cpu1 or cpu2, debug)
             cliente.conecta_ao_servidor()
             while not cliente.acabou_batalha():
                 cliente.jogada()
@@ -35,16 +40,12 @@ try:
 
         # Servidor
         elif arg == "-s":
-            servidor = Servidor(is_cpu1 or is_cpu2)
+            servidor = Servidor(cpu1 or cpu2, debug)
             try:
-                servidor.app.run(debug=False)
+                servidor.app.run()
             except OSError:
                 print("Endereço do servidor já em uso!")
-
-    exit(0)
 
 except (KeyboardInterrupt, EOFError):
     print("\nPrograma interrompido!")
     exit(1)
-
-print("Nenhuma opção (local, cliente, servidor) digitada...")

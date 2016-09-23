@@ -1,4 +1,4 @@
-"""Funções de leitura para criar objetos de uma classe."""
+"""Funções de leitura de tipos, Pokémons e ataques."""
 
 from tipo import le_tipos
 
@@ -9,7 +9,7 @@ from pokemon import Pokemon
 from ataque import Ataque
 
 
-def le_pokemon(is_cpu):
+def le_pokemon(cpu, debug):
     """Recebe dados do Pokémon e cria um objeto dessa classe."""
     dados = [input()]  # Começa com o nome
 
@@ -32,7 +32,7 @@ def le_pokemon(is_cpu):
     dados.append(ataques)
 
     print("'" + dados[0] + "' lido com sucesso!")
-    return Pokemon(dados, is_cpu)
+    return Pokemon(dados, cpu, debug)
 
 
 def le_ataque():

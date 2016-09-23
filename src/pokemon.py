@@ -1,6 +1,7 @@
-"""Contém a classe que representa um Pokémon."""
+"""Contém a classe Pokemon."""
 
 import os
+import sys
 import random
 import time
 
@@ -8,20 +9,15 @@ from tipo import get_tipo
 from ataque import Ataque
 from ia import melhor_ataque
 
-MAX_ATAQUES = 4  # Nº máximo de ataques de um Pokémon
-BARRA_MAX = 20   # Comprimento máximo da barra de vida
-
 
 class Pokemon:
-
     """Representa um Pokémon que batalha no jogo."""
 
     # Define Struggle como possível ataque
     struggle = Ataque(["Struggle", 0, 100, 50, 10])
 
-    def __init__(self, _dados, is_cpu=False):
+    def __init__(self, dados, cpu, debug):
         """Recebe uma lista contendo dados e cria um Pokémon."""
-        dados = list(_dados)  # Faz uma cópia bruta da lista original
         dados.reverse()
 
         self._nome = dados.pop()
@@ -33,29 +29,30 @@ class Pokemon:
         self._spc = dados.pop()
         self._tipo1 = get_tipo(dados.pop())
         self._tipo2 = get_tipo(dados.pop())
-        self._is_cpu = is_cpu
+        self._cpu = cpu
+        self._debug = debug
 
         self._ataques = dados.pop()
 
-    def mostra(self, full=False):
+    def mostra(self):
         """ Exibe nome, tipo(s) e HP atual/máximo do Pokémon.
-            Se full=True, mostra também os atributos restantes."""
+            Se debug=True, mostra também os atributos restantes."""
         print(">>>", self.nome, "{Lv " + str(self.lvl) + "} <<<")
         print("(" + self.tipo1.nome +
               (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "")
-              + ")" + ((" [CPU]") if self.is_cpu is True else ""))
+              + ")" + ((" [CPU]") if self.cpu is True else ""))
         self.imprime_barra()
 
-        if full:
-            print("ATK =", self.atk)
-            print("DEF =", self.dfs)
-            print("SPD =", self.spd)
-            print("SPC =", self.spc)
+        if self.debug:
+            print("{ ATK =", self.atk, "/", "DEF =", self.dfs, "/",
+                    "SPD =", self.spd, "/", "SPC =", self.spc, "}")
 
         print()
 
     def imprime_barra(self):
         """Imprime uma barra para facilitar a leitura do HP do Pokémon."""
+        BARRA_MAX = 20   # Comprimento máximo da barra de vida
+
         # Pega o comprimento relativo à vida atual
         length = int(BARRA_MAX * self.hp/self.hp_max)
         if length == 0 and self.hp > 0:
@@ -67,22 +64,53 @@ class Pokemon:
         print(" " * (BARRA_MAX - length), end="")
         print("]  " + str(self.hp) + "/" + str(self.hp_max), "HP")
 
-    def mostra_ataques(self, full=False):
+    def escolhe_ataque(self, defensor=None):
+        """Mostra a lista de ataques do Pokémon e lê a escolha do usuário."""
+        print("* Turno de", self.nome, "*\n")
+        n = self.mostra_ataques()
+
+        # Se não tiver mais com o que atacar, usa Struggle
+        if self.todos_ataques_sem_pp():
+            print(self.nome, "não tem golpes sobrando", end="")
+            for cont in range(3):
+                print(".", end="")
+                sys.stdout.flush()
+                time.sleep(1)
+            print()
+            return self.struggle
+
+        ataque = None
+        if self.cpu:
+            ataque = melhor_ataque(self, defensor)
+        else:
+            while True:
+                try:
+                    i = int(input("Digite o nº do ataque: "))
+                except ValueError:
+                    continue
+                if self.get_ataque(i-1) is not None:
+                    ataque = self.get_ataque(i-1)
+                    break
+
+        return ataque
+
+    def mostra_ataques(self):
         """Mostra lista de ataques do Pokémon e devolve quantos são."""
         print("<<< Ataques >>>")
         i = 1
         for ataque in self.ataques:
             print(i, "-", end=" ")
-            ataque.mostra(full)
+            ataque.mostra(self.debug)
             i += 1
         print()
         return len(self.ataques)
 
-    def remove_hp(self, dano):
-        """Reduz quantidade de HP equivalente ao dano."""
-        self._hp -= dano
-        if self._hp < 0:
-            self._hp = 0
+    def get_ataque(self, i):
+        """Retorna o i-ésimo ataque do Pokémon se existir e tiver PP > 0."""
+        n = len(self.ataques)
+        if i >= n or self.ataques[i].sem_pp():
+            return None
+        return self.ataques[i]
 
     def todos_ataques_sem_pp(self):
         """Verifica se todos os ataques estão com PP 0."""
@@ -90,6 +118,64 @@ class Pokemon:
             if not ataque.sem_pp():
                 return False
         return True
+
+    def realiza_ataque(self, ataque, defensor):
+        """Realiza um ataque contra outro Pokémon."""
+        ataque.usa_pp()
+        print("\n>", self.nome + " usa " + ataque.nome + "!")
+
+        if ataque.acertou():
+            dano = ataque.calcula_dano(self, defensor)
+
+            if dano > 0:
+                defensor.remove_hp(dano)
+                print(">", defensor.nome, "perdeu", dano, "HP!")
+
+                if ataque == self.struggle:
+                    dano //= 2
+                    print(">", self.nome, "perdeu", dano, "HP pelo recuo!")
+                    self.remove_hp(dano)
+        else:
+            print("> O ataque de " + self.nome + " errou!")
+
+        input()  # Aguarda por usuário antes de limpar a tela
+
+    def remove_hp(self, dano):
+        """Reduz quantidade de HP equivalente ao dano."""
+        self.hp -= dano
+        if self.hp < 0:
+            self.hp = 0
+
+    def to_xml(self):
+        """Gera uma string XML contendo as informações do Pokémon."""
+        xml = "<pokemon>"
+        xml += tag("name", self.nome)
+        xml += tag("level", self.lvl)
+
+        xml += "<attributes>"
+        xml += tag("health", self.hp)
+        xml += tag("attack", self.atk)
+        xml += tag("defense", self.dfs)
+        xml += tag("speed", self.spd)
+        xml += tag("special", self.spc)
+        xml += "</attributes>"
+
+        xml += tag("type", self.tipo1.numero)
+        if self.tipo2 != "Blank":
+            xml += tag("type", self.tipo2.numero)
+
+        xml += "<attacks>"
+        for ataque in self.ataques:
+            xml += tag("id", self.ataques.index(ataque) + 1)
+            xml += tag("name", ataque.nome)
+            xml += tag("type", ataque.typ.numero)
+            xml += tag("power", ataque.pwr)
+            xml += tag("accuracy", ataque.acu)
+            xml += tag("power_points", ataque.pp)
+        xml += "</attacks>"
+        xml += "</pokemon>"
+
+        return xml
 
     @property
     def nome(self):
@@ -140,94 +226,14 @@ class Pokemon:
         return self._ataques
 
     @property
-    def is_cpu(self):
-        return self._is_cpu
+    def cpu(self):
+        return self._cpu
 
-    def get_ataque(self, n):
-        """Retorna o n-ésimo ataque do Pokémon se existir e tiver PP > 0."""
-        if n >= MAX_ATAQUES or self.ataques[n].sem_pp():
-            return None
-        return self.ataques[n]
-
-    def escolhe_ataque(self, defensor):
-        """Mostra a lista de ataques do Pokémon e lê a escolha do usuário."""
-        print("* Turno de", self.nome, "*\n")
-        n = self.mostra_ataques()
-
-        # Se não tiver mais com o que atacar, usa Struggle
-        if self.todos_ataques_sem_pp():
-            print(self.nome, "não tem golpes sobrando...", end="")
-            input()
-            return self.struggle
-
-        ataque = None
-        if self.is_cpu:
-            ataque = melhor_ataque(self, defensor)
-        else:
-            while True:
-                try:
-                    i = int(input("Digite o nº do ataque: "))
-                except ValueError:
-                    continue
-                if self.get_ataque(i-1) is not None:
-                    ataque = self.get_ataque(i-1)
-                    break
-
-        return ataque
-
-    def realiza_ataque(self, ataque, defensor):
-        """Realiza um ataque contra outro Pokémon."""
-        ataque.usa_pp()
-        print("\n>", self.nome + " usa " + ataque.nome + "!")
-
-        if ataque.acertou():
-            dano = ataque.calcula_dano(self, defensor)
-
-            if dano > 0:
-                defensor.remove_hp(dano)
-                print(">", defensor.nome, "perdeu", dano, "HP!")
-
-                if ataque == self.struggle:
-                    dano //= 2
-                    print(">", self.nome, "perdeu", dano, "HP pelo recuo!")
-                    self.remove_hp(dano)
-        else:
-            print("> O ataque de " + self.nome + " errou!")
-
-        input()  # Aguarda por usuário antes de limpar a tela
-
-    def to_xml(self):
-        """Gera uma string XML contendo as informações do Pokémon."""
-        xml = "<pokemon>"
-        xml += _tag("name", self.nome)
-        xml += _tag("level", self.lvl)
-
-        xml += "<attributes>"
-        xml += _tag("health", self.hp)
-        xml += _tag("attack", self.atk)
-        xml += _tag("defense", self.dfs)
-        xml += _tag("speed", self.spd)
-        xml += _tag("special", self.spc)
-        xml += "</attributes>"
-
-        xml += _tag("type", self.tipo1.numero)
-        if self.tipo2 != "Blank":
-            xml += _tag("type", self.tipo2.numero)
-
-        xml += "<attacks>"
-        for ataque in self.ataques:
-            xml += _tag("id", self.ataques.index(ataque) + 1)
-            xml += _tag("name", ataque.nome)
-            xml += _tag("type", ataque.typ.numero)
-            xml += _tag("power", ataque.pwr)
-            xml += _tag("accuracy", ataque.acu)
-            xml += _tag("power_points", ataque.pp)
-        xml += "</attacks>"
-        xml += "</pokemon>"
-
-        return xml
+    @property
+    def debug(self):
+        return self._debug
 
 
-# Função auxiliar de to_xml
-def _tag(nome, valor):
+def tag(nome, valor):
+    """Função auxiliar de to_xml para escrever tags."""
     return "<" + nome + ">" + str(valor) + "</" + nome + ">"

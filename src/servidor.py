@@ -16,13 +16,12 @@ class Trancado(HTTPException):
 
 
 class Servidor:
-
     """Representa o servidor na parte multiplayer."""
 
-    def __init__(self, is_cpu):
+    def __init__(self, cpu, debug):
         """Executa o programa no modo servidor."""
         self.conectado = False
-        self.is_cpu = is_cpu
+        self.cpu = cpu
         self.app = Flask(__name__)
 
         # ---------------------------------------
@@ -42,7 +41,7 @@ class Servidor:
             self.conectado = True
 
             # Lê o Pokémon do servidor
-            self.poke_servidor = le_pokemon(self.is_cpu)
+            self.poke_servidor = le_pokemon(self.cpu, debug)
 
             # Convertemos o xml para um objeto Pokémon (do cliente)
             battle_state = request.data.decode("UTF-8")

@@ -97,7 +97,7 @@ class BatalhaTestCase(unittest.TestCase):
                 # Aqui começa o cálculo do dano
                 lvl = poke1.lvl
                 ataque = Ataque(a.gera_ataque())
-                if ataque.typ.is_especial:
+                if ataque.typ.especial:
                     atk = poke1.spc
                     dfs = poke2.spc
                 else:

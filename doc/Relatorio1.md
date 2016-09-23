@@ -10,7 +10,7 @@ MAC0242 - Relatório (Parte 1)
 
 ### Introdução
 
-  A primeira parte deste projeto visou implementar um jogo (em modo texto) muito semelhante à primeira geração de Pokémon. O programa recebe como entrada dados de dois Pokémons e simula uma batalha entre eles, recebendo ataques do usuário e exibindo mensagens conforme o resultado das ações: qual foi o dano, se foi crítico, efetividade aplicada, etc.
+  A primeira parte deste projeto visou a implementar um jogo (em modo texto) muito semelhante à primeira geração de Pokémon. O programa recebe como entrada dados de dois Pokémons e simula uma batalha entre eles, recebendo ataques do usuário e exibindo mensagens conforme o resultado das ações: qual foi o dano, se foi crítico, efetividade aplicada, etc.
 
 ### Visão geral
 

@@ -40,15 +40,15 @@ class IaTestCase(unittest.TestCase):
                 estado_critico = False
             for ataque in atacante.ataques:
                 if ataque.pp > 0 and estado_critico is False:
-                    dano = ataque.calcula_dano(atacante, defensor, is_basico=True)
+                    dano = ataque.calcula_dano(atacante, defensor, basico=True)
                     danos.append(dano * (ataque.acu*ataque.acu)/10000)  
                 elif ataque.pp > 0 and estado_critico is True:
-                    dano = ataque.calcula_dano(atacante, defensor, is_basico=True)    
+                    dano = ataque.calcula_dano(atacante, defensor, basico=True)    
             
             # Caso não tire todo o hp, escolhe o que causa (em média) o maior
             # dano usando a relação dano x acurácia.
             if max(danos) < defensor.hp:
-                melhor_dano = melhor.calcula_dano(atacante, defensor, is_basico=True)
+                melhor_dano = melhor.calcula_dano(atacante, defensor, basico=True)
                 self.assertEqual(atacante.get_ataque(danos.index(max(danos))), melhor, 1)
     
     def gera_ataque(self, acu, pwr, pp):

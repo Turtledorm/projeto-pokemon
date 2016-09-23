@@ -1,16 +1,14 @@
-"""Contém a classe que representa um ataque."""
+"""Contém a classe Ataque."""
 
 import random
 from tipo import get_tipo
 
 
 class Ataque:
-
     """Representa um ataque de Pokémon."""
 
-    def __init__(self, _dados):
+    def __init__(self, dados):
         """Recebe uma lista de dados e cria um ataque."""
-        dados = list(_dados)
         dados.reverse()
 
         self._nome = dados.pop()
@@ -19,17 +17,13 @@ class Ataque:
         self._pwr = dados.pop()
         self._pp = self.pp_max = dados.pop()
 
-    def mostra(self, full=False):
+    def mostra(self, debug):
         """Exibe nome e PP atual/máximo do ataque.
-        Se full=True, mostra também os atributos restantes."""
-        if not full:
-            print(self.nome, "(" + str(self.typ.nome) + ")",
-                  "[" + str(self.pp) + "/" + str(self.pp_max) + "]")
-        else:
-            print(self.nome, "(" + str(self.typ.nome) + ")")
-            print(str(self.pp) + "/" + str(self.pp_max), "PP")
-            print("Acurácia:", self.acu)
-            print("Poder:", self.pwr)
+           Se debug=True, mostra também os atributos restantes."""
+        print(self.nome, " (", self.typ.nome, ")", sep="", end=" ")
+        print("[", self.pp, "/", self.pp_max, "]", sep="")
+        if debug:
+            print("    { Acurácia:", self.acu, "/", "Poder:", self.pwr, "}")
 
     @property
     def nome(self):
@@ -62,40 +56,40 @@ class Ataque:
         chance = (self.acu * self.acu)/10000
         return random.uniform(0, 1) <= chance
 
-    def calcula_dano(self, atacante, defensor, is_basico=False):
+    def calcula_dano(self, atacante, defensor, ia=False):
         """Calcula o dano causado pelo ataque usando a fórmula da 1ª geração.
-           Se is_basico=True, aleatório e crítico não são contabilizados."""
+           Se ia=True, aleatório e crítico não são contabilizados."""
         # Reúne os valores básicos para calcular dano
         lvl = atacante.lvl
         base = self.pwr
-        if self.typ.is_especial:
+        if self.typ.especial:
             atk = atacante.spc
             dfs = defensor.spc
         else:
             atk = atacante.atk
             dfs = defensor.dfs
 
-        eff = self.efetividade(defensor, is_basico)
+        eff = self.efetividade(defensor, ia)
 
         # Calcula o dano base, sem modificadores aleatórios
         dano = (2*lvl + 10)/250 * atk/dfs * base + 2
         dano *= self.stab(atacante) * eff
 
         # Aplica o modificador de crítico e aleatório
-        if not is_basico:
+        if not ia:
             dano *= self.critico(atacante, eff) * self.aleatorio()
 
         return int(dano)
 
     def stab(self, atacante):
-        """Confere um bônus de dano se tipo de ataque e atacante são iguais."""
+        """Confere bônus de dano se tipo de ataque e atacante são iguais."""
         typ = self.typ
         if atacante.tipo1 == typ or atacante.tipo2 == typ:
             return 1.5
         return 1
 
     def critico(self, atacante, eff):
-        """Verifica se o atacante causou um golpe crítico."""
+        """Confere bônus de dano se for causado um golpe crítico."""
         lvl = atacante.lvl
         chance = atacante.spd/512
 
@@ -104,7 +98,7 @@ class Ataque:
             return (2*lvl + 5)/(lvl + 5)
         return 1
 
-    def efetividade(self, defensor, is_basico):
+    def efetividade(self, defensor, basico):
         """Aplica o multiplicador de efetividade presente na tabela."""
         # Calcula o multiplicador
         mult = self.typ.get_eff_contra(defensor.tipo1)
@@ -112,7 +106,7 @@ class Ataque:
             mult *= self.typ.get_eff_contra(defensor.tipo2)
 
         # Exibe mensagem
-        if not is_basico:
+        if not basico:
             if mult > 1:
                 print("> Foi super efetivo!")
             elif 0 < mult < 1:

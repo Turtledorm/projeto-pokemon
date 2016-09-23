@@ -8,12 +8,11 @@ from battle_state import cria_bs, bs_to_poke
 
 
 class Cliente:
-
     """Representa o cliente no jogo multiplayer."""
 
-    def __init__(self, is_cpu):
+    def __init__(self, cpu, debug):
         """Lê o Pokémon do cliente o endereço do servidor."""
-        self.poke_cliente = le_pokemon(is_cpu)
+        self.poke_cliente = le_pokemon(cpu, debug)
 
         ip = input("Digite o endereço IP do servidor: ")
         if ip == "":
