@@ -10,69 +10,68 @@ from battle_state import cria_bs, bs_to_poke
 class Cliente:
     """Representa o cliente no jogo multiplayer."""
 
-    def __init__(self, cpu, debug):
-        """Lê o Pokémon do cliente o endereço do servidor."""
-        self.poke_cliente = le_pokemon(cpu, debug)
+    def __init__(self, cpu):
+        """Lê o Pokémon do cliente e o endereço do servidor."""
+        self.poke_cliente = le_pokemon(cpu)
+        self.cpu = cpu
 
         ip = input("Digite o endereço IP do servidor: ")
         if ip == "":
-            ip = "localhost"
+            ip = "127.0.0.1"
         try:
-            port = int(input("Digite a porta de conexão: "))
+            porta = int(input("Digite a porta de conexão: "))
         except ValueError:
-            port = 5000
-        self.servidor = ip + ":" + str(port)
+            porta = 5000
+        self.servidor = ip + ":" + str(porta)
+        print("Endereço do servidor:", self.servidor)
 
     def conecta_ao_servidor(self):
         """Envia um objeto battle_state com dados do cliente ao servidor."""
         bs = cria_bs(self.poke_cliente)
 
         try:
-            data = requests.post("http://" + self.servidor + "/battle/",
-                                 data=bs)
-            data.raise_for_status()
-            bs = data.text
+            # Faz uma requisição POST e recebe battle_state modificado
+            resp = requests.post("http://" + self.servidor + "/battle/", bs)
+            resp.raise_for_status()  # Verificação de erros HTTP
+            bs = resp.text
 
         except requests.exceptions.ConnectionError:
-            print("Não foi possível se conectar ao servidor!")
+            print("ERRO: Não foi possível se conectar ao servidor.")
             exit(1)
 
-        except requests.exceptions.HTTPError:
-            print("Erro interno do servidor!")
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 423:
+                print("ERRO: [423] Já há uma partida em execução no servidor.")
+            else:
+                print("ERRO: Não foi possível completar a requisição.")
             exit(1)
 
-        cliente_temp, self.poke_servidor = bs_to_poke(bs)
-        self.poke_cliente.hp = cliente_temp.hp
+        self.poke_cliente, self.poke_servidor = bs_to_poke(bs, self.cpu)
+
+    def loop(self):
+        """Executa o loop de batalha com o servidor."""
+        while not acabou(self.poke_cliente, self.poke_servidor):
+            self.jogada()
+        self.finaliza()
 
     def jogada(self):
         """Envia a escolha de ataque do cliente ao servidor."""
-        # Cliente escolhe seu ataque
+        # Cliente escolhe seu ataque e obtém-se o id deste
         mostra_pokemons(self.poke_servidor, self.poke_cliente)
         id = self.poke_cliente.escolhe_ataque(self.poke_servidor)
-        if id not in self.poke_cliente.ataques:
-            id = 0
-        else:
-            id = self.poke_cliente.ataques.index(id) + 1
+        id = self.poke_cliente.ataques.index(id) + 1
 
         # Faz o envio da escolha ao servidor
         try:
             print("Esperando resposta do servidor...")
-            bs = requests.post("http://" + self.servidor + "/battle/attack/"
-                               + str(id))
+            resp = requests.post("http://" + self.servidor + "/battle/attack/"
+                                 + str(id))
         except requests.exceptions.ConnectionError:
-            print("A conexão com o servidor caiu!")
+            print("ERRO: A conexão com o servidor foi desfeita.")
             exit(1)
 
         # Atualiza dados do cliente
-        cliente_temp, servidor_temp = bs_to_poke(bs.text)
-        self.poke_cliente.hp = cliente_temp.hp
-        self.poke_servidor.hp = servidor_temp.hp
-        if id > 0:
-            self.poke_cliente.get_ataque(id-1).usa_pp()
-
-    def acabou_batalha(self):
-        """Verifica se a batalha terminou."""
-        return acabou(self.poke_servidor, self.poke_cliente)
+        self.poke_cliente, self.poke_servidor = bs_to_poke(resp.text)
 
     def finaliza(self):
         """Mostra o resultado da batalha e fecha o servidor."""

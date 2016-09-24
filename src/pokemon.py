@@ -2,51 +2,64 @@
 
 import os
 import sys
-import random
 import time
 
 from tipo import get_tipo
-from ataque import Ataque
+from ataque import Ataque, get_struggle
+from batalha import is_debug
 from ia import melhor_ataque
 
 
 class Pokemon:
     """Representa um Pokémon que batalha no jogo."""
 
-    # Define Struggle como possível ataque
-    struggle = Ataque(["Struggle", 0, 100, 50, 10])
-
-    def __init__(self, dados, cpu, debug):
+    def __init__(self, dados, cpu=False):
         """Recebe uma lista contendo dados e cria um Pokémon."""
-        dados.reverse()
+        aux = dados[9:]     # Dados dos ataques
+        dados = dados[:9]   # Dados do Pokémon
+        dados.reverse()     # Revertido para facilitar pop()
 
+        # Atributos iniciais
         self._nome = dados.pop()
-        self._lvl = dados.pop()
-        self._hp = self._hp_max = dados.pop()
-        self._atk = dados.pop()
-        self._dfs = dados.pop()
-        self._spd = dados.pop()
-        self._spc = dados.pop()
-        self._tipo1 = get_tipo(dados.pop())
-        self._tipo2 = get_tipo(dados.pop())
+        self._lvl = int(dados.pop())
+        self._hp = self._hp_max = int(dados.pop())
+        self._atk = int(dados.pop())
+        self._dfs = int(dados.pop())
+        self._spd = int(dados.pop())
+        self._spc = int(dados.pop())
+
+        # Tipos do Pokémon
+        t = int(dados.pop()), int(dados.pop())
+        for i in range(2):
+            if t[i] not in range(17):
+                print("ERRO: Valor inválido para tipo de Pokémon.")
+                exit(1)
+        self._tipo1 = get_tipo(t[0])
+        self._tipo2 = get_tipo(t[1])
+
+        # Ataques
+        self._ataques = []
+        while aux:
+            ataque = Ataque(aux[:5])
+            self.ataques.append(ataque)
+            aux = aux[5:]
+
         self._cpu = cpu
-        self._debug = debug
 
-        self._ataques = dados.pop()
+        print("'" + self.nome + "' lido com sucesso!")
 
-    def mostra(self):
+    def info(self):
         """ Exibe nome, tipo(s) e HP atual/máximo do Pokémon.
-            Se debug=True, mostra também os atributos restantes."""
-        print(">>>", self.nome, "{Lv " + str(self.lvl) + "} <<<")
+            Se debug, mostra também os atributos restantes."""
+        print(">>>", self.nome, "{Lv " + str(self.lvl) + "} <<<", end=" ")
         print("(" + self.tipo1.nome +
               (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "")
               + ")" + ((" [CPU]") if self.cpu is True else ""))
         self.imprime_barra()
 
-        if self.debug:
+        if is_debug():
             print("{ ATK =", self.atk, "/", "DEF =", self.dfs, "/",
                     "SPD =", self.spd, "/", "SPC =", self.spc, "}")
-
         print()
 
     def imprime_barra(self):
@@ -59,25 +72,19 @@ class Pokemon:
             length = 1
 
         # Imprime a barra
-        print("[", end="")
-        print("=" * length, end="")
-        print(" " * (BARRA_MAX - length), end="")
-        print("]  " + str(self.hp) + "/" + str(self.hp_max), "HP")
+        print("[" + "=" * length + " " * (BARRA_MAX - length) + "] ", end="")
+        print("[", self.hp, "/", self.hp_max, "] HP", sep="")
 
-    def escolhe_ataque(self, defensor=None):
+    def escolhe_ataque(self, defensor):
         """Mostra a lista de ataques do Pokémon e lê a escolha do usuário."""
         print("* Turno de", self.nome, "*\n")
-        n = self.mostra_ataques()
+        self.info_ataques()
 
         # Se não tiver mais com o que atacar, usa Struggle
         if self.todos_ataques_sem_pp():
-            print(self.nome, "não tem golpes sobrando", end="")
-            for cont in range(3):
-                print(".", end="")
-                sys.stdout.flush()
-                time.sleep(1)
-            print()
-            return self.struggle
+            print(self.nome, "não tem golpes sobrando...", end="")
+            input()
+            return get_struggle()
 
         ataque = None
         if self.cpu:
@@ -86,36 +93,37 @@ class Pokemon:
             while True:
                 try:
                     i = int(input("Digite o nº do ataque: "))
+                    if i <= 0 or i > len(self.ataques):
+                        continue
                 except ValueError:
                     continue
-                if self.get_ataque(i-1) is not None:
-                    ataque = self.get_ataque(i-1)
+                ataque = self.get_ataque(i-1)
+                if ataque.com_pp():
                     break
 
         return ataque
 
-    def mostra_ataques(self):
-        """Mostra lista de ataques do Pokémon e devolve quantos são."""
+    def info_ataques(self):
+        """Mostra lista de ataques do Pokémon."""
         print("<<< Ataques >>>")
         i = 1
         for ataque in self.ataques:
             print(i, "-", end=" ")
-            ataque.mostra(self.debug)
+            ataque.info()
             i += 1
         print()
-        return len(self.ataques)
 
     def get_ataque(self, i):
-        """Retorna o i-ésimo ataque do Pokémon se existir e tiver PP > 0."""
-        n = len(self.ataques)
-        if i >= n or self.ataques[i].sem_pp():
-            return None
+        """Retorna o i-ésimo ataque do Pokémon.
+           Caso especial para struggle em batalhas multiplayer."""
+        if i == -1:
+            return get_struggle()
         return self.ataques[i]
 
     def todos_ataques_sem_pp(self):
         """Verifica se todos os ataques estão com PP 0."""
         for ataque in self.ataques:
-            if not ataque.sem_pp():
+            if ataque.com_pp():
                 return False
         return True
 
@@ -126,12 +134,10 @@ class Pokemon:
 
         if ataque.acertou():
             dano = ataque.calcula_dano(self, defensor)
-
             if dano > 0:
                 defensor.remove_hp(dano)
                 print(">", defensor.nome, "perdeu", dano, "HP!")
-
-                if ataque == self.struggle:
+                if ataque.nome == "Struggle":
                     dano //= 2
                     print(">", self.nome, "perdeu", dano, "HP pelo recuo!")
                     self.remove_hp(dano)
@@ -228,10 +234,6 @@ class Pokemon:
     @property
     def cpu(self):
         return self._cpu
-
-    @property
-    def debug(self):
-        return self._debug
 
 
 def tag(nome, valor):

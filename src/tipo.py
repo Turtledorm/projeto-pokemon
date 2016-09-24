@@ -15,7 +15,7 @@ class Tipo:
         self._nome = nome
         self._especial = especial
 
-    def mostra(self):
+    def info(self):
         """Exibe informações do tipo."""
         print(str(self.numero) + ":", self.nome,
               "(Especial)" if self.especial else "")
@@ -39,7 +39,7 @@ class Tipo:
 
 def le_tipos(nome_arquivo):
     """Lê tipos do arquivo, guarda-os e constrói a tabela de efetividade."""
-    # Para encontrar o arquivo mesmo estando fora do diretório de execução
+    # Encontra o arquivo mesmo estando fora do diretório de execução
     #   __file__: caminho relativo do programa sendo executado
     #   os.path.dirname(__file__): caminho relativo do diretório
     diretorio = os.path.dirname(__file__)
@@ -62,9 +62,18 @@ def le_tipos(nome_arquivo):
             linha = list(map(float, linha))
             tabela_eff.append(linha)
 
-    return n
+    global num_tipos
+    num_tipos = n
+
+
+def get_num_tipos():
+    return num_tipos
 
 
 def get_tipo(i):
     """Devolve o tipo de número 'i'."""
     return tipos[i]
+
+
+# Lê de arquivo tipos e tabela de efetividade
+le_tipos("tipos.txt")

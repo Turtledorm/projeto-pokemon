@@ -41,8 +41,8 @@ function uso {
     echo -e "\e[1mOPÇÕES EXTRAS DO PROGRAMA PRINCIPAL\e[0m"
     echo -e "\tSepare cada opção com um espaço.\n"
 
-    echo -e "\t\e[1m-a\e[0m\tFaz com que todos os Pokémons sejam CPUs.\n"
-    echo -e "\t\e[1m-b\e[0m\tFaz com que o primeiro Pokémon seja um CPU.\n"
+    echo -e "\t\e[1m-a\e[0m\tFaz com que o seu (multiplayer) ou ambos (local) Pokémons sejam CPUs.\n"
+    echo -e "\t\e[1m-b\e[0m\tFaz com que o primeiro Pokémon seja um CPU (multiplayer ou local).\n"
     echo -e "\t\e[1m-d\e[0m\tModo debug. Atributos ocultos serão explicitados.\n"
 
     exit 0

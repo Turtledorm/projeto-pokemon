@@ -4,6 +4,9 @@ import sys
 import random
 import subprocess
 
+# Indicador de debug
+debug = False
+
 
 def batalha_local(poke1, poke2):
     """Simula uma batalha entre dois Pokémons, no modo offline."""
@@ -13,13 +16,12 @@ def batalha_local(poke1, poke2):
     # Loop principal da batalha e do jogo
     while not acabou(poke1, poke2):
         mostra_pokemons(poke1, poke2)
-        ataque = atacante.escolhe_ataque()
+        ataque = atacante.escolhe_ataque(defensor)
         atacante.realiza_ataque(ataque, defensor)
         atacante, defensor = defensor, atacante
 
-    mostra_pokemons(poke1, poke2)
-
     # Define Pokémon vencedor e perdedor
+    mostra_pokemons(poke1, poke2)
     resultado(poke1, poke2)
 
 
@@ -37,14 +39,14 @@ def quem_comeca(poke1, poke2):
 
 
 def mostra_pokemons(poke1, poke2):
-    """Limpa a tela e exibe informação dos pokémons."""
+    """Exibe informação dos pokémons."""
     limpa_tela()
-    poke1.mostra()
-    poke2.mostra()
+    poke1.info()
+    poke2.info()
 
 
 def limpa_tela():
-    """Limpa a tela após a escolha do ataque pelo usuário."""
+    """Limpa a tela com um comando."""
     if sys.platform == "linux":
         subprocess.call("clear")
     elif sys.platform == "win32":
@@ -66,3 +68,14 @@ def resultado(poke1, poke2):
         print("> A batalha terminou em empate!")
     else:
         print(">", vencedor.nome + " vence a batalha! :D")
+
+
+def set_debug():
+    """Ativa modo debug."""
+    global debug
+    debug = True
+
+
+def is_debug():
+    """Verifica se está em modo debug."""
+    return debug

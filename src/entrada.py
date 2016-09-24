@@ -1,58 +1,21 @@
-"""Funções de leitura de tipos, Pokémons e ataques."""
-
-from tipo import le_tipos
-
-# Lê de arquivo tipos e tabela de efetividade
-num_tipos = le_tipos("tipos.txt")
+"""Função para ler Pokémons."""
 
 from pokemon import Pokemon
-from ataque import Ataque
 
 
-def le_pokemon(cpu, debug):
-    """Recebe dados do Pokémon e cria um objeto dessa classe."""
-    dados = [input()]  # Começa com o nome
+def le_pokemon(cpu, dados=None):
+    """Lê dados da entrada padrão e devolve um objeto Pokémon.
+       Alternativamente, recebe uma lista de dados (strings) já pronta."""
+    if dados is None:
+        dados = []
 
-    # Leitura de LVL, HP, ATK, DEF, SPD, SPC
-    for i in range(6):
-        dados.append(int(input()))
+        # Leitura dos atributos do Pokémon
+        for i in range(9):
+            dados.append(input())
 
-    # Leitura de Tipo 1 e Tipo 2
-    for i in range(2):
-        n = int(input())
-        if n not in range(num_tipos + 1):
-            erro_leitura("tipo de um Pokémon")
-        dados.append(n)
+        # Leitura dos atributos de ataque
+        num_ataques = int(input())
+        for i in range(5 * num_ataques):
+            dados.append(input())
 
-    # Leitura dos ataques
-    ataques = []
-    num_ataques = int(input())
-    for i in range(num_ataques):
-        ataques.append(le_ataque())
-    dados.append(ataques)
-
-    print("'" + dados[0] + "' lido com sucesso!")
-    return Pokemon(dados, cpu, debug)
-
-
-def le_ataque():
-    """Recebe dados de um ataque e cria um objeto dessa classe."""
-    dados = [input()]  # Começa com o nome
-
-    # Leitura do tipo
-    n = int(input())
-    if n not in range(num_tipos):
-        erro_leitura("tipo de um ataque")
-    dados.append(n)
-
-    # Leitura de ACU, PWR e PP
-    for i in range(3):
-        dados.append(int(input()))
-
-    return Ataque(dados)
-
-
-def erro_leitura(mensagem):
-    """Imprime mensagem de erro."""
-    raise Exception("Erro ao ler " + mensagem + "!")
-    exit(1)
+    return Pokemon(dados, cpu)
