@@ -14,34 +14,32 @@ try:
     # Verifica se algum jogador será controlado pelo CPU e modo debug
     cpu1 = False
     cpu2 = False
-    for arg in sys.argv[1:]:
-        if arg == "-a":
-            cpu1 = cpu2 = True
-        elif arg == "-b":
-            cpu1 = True
-        if arg == "-d":
-            set_debug()
+    if "-a" in sys.argv:
+        cpu1 = cpu2 = True
+    elif "-b" in sys.argv:
+        cpu1 = True
+    if "-d" in sys.argv:
+        set_debug()
 
-    for arg in sys.argv[1:]:
-        # Local
-        if arg == "-l":
-            poke1 = le_pokemon(cpu1)
-            poke2 = le_pokemon(cpu2)
-            batalha_local(poke1, poke2)
+    # Local
+    if "-l" in sys.argv:
+        poke1 = le_pokemon(cpu1)
+        poke2 = le_pokemon(cpu2)
+        batalha_local(poke1, poke2)
 
-        # Cliente
-        elif arg == "-c":
-            cliente = Cliente(cpu1)
-            cliente.conecta_ao_servidor();
-            cliente.rotina()
+    # Cliente
+    elif "-c" in sys.argv:
+        cliente = Cliente(cpu1)
+        cliente.conecta_ao_servidor()
+        cliente.loop()
 
-        # Servidor
-        elif arg == "-s":
-            servidor = Servidor(cpu1)
-            try:
-                servidor.app.run(debug=True)
-            except OSError:
-                print("ERRO: Endereço do servidor já em uso.")
+    # Servidor
+    elif "-s" in sys.argv:
+        servidor = Servidor(cpu1)
+        try:
+            servidor.app.run(debug=True)
+        except OSError:
+            print("ERRO: Endereço do servidor já em uso.")
 
 except (KeyboardInterrupt, EOFError):
     print("\nPrograma interrompido.")

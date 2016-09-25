@@ -1,0 +1,30 @@
+Jigglypuff
+100
+340
+85
+40
+85
+40
+0
+16
+4
+Pound
+0
+100
+40
+35
+Double Slap
+0
+85
+15
+10
+Body Slam
+0
+100
+85
+15
+Double-Edge
+0
+100
+120
+15

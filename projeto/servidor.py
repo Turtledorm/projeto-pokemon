@@ -23,9 +23,9 @@ class Servidor:
         self.conectado = False
         self.app = Flask(__name__)
 
-        #-----------------------------------------
-        # A seguir estão contidos os métodos POST
-        #-----------------------------------------
+        # -----------------------------------------
+        #  A seguir estão contidos os métodos POST
+        # -----------------------------------------
 
         @self.app.route("/battle/", methods=["POST"])
         def recebe_cliente():

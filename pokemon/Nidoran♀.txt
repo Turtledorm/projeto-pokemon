@@ -1,0 +1,40 @@
+Nidoran♀
+100
+220
+89
+98
+76
+78
+3
+16
+6
+Tackle
+0
+100
+50
+35
+Scratch
+0
+100
+40
+35
+Poison Sting
+3
+100
+15
+35
+Bite
+0
+100
+60
+25
+Fury Swipes
+0
+80
+18
+15
+Double Kick
+1
+100
+30
+30

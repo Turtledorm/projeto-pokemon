@@ -1,0 +1,35 @@
+Nidorino
+100
+232
+134
+107
+103
+121
+3
+16
+5
+Horn Attack
+0
+100
+65
+25
+Tackle
+0
+100
+50
+35
+Poison Sting
+3
+100
+15
+35
+Fury Attack
+0
+85
+15
+20
+Double Kick
+1
+100
+30
+30

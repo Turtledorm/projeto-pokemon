@@ -10,7 +10,7 @@ def melhor_ataque(atacante, defensor):
     # Condição especial para caso Pokémon esteja à beira do nocaute
     estado_critico = True if atacante.hp < atacante.hp_max/3 else False
 
-    # Procura pelo ataque com melhor custo-benefício. 
+    # Procura pelo ataque com melhor custo-benefício
     for ataque in atacante.ataques:
         if not ataque.com_pp():
             continue

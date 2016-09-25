@@ -1,0 +1,30 @@
+Rhyhorn
+100
+270
+157
+175
+58
+49
+4
+5
+4
+Horn Attack
+0
+100
+65
+25
+Stomp
+0
+100
+65
+20
+Fury Attack
+0
+85
+15
+20
+Take Down
+0
+85
+90
+20

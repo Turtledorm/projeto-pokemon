@@ -1,0 +1,40 @@
+Jolteon
+100
+240
+121
+112
+202
+238
+12
+16
+6
+Quick Attack
+0
+100
+40
+30
+Tackle
+0
+100
+50
+35
+Thunder Shock
+12
+100
+40
+30
+Double Kick
+1
+100
+30
+30
+Pin Missile
+7
+95
+25
+20
+Thunder
+12
+70
+110
+10

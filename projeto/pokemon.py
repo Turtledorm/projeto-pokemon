@@ -59,8 +59,9 @@ class Pokemon:
         self.imprime_barra()
 
         if is_debug():
-            print("{ ATK =", self.atk, "/", "DEF =", self.dfs, "/",
-                    "SPD =", self.spd, "/", "SPC =", self.spc, "}")
+            print("{ "
+                  "ATK =", self.atk, "/", "DEF =", self.dfs, "/",
+                  "SPD =", self.spd, "/", "SPC =", self.spc, "}")
         print()
 
     def imprime_barra(self):

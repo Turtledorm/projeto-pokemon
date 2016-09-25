@@ -1,0 +1,35 @@
+Hitmonchan
+100
+210
+193
+146
+67
+141
+1
+16
+5
+Comet Punch
+0
+85
+18
+15
+Fire Punch
+9
+100
+75
+15
+Ice Punch
+14
+100
+75
+15
+Thunder Punch
+12
+100
+75
+15
+Mega Punch
+0
+85
+80
+20

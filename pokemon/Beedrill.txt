@@ -1,0 +1,30 @@
+Beedrill
+100
+240
+166
+76
+85
+139
+7
+3
+4
+Fury Attack
+0
+85
+15
+20
+Twineedle
+7
+100
+25
+20
+Rage
+0
+100
+20
+20
+Pin Missile
+7
+95
+25
+20

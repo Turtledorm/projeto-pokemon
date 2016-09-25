@@ -1,0 +1,35 @@
+Poliwhirl
+100
+240
+121
+121
+94
+166
+10
+16
+5
+Bubble
+10
+100
+40
+30
+Water Gun
+10
+100
+40
+25
+Double Slap
+0
+85
+15
+10
+Body Slam
+0
+100
+85
+15
+Hydro Pump
+10
+80
+110
+5

@@ -1,0 +1,30 @@
+Omanyte
+100
+180
+76
+184
+166
+67
+5
+10
+4
+Water Gun
+10
+100
+40
+25
+Horn Attack
+0
+100
+65
+25
+Spike Cannon
+0
+100
+20
+15
+Hydro Pump
+10
+80
+110
+5

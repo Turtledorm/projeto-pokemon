@@ -1,0 +1,30 @@
+Vulpix
+100
+186
+78
+76
+94
+121
+9
+16
+4
+Ember
+9
+100
+40
+25
+Quick Attack
+0
+100
+40
+30
+Flamethrower
+9
+100
+90
+15
+Fire Spin
+9
+85
+35
+15

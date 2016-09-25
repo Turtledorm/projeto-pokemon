@@ -1,0 +1,30 @@
+Aerodactyl
+100
+270
+193
+121
+112
+238
+5
+2
+4
+Wing Attack
+2
+100
+60
+35
+Bite
+0
+100
+60
+25
+Take Down
+0
+85
+90
+20
+Hyper Beam
+0
+90
+150
+5

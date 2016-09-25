@@ -1,0 +1,30 @@
+Electabuzz
+100
+240
+153
+107
+175
+193
+12
+16
+4
+Quick Attack
+0
+100
+40
+30
+Thunder Shock
+12
+100
+40
+30
+Thunder Punch
+12
+100
+75
+15
+Thunder
+12
+70
+110
+10

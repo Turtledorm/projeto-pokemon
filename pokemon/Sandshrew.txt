@@ -1,0 +1,35 @@
+Sandshrew
+100
+210
+139
+157
+40
+76
+4
+16
+5
+Scratch
+0
+100
+40
+35
+Slash
+0
+100
+70
+20
+Poison Sting
+3
+100
+15
+35
+Swift
+0
+100
+60
+20
+Fury Swipes
+0
+80
+18
+15

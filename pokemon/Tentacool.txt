@@ -1,0 +1,40 @@
+Tentacool
+100
+190
+76
+67
+94
+130
+10
+3
+6
+Acid
+3
+100
+40
+30
+Wrap
+0
+90
+15
+20
+Poison Sting
+3
+100
+15
+35
+Water Gun
+10
+100
+40
+25
+Constrict
+0
+100
+10
+35
+Hydro Pump
+10
+80
+110
+5

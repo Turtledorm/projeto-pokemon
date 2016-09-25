@@ -1,0 +1,30 @@
+Omastar
+100
+250
+112
+229
+211
+103
+5
+10
+4
+Horn Attack
+0
+100
+65
+25
+Water Gun
+10
+100
+40
+25
+Spike Cannon
+0
+100
+20
+15
+Hydro Pump
+10
+80
+110
+5

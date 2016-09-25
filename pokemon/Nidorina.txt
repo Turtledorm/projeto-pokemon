@@ -1,0 +1,40 @@
+Nidorina
+100
+250
+116
+125
+103
+105
+3
+16
+6
+Scratch
+0
+100
+40
+35
+Tackle
+0
+100
+50
+35
+Poison Sting
+3
+100
+15
+35
+Bite
+0
+100
+60
+25
+Fury Swipes
+0
+80
+18
+15
+Double Kick
+1
+100
+30
+30

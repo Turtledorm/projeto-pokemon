@@ -1,0 +1,35 @@
+Hitmonlee
+100
+210
+220
+99
+67
+161
+1
+16
+5
+Double Kick
+1
+100
+30
+30
+Rolling Kick
+1
+85
+60
+15
+Jump Kick
+1
+95
+100
+10
+High Jump Kick
+1
+90
+130
+10
+Mega Kick
+0
+75
+120
+5

@@ -1,0 +1,35 @@
+Kangaskhan
+100
+320
+175
+148
+76
+166
+0
+16
+5
+Comet Punch
+0
+85
+18
+15
+Rage
+0
+100
+20
+20
+Bite
+0
+100
+60
+25
+Mega Punch
+0
+85
+80
+20
+Dizzy Punch
+0
+100
+70
+10
