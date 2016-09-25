@@ -4,7 +4,7 @@ import os
 import sys
 import time
 
-from tipo import get_tipo
+from tipo import get_tipo, get_num_tipos
 from ataque import Ataque, get_struggle
 from batalha import is_debug
 from ia import melhor_ataque
@@ -31,8 +31,9 @@ class Pokemon:
         # Tipos do Pokémon
         t = int(dados.pop()), int(dados.pop())
         for i in range(2):
-            if t[i] not in range(17):
-                print("ERRO: Valor inválido para tipo de Pokémon.")
+            if t[i] not in range(get_num_tipos() + 1):
+                print("ERRO: Valor inválido ("
+                      + str(t) + ") para tipo de Pokémon.")
                 exit(1)
         self._tipo1 = get_tipo(t[0])
         self._tipo2 = get_tipo(t[1])
@@ -112,13 +113,6 @@ class Pokemon:
             ataque.info()
             i += 1
         print()
-
-    def get_ataque(self, i):
-        """Retorna o i-ésimo ataque do Pokémon.
-           Caso especial para struggle em batalhas multiplayer."""
-        if i == -1:
-            return get_struggle()
-        return self.ataques[i]
 
     def todos_ataques_sem_pp(self):
         """Verifica se todos os ataques estão com PP 0."""
@@ -230,6 +224,13 @@ class Pokemon:
     @property
     def ataques(self):
         return self._ataques
+
+    def get_ataque(self, i):
+        """Retorna o i-ésimo ataque do Pokémon.
+           Caso especial para struggle em batalhas multiplayer."""
+        if i == -1:
+            return get_struggle()
+        return self.ataques[i]
 
     @property
     def cpu(self):

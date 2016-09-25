@@ -39,10 +39,10 @@ def xml_to_poke(xml, cpu):
     # Pega todos os valores dos atributos do Pokémon e separa por linhas
     dados = dados.pokemon.get_text("\n").split("\n")
 
-    # Remove ids dos ataques (inúteis)
+    # Remove ids dos ataques (inúteis) e troca ACU e PWR de lugar
     del dados[9::6]
+    dados[11::5], dados[12::5] = dados[12::5], dados[11::5]
 
     # Cria objeto com dados recebidos
     poke = le_pokemon(cpu, dados)
-
     return poke

@@ -75,5 +75,12 @@ def get_tipo(i):
     return tipos[i]
 
 
+def get_tipo_id(nome):
+    """Devolve o id do tipo de respectivo nome."""
+    for i in range(get_num_tipos()):
+        if tipos[i].nome == nome:
+            return i + 1
+
+
 # Lê de arquivo tipos e tabela de efetividade
 le_tipos("tipos.txt")

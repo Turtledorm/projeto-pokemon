@@ -7,7 +7,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 
 # Nome dos diretórios
 pokedir="pokemon"
-srcdir="src"
+srcdir="projeto"
 
 # --------------------------------------------------------------------
 # Mostra como usar o script.

@@ -2,7 +2,7 @@
 
 import random
 
-from tipo import get_tipo
+from tipo import get_tipo, get_num_tipos
 from batalha import is_debug
 
 
@@ -18,8 +18,8 @@ class Ataque:
 
         # Tipo do ataque
         t = int(dados.pop())
-        if t not in range(16):
-            print("ERRO: Valor inválido para tipo de ataque.")
+        if t not in range(get_num_tipos()):
+            print("ERRO: Valor inválido (" + str(t) + ") para tipo de ataque.")
             exit(1)
         self._typ = get_tipo(t)
 
