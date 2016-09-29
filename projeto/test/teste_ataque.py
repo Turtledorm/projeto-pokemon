@@ -14,13 +14,13 @@ from ataque import Ataque
 
 
 class DanoTestCase(unittest.TestCase):
-    
+
     def setUp(self):
             sys.stdout = open(os.devnull, "w")  # Suprime o output de batalha.py
             sys.stderr = sys.stdout
             self.a = RandomPoke()
             self.poke1 = Pokemon(self.a.gera())
-        
+
     def test_critico(self):
         """Verifica se o cálculo de golpes críticos está funcionando OK."""
         res = (2 * self.poke1.lvl + 5)/(self.poke1.lvl + 5)
@@ -91,11 +91,11 @@ class DanoTestCase(unittest.TestCase):
                 with patch(poke + "tipo2", PropertyMock(return_value=not_typ)):
                     self.assertEqual(ataque.stab(self.poke1), 1)
 
-    
+
     def tearDown(self):
         sys.stdout.close()  # Fechando o os.devnull
         sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__     
+        sys.stderr = sys.__stderr__
 
 # Inicializa o unittest, que cuidará do resto
 if __name__ == '__main__':

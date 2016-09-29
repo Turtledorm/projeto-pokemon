@@ -3,7 +3,7 @@
 import random
 
 from tipo import get_tipo, get_num_tipos
-from batalha import is_debug
+from batalha import is_debug, cor
 
 
 class Ataque:
@@ -31,7 +31,8 @@ class Ataque:
     def info(self):
         """Exibe nome e PP atual/máximo do ataque.
            Se debug, mostra também os atributos restantes."""
-        print(self.nome, " (", self.typ.nome, ")", sep="", end=" ")
+        print(cor(self.nome, 36, b=True) +
+              cor(" (" + self.typ.nome + ")", 36), end=" ")
         print("[", self.pp, "/", self.pp_max, "]", sep="")
         if is_debug():
             print("    { Acurácia:", self.acu, "/", "Poder:", self.pwr, "}")

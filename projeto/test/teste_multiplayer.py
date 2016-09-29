@@ -57,7 +57,7 @@ class MultiplayerTestCase(unittest.TestCase):
                 # sempre o primeiro.
                 with patch("batalha.input", return_value=1):
                     pokemon.input = Mock(return_value="\n")
-                        
+
                     # Façamos primeiro o teste multiplayer
                     bs_multi = self.app.post("/battle/",
                                              data=poke_cliente.to_xml())
@@ -66,7 +66,7 @@ class MultiplayerTestCase(unittest.TestCase):
                     bs_multi = self.padroniza(bs_multi.data)
 
                     # Vamos realizar a mesma batalha agora no modo offline
-                    poke_servidor.realiza_ataque(escolhe_ataque(poke_servidor, 
+                    poke_servidor.realiza_ataque(escolhe_ataque(poke_servidor,
                                                  poke_cliente), poke_cliente)
 
                     # Vamos testar se os resultados são os mesmo se simularmos
@@ -74,7 +74,7 @@ class MultiplayerTestCase(unittest.TestCase):
                     # teste e plenamente operante.
                     self.assertEqual(cria_bs(poke_cliente, poke_servidor),
                                      bs_multi)
-        
+
     def test_cliente_ataca(self):
         """Procedemos da mesma maneira que no método test_servidor_ataca(),
            mas aqui também testamos o ataque do cliente."""
@@ -95,7 +95,7 @@ class MultiplayerTestCase(unittest.TestCase):
                     multi_bs = self.app.post("/battle/attack/" + str(id))
                     multi_bs = self.padroniza(multi_bs.data)
 
-                    poke_servidor.realiza_ataque(escolhe_ataque(poke_servidor, 
+                    poke_servidor.realiza_ataque(escolhe_ataque(poke_servidor,
                                                  poke_cliente), poke_cliente)
                     poke_cliente.realiza_ataque(poke_cliente.get_ataque(id-1),
                                                 poke_servidor)
@@ -106,11 +106,11 @@ class MultiplayerTestCase(unittest.TestCase):
                     off_bs = cria_bs(poke_cliente, poke_servidor)
 
                     self.assertEqual(off_bs, multi_bs)
-    
+
     def test_shutdown(self):
         """Verifica se o programa está sendo encerrado corretamente."""
         self.assertRaises(RuntimeError, self.app.post, "/shutdown/")
-    
+
     def test_locked(self):
         """Como no setUp iniciamos o app, todas as vezes que tentarmos
            mandar um POST para /battle/ resultará no erro 423."""

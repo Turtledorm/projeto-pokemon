@@ -79,3 +79,13 @@ def set_debug():
 def is_debug():
     """Verifica se está em modo debug."""
     return debug
+
+
+def cor(s, codigo, b=False):
+    """Recebe uma string e devolve-a colorida segundo o código.
+       Se b, também transforma em negrito.
+       Referência: http://stackoverflow.com/a/21786287/3698981"""
+    s = "\033[" + str(codigo) + "m" + s + "\033[00m"
+    if b:
+        s = "\033[1m" + s + "\033[0m"
+    return s

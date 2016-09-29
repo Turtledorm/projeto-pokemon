@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Script que gera arquivos de todos os pokemons da primeira geração.
    Dados são importados do site pokemondb.net. Os status são referentes ao
    nível 100 (sem bônus) e ataques que não causam dano são desconsiderados."""

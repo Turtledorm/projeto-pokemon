@@ -6,7 +6,7 @@ import time
 
 from tipo import get_tipo, get_num_tipos
 from ataque import Ataque, get_struggle
-from batalha import is_debug
+from batalha import is_debug, cor
 from ia import melhor_ataque
 
 
@@ -52,10 +52,12 @@ class Pokemon:
     def info(self):
         """ Exibe nome, tipo(s) e HP atual/máximo do Pokémon.
             Se debug, mostra também os atributos restantes."""
-        print(">>>", self.nome, "{Lv " + str(self.lvl) + "} <<<", end=" ")
-        print("(" + self.tipo1.nome +
-              (("/" + self.tipo2.nome) if self.tipo2.nome != "Blank" else "")
-              + ")" + ((" [CPU]") if self.cpu is True else ""))
+        cor_id = 33 if self.hp > 0 else 37
+        print(cor("+++ " + self.nome +
+              " {Lv " + str(self.lvl) + "}", cor_id, b=True), end=" ")
+        print(cor("(" + self.tipo1.nome + (("/" + self.tipo2.nome)
+                  if self.tipo2.nome != "Blank" else "") + ")", cor_id)
+              + (cor(" [CPU]", 31, b=True) if self.cpu is True else ""))
         self.imprime_barra()
 
         if is_debug():
@@ -74,7 +76,8 @@ class Pokemon:
             length = 1
 
         # Imprime a barra
-        print("[" + "=" * length + " " * (BARRA_MAX - length) + "] ", end="")
+        print("[" + cor("=" * length, 33) +
+              " " * (BARRA_MAX - length) + "] ", end="")
         print("[", self.hp, "/", self.hp_max, "] HP", sep="")
 
     def escolhe_ataque(self, defensor):
@@ -88,10 +91,12 @@ class Pokemon:
             input()
             return get_struggle()
 
+        # Obtém o ataque a ser usado
         ataque = None
         if self.cpu:
             ataque = melhor_ataque(self, defensor)
         else:
+            print()
             while True:
                 try:
                     i = int(input("Digite o nº do ataque: "))
@@ -113,7 +118,6 @@ class Pokemon:
             print(i, "-", end=" ")
             ataque.info()
             i += 1
-        print()
 
     def todos_ataques_sem_pp(self):
         """Verifica se todos os ataques estão com PP 0."""
@@ -139,7 +143,8 @@ class Pokemon:
         else:
             print("> O ataque de " + self.nome + " errou!")
 
-        input()  # Aguarda por usuário antes de limpar a tela
+        # Aguarda por usuário antes de limpar a tela
+        input()
 
     def remove_hp(self, dano):
         """Reduz quantidade de HP equivalente ao dano."""

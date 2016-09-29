@@ -63,8 +63,8 @@ class PokeTestCase(unittest.TestCase):
                 self.assertTrue(self.test.ataques[0].acertou())
             for i in range(100):
                 self.assertFalse(self.test.ataques[0].acertou())
-    
-    
+
+
     def tearDown(self):
         """Finaliza o teste."""
         sys.stdout.close()  # Fechando o os.devnull

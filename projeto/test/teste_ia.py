@@ -19,10 +19,10 @@ from ataque import Ataque
 
 
 class IaTestCase(unittest.TestCase):
-        
+
     def teste_melhor_ataque(self):
-        """ Vamos testar se a função melhor_ataque dá realmente o 
-            ataque com a melhor relação dano x acurácia testando 
+        """ Vamos testar se a função melhor_ataque dá realmente o
+            ataque com a melhor relação dano x acurácia testando
             todos os ataques do pokemon atacante no pokemon defensor."""
 
         for j in range(100):
@@ -31,7 +31,7 @@ class IaTestCase(unittest.TestCase):
             dados_def = RandomPoke()
             atacante = Pokemon(dados_atk.gera())
             defensor = Pokemon(dados_def.gera())
-           
+
             melhor = melhor_ataque(atacante, defensor)
             danos = []
             if atacante.hp < atacante.hp_max/5:
@@ -41,16 +41,16 @@ class IaTestCase(unittest.TestCase):
             for ataque in atacante.ataques:
                 if ataque.pp > 0 and estado_critico is False:
                     dano = ataque.calcula_dano(atacante, defensor, basico=True)
-                    danos.append(dano * (ataque.acu*ataque.acu)/10000)  
+                    danos.append(dano * (ataque.acu*ataque.acu)/10000)
                 elif ataque.pp > 0 and estado_critico is True:
-                    dano = ataque.calcula_dano(atacante, defensor, basico=True)    
-            
+                    dano = ataque.calcula_dano(atacante, defensor, basico=True)
+
             # Caso não tire todo o hp, escolhe o que causa (em média) o maior
             # dano usando a relação dano x acurácia.
             if max(danos) < defensor.hp:
                 melhor_dano = melhor.calcula_dano(atacante, defensor, basico=True)
                 self.assertEqual(atacante.get_ataque(danos.index(max(danos))), melhor, 1)
-    
+
     def gera_ataque(self, acu, pwr, pp):
         """Gera um ataque com atributos aleatórios."""
         return [''.join(choice(ascii_lowercase + ascii_uppercase)
@@ -59,9 +59,9 @@ class IaTestCase(unittest.TestCase):
                 acu,
                 pwr,
                 pp]
-    
+
     def gera_poke(self):
-        """Gera pokemons tais que os ataques estão ordenados em ordem 
+        """Gera pokemons tais que os ataques estão ordenados em ordem
         crescente de pwr e acu."""
         t = RandomPoke()
         dados = t.gera()
@@ -69,15 +69,15 @@ class IaTestCase(unittest.TestCase):
         ataque = []
         rand_num = randint(1, 97)
         for i in range(4): #Criamos ataques ordenados
-            ataque.append(self.gera_ataque(i + rand_num, i + rand_num, 
+            ataque.append(self.gera_ataque(i + rand_num, i + rand_num,
                                            randint(1, 255)))
-        
+
         ataques = [Ataque(ataque[i]) for i in range(4)]
-        dados.append(ataques)   
-        poke = Pokemon(dados) #Agora nosso pokemón contém os ataques ordenados 
+        dados.append(ataques)
+        poke = Pokemon(dados) #Agora nosso pokemón contém os ataques ordenados
         return poke
 
 # Inicializa o unittest, que cuidará do resto
 if __name__ == '__main__':
     unittest.main()
-    
+

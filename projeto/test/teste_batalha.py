@@ -34,7 +34,7 @@ class BatalhaTestCase(unittest.TestCase):
         self.poke1 = Pokemon(self.a.gera())
         self.poke2 = Pokemon(self.b.gera())
         self.struggle = Ataque(["Struggle", 0, 100, 50, 10])
-            
+
     def test_quem_comeca(self):
         """Verifica se a função quem_comeca retorna
            a tupla com o Pokemon de maior SPD primeiro."""
@@ -62,13 +62,13 @@ class BatalhaTestCase(unittest.TestCase):
         batalha.input = Mock(return_value="ok")
         with patch("pokemon.Pokemon.todos_ataques_sem_pp", return_value=True):
             self.assertEqual(self.poke2.todos_ataques_sem_pp(), True)
-            self.assertEqual((escolhe_ataque(self.poke1, self.poke2)).nome, 
+            self.assertEqual((escolhe_ataque(self.poke1, self.poke2)).nome,
                               self.struggle.nome)
 
         # Testando se escolhe_ataque está retornando os ataques corretos
         for i in range(len(self.poke1.ataques)):
             batalha.input = Mock(return_value=(i+1))
-            self.assertEqual(escolhe_ataque(self.poke1, self.poke2), 
+            self.assertEqual(escolhe_ataque(self.poke1, self.poke2),
                              self.poke1.ataques[i])
 
         # Nesse ponto o escolhe_ataque receberá de input 4 valores "errados"
@@ -79,7 +79,7 @@ class BatalhaTestCase(unittest.TestCase):
                            random.uniform(-100, 100), 5, -1, 1]
         batalha.input = Mock(side_effect=valores_errados)
         self.assertTrue(escolhe_ataque(self.poke1, self.poke2) in self.poke1.ataques)
-        
+
     def test_realiza_ataque_e_calcula_dano(self):
         """Verifica se ataque e suas consequências ocorrem sem problemas."""
         batalha.input = Mock(return_value="ok")
@@ -121,7 +121,7 @@ class BatalhaTestCase(unittest.TestCase):
                     dano //= 2
                     poke2.remove(hp.dano)
 
-                # Verficamos se o Pokemon.realiza_ataque está 
+                # Verficamos se o Pokemon.realiza_ataque está
                 # aplicando corretamente o dano conforme a fórmula.
                 pokemon.input = Mock(return_value="\n")
                 poke3.realiza_ataque(ataque, poke4)
