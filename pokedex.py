@@ -5,8 +5,8 @@
    nível 100 (sem bônus) e ataques que não causam dano são desconsiderados."""
 
 import os
-import pycurl
-from io import BytesIO
+
+import requests
 from bs4 import BeautifulSoup
 
 from projeto.tipo import get_tipo_id, get_num_tipos
@@ -15,24 +15,15 @@ from projeto.tipo import get_tipo_id, get_num_tipos
 SITE_URL = "https://pokemondb.net"
 
 
-def get_soup(c, url):
-    """Recebe um objeto Curl e uma URL.
-       Devolve o objeto BeautifulSoup da página em questão."""
-    buffer = BytesIO()
-    c.setopt(c.URL, url)
-    c.setopt(c.WRITEDATA, buffer)
-    c.perform()
-    html = buffer.getvalue()
-    return BeautifulSoup(html, "html.parser")
+def get_soup(url):
+    """Recebe uma URL e devolve o objeto
+       BeautifulSoup da página em questão."""
+    r = requests.get(url)
+    return BeautifulSoup(r.text, "html.parser")
 
-
-# Cria objeto do pycurl
-c = pycurl.Curl()
-c.setopt(pycurl.USERAGENT,
-         "Mozilla/5.0 (compatible; pycurl)")  # Evita problema de ass. inválida
 
 # Obtém página com lista de Pokémons da 1ª geração
-soup = get_soup(c, SITE_URL + "/pokedex/game/firered-leafgreen")
+soup = get_soup(SITE_URL + "/pokedex/game/firered-leafgreen")
 
 # Lista de tags de Pokémons
 pokes = soup.find_all("span", {"class": "game-red-blue"})
@@ -55,7 +46,7 @@ for p in pokes:
 
         # Página do Pokémon
         url = SITE_URL + "/" + a["href"]
-        soup = get_soup(c, url)
+        soup = get_soup(url)
 
         # Coleta atributos numéricos
         tds = soup.find_all("td", {"class": "num"})
@@ -69,7 +60,7 @@ for p in pokes:
 
         # Página dos ataques da 1ª geração
         url += "/moves/1"
-        soup = get_soup(c, url)
+        soup = get_soup(url)
 
         # Cria lista e itera-se entre os ataques
         ataques = []
@@ -86,7 +77,7 @@ for p in pokes:
 
             # Vamos para a página do ataque (para pegar o maldito PP)
             url = SITE_URL + tr.a["href"]
-            soup = get_soup(c, url)
+            soup = get_soup(url)
 
             # Obtém-se atributos e coloca-os na lista
             table = soup.find("table", {"class": "vitals-table key-table"})
@@ -106,6 +97,3 @@ for p in pokes:
                 arq.write(atrib + "\n")
 
         print(nome, "criado com sucesso!")
-
-# Encera sessão do curl
-c.close()
